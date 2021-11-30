@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node -r dotenv/config ./prod/index.js",
-    "debug": "tsc && node -r dotenv/config ./prod/index.js"
+    "debug": "tsc && node -r dotenv/config ./prod/index.js",
+    "lint": "eslint src/**/*.ts --ext .ts --fix"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,8 @@
   },
   "devDependencies": {
     "@types/node": "^16.11.11",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
     "eslint": "^8.3.0",
     "typescript": "^4.5.2"
   }

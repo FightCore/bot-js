@@ -1,8 +1,4 @@
-import { Message } from 'discord.js';
-
-// Require the necessary discord.js classes
-const { Client, Intents, Events } = require('discord.js');
-require('dotenv').config();
+import { Message, Client, Intents } from 'discord.js';
 
 // Create a new client instance
 const client = new Client({
@@ -18,7 +14,7 @@ client.on('messageCreate', async (message: Message) => {
   if (
     message.mentions &&
     message.mentions.users &&
-    message.mentions.users.firstKey() === client.user.id
+    message.mentions.users.firstKey() === client.user?.id
   ) {
     if (message.content.includes('ping')) {
       message.reply('pong');
