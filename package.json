@@ -4,8 +4,9 @@
   "description": "FightCore Discord bot to display frame data",
   "main": "index.js",
   "scripts": {
-    "main": "index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "start": "node -r dotenv/config ./prod/index.js",
+    "debug": "tsc && node -r dotenv/config ./prod/index.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,8 @@
     "dotenv": "^10.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.3.0"
+    "@types/node": "^16.11.11",
+    "eslint": "^8.3.0",
+    "typescript": "^4.5.2"
   }
 }

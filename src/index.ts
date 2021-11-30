@@ -1,3 +1,5 @@
+import { Message } from 'discord.js';
+
 // Require the necessary discord.js classes
 const { Client, Intents, Events } = require('discord.js');
 require('dotenv').config();
@@ -12,7 +14,7 @@ const client = new Client({
   partials: ['CHANNEL'],
 });
 
-client.on('messageCreate', async (message) => {
+client.on('messageCreate', async (message: Message) => {
   if (
     message.mentions &&
     message.mentions.users &&
