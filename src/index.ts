@@ -1,4 +1,10 @@
-import { Message, Client, Intents } from 'discord.js';
+import { Message, Client, Intents, Interaction } from 'discord.js';
+
+import { Loader } from './data/loader';
+import { MoveEmbedCreator } from './embeds/move-embed-creator';
+
+const dataLoader = new Loader();
+dataLoader.load();
 
 // Create a new client instance
 const client = new Client({
@@ -16,9 +22,34 @@ client.on('messageCreate', async (message: Message) => {
     message.mentions.users &&
     message.mentions.users.firstKey() === client.user?.id
   ) {
-    if (message.content.includes('ping')) {
-      message.reply('pong');
+    const keyWords = message.content.split(' ');
+    const characters = dataLoader.data;
+    const character = characters.find(
+      (localCharacter) => localCharacter.normalizedName === keyWords[1]
+    );
+
+    if (character) {
+      const move = character.moves.find(
+        (localMove) => localMove.normalizedName === keyWords[2]
+      );
+      if (move) {
+        await message.reply({
+          embeds: new MoveEmbedCreator(move, character).create(),
+        });
+        return;
+      }
     }
+
+    await message.reply('Not found');
+  }
+});
+
+client.on('interactionCreate', async (interaction: Interaction) => {
+  if (interaction.isButton()) {
+    await interaction.update({
+      components: [],
+    });
+    await (interaction.message as Message).reply({ content: 'Test!' });
   }
 });
 
