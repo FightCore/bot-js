@@ -1,6 +1,7 @@
 import { Message, Client, Intents, Interaction } from 'discord.js';
 
 import { Loader } from './data/loader';
+import { Search } from './data/search';
 import { MoveEmbedCreator } from './embeds/move-embed-creator';
 
 const dataLoader = new Loader();
@@ -17,30 +18,33 @@ const client = new Client({
 });
 
 client.on('messageCreate', async (message: Message) => {
+  if (message.author.bot) return;
+
   if (
     message.mentions &&
     message.mentions.users &&
     message.mentions.users.firstKey() === client.user?.id
   ) {
     const keyWords = message.content.split(' ');
-    const characters = dataLoader.data;
-    const character = characters.find(
-      (localCharacter) => localCharacter.normalizedName === keyWords[1]
-    );
+    keyWords.shift();
+    const search = new Search(dataLoader);
+    await message.channel.sendTyping();
 
-    if (character) {
-      const move = character.moves.find(
-        (localMove) => localMove.normalizedName === keyWords[2]
-      );
-      if (move) {
-        await message.reply({
-          embeds: new MoveEmbedCreator(move, character).create(),
-        });
-        return;
-      }
+    const characterMove = search.search(keyWords.join(' '));
+    if (!characterMove) {
+      await message.reply('Not found');
+      return;
     }
 
-    await message.reply('Not found');
+    const embedCreator = new MoveEmbedCreator(
+      characterMove.move,
+      characterMove.character
+    );
+
+    await message.reply({
+      embeds: embedCreator.createEmbed(),
+      components: embedCreator.createButtons(),
+    });
   }
 });
 
@@ -49,7 +53,25 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     await interaction.update({
       components: [],
     });
-    await (interaction.message as Message).reply({ content: 'Test!' });
+
+    const search = new Search(dataLoader);
+
+    const characterMove = search.search(interaction.customId);
+
+    if (!characterMove) {
+      console.log('Move not found for interaction');
+      return;
+    }
+
+    const embedCreator = new MoveEmbedCreator(
+      characterMove.move,
+      characterMove.character
+    );
+
+    await (interaction.message as Message).reply({
+      embeds: embedCreator.createEmbed(),
+      components: embedCreator.createButtons(),
+    });
   }
 });
 
