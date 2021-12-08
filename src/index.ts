@@ -32,6 +32,7 @@ client.on('messageCreate', async (message: Message) => {
 
     const characterMove = search.search(keyWords.join(' '));
     if (!characterMove) {
+      console.log(`No character or move found for ${keyWords.join(' ')}`);
       await message.reply('Not found');
       return;
     }
@@ -41,22 +42,27 @@ client.on('messageCreate', async (message: Message) => {
       characterMove.character
     );
 
+    console.log(
+      `Replying with ${characterMove.character.name} and ${characterMove.move.name}`
+    );
+
     await message.reply({
       embeds: embedCreator.createEmbed(),
-      components: embedCreator.createButtons(),
+      components: embedCreator.createButtons(characterMove.possibleMoves),
     });
   }
 });
 
 client.on('interactionCreate', async (interaction: Interaction) => {
-  if (interaction.isButton()) {
+  if (interaction.isButton() || interaction.isSelectMenu()) {
     await interaction.update({
       components: [],
     });
 
     const search = new Search(dataLoader);
-
-    const characterMove = search.search(interaction.customId);
+    const characterMove = search.search(
+      interaction.isSelectMenu() ? interaction.values[0] : interaction.customId
+    );
 
     if (!characterMove) {
       console.log('Move not found for interaction');
@@ -68,7 +74,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
       characterMove.character
     );
 
-    await (interaction.message as Message).reply({
+    await (interaction.message as Message).edit({
       embeds: embedCreator.createEmbed(),
       components: embedCreator.createButtons(),
     });

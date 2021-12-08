@@ -3,6 +3,7 @@ import {
   EmbedFieldData,
   MessageActionRow,
   MessageButton,
+  MessageSelectMenu,
 } from 'discord.js';
 import { Character } from '../models/character';
 import { Hitbox } from '../models/hitbox';
@@ -53,11 +54,17 @@ export class MoveEmbedCreator {
     return [moveEmbed];
   }
 
-  public createButtons(): MessageActionRow[] {
+  public createButtons(possibleMoves?: Move[]): MessageActionRow[] {
     const result: MessageActionRow[] = [];
 
     // Check if its a special
-    if (this.move.type == 4 && this.move.normalizedName[0] != 'a') {
+    if (
+      this.move.type === 4 &&
+      this.move.normalizedName[0] !== 'a' &&
+      this.character.moves.findIndex(
+        (m) => m.normalizedName === 'a' + this.move.normalizedName
+      ) !== -1
+    ) {
       result.push(
         new MessageActionRow().addComponents(
           new MessageButton()
@@ -66,6 +73,26 @@ export class MoveEmbedCreator {
             )
             .setLabel('Aerial version')
             .setStyle('PRIMARY')
+        )
+      );
+    }
+
+    if (possibleMoves) {
+      result.push(
+        new MessageActionRow().addComponents(
+          new MessageSelectMenu()
+            .setCustomId('select')
+            .setPlaceholder('Nothing selected')
+            .addOptions(
+              possibleMoves.map((move) => {
+                return {
+                  label: move.name,
+                  description: move.name,
+                  value: `${this.character.normalizedName} ${move.normalizedName}`,
+                  customId: `${this.character.normalizedName} ${move.normalizedName}`,
+                };
+              })
+            )
         )
       );
     }
