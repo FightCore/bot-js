@@ -1,5 +1,4 @@
 import { Message, Client, Intents, Interaction } from 'discord.js';
-
 import { Loader } from './data/loader';
 import { Search } from './data/search';
 import { MoveEmbedCreator } from './embeds/move-embed-creator';
@@ -8,6 +7,8 @@ const dataLoader = new Loader();
 dataLoader.load();
 
 // Create a new client instance
+// Add the GUILD, DIRECT_MESSAGES and GUILD_MESSAGES to allow both DMs and
+// @ messages from within the servers.
 const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
@@ -21,36 +22,43 @@ client.on('messageCreate', async (message: Message) => {
   if (message.author.bot) return;
 
   if (
-    message.mentions &&
-    message.mentions.users &&
-    message.mentions.users.firstKey() === client.user?.id
+    !message.mentions ||
+    !message.mentions.users ||
+    message.mentions.users.firstKey() !== client.user?.id
   ) {
-    const keyWords = message.content.split(' ');
-    keyWords.shift();
-    const search = new Search(dataLoader);
-    await message.channel.sendTyping();
-
-    const characterMove = search.search(keyWords.join(' '));
-    if (!characterMove) {
-      console.log(`No character or move found for ${keyWords.join(' ')}`);
-      await message.reply('Not found');
-      return;
-    }
-
-    const embedCreator = new MoveEmbedCreator(
-      characterMove.move,
-      characterMove.character
-    );
-
-    console.log(
-      `Replying with ${characterMove.character.name} and ${characterMove.move.name}`
-    );
-
-    await message.reply({
-      embeds: embedCreator.createEmbed(),
-      components: embedCreator.createButtons(characterMove.possibleMoves),
-    });
+    return;
   }
+
+  const modifiedMessage = message.content.replace(
+    `<@!${client.user?.id}> `,
+    ''
+  );
+
+  console.log(modifiedMessage);
+
+  const search = new Search(dataLoader);
+  await message.channel.sendTyping();
+
+  const characterMove = search.search(modifiedMessage);
+  if (!characterMove) {
+    console.log(`No character or move found for ${modifiedMessage}`);
+    await message.reply('Not found');
+    return;
+  }
+
+  const embedCreator = new MoveEmbedCreator(
+    characterMove.move,
+    characterMove.character
+  );
+
+  console.log(
+    `Replying with ${characterMove.character.name} and ${characterMove.move.name}`
+  );
+
+  await message.reply({
+    embeds: embedCreator.createEmbed(),
+    components: embedCreator.createButtons(characterMove.possibleMoves),
+  });
 });
 
 client.on('interactionCreate', async (interaction: Interaction) => {

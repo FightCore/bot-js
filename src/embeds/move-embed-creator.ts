@@ -8,6 +8,7 @@ import {
 import { Character } from '../models/character';
 import { Hitbox } from '../models/hitbox';
 import { Move } from '../models/move';
+import { MoveType } from '../models/move-type';
 
 export class MoveEmbedCreator {
   private readonly move: Move;
@@ -40,10 +41,12 @@ export class MoveEmbedCreator {
     const moveEmbed = new MessageEmbed()
       .setTitle(`${this.character.name} - ${this.move.name}`)
       .setURL(this.move.source)
+      // TODO: Do not hardcode this somehow.
       .setColor('#e74c3c')
       .setImage(
         `https://i.fightcore.gg/melee/moves/${this.character.normalizedName}/${this.move.normalizedName}.gif`
       )
+      // TODO: Replace with actual currect version of the bot.
       .setFooter(
         'FightCore Bot Version 2.0.0',
         'https://i.fightcore.gg/clients/fightcore.png'
@@ -51,6 +54,8 @@ export class MoveEmbedCreator {
       .setTimestamp()
       .addFields(moveEmbedFields);
 
+    // Return the embed inside of an array.
+    // Multiple embeds could be created and returned but this is not needed for this use case.
     return [moveEmbed];
   }
 
@@ -58,11 +63,14 @@ export class MoveEmbedCreator {
     const result: MessageActionRow[] = [];
 
     // Check if its a special
+    // Does not start with a (aerial moves always start with 'a' like 'aupb', 'asideb', etc)
     if (
-      this.move.type === 4 &&
+      this.move.type === MoveType.special &&
       this.move.normalizedName[0] !== 'a' &&
+      // Find the aerial move that corresponds with the provided grounded move.
       this.character.moves.findIndex(
-        (m) => m.normalizedName === 'a' + this.move.normalizedName
+        (groundedMove) =>
+          groundedMove.normalizedName === 'a' + this.move.normalizedName
       ) !== -1
     ) {
       result.push(
@@ -77,12 +85,17 @@ export class MoveEmbedCreator {
       );
     }
 
+    // Check if there are any moves that were seen as possible for this query.
     if (possibleMoves) {
+      // Push a new row.
       result.push(
+        // Add the select menu to the row.
         new MessageActionRow().addComponents(
           new MessageSelectMenu()
+            // Set the select id to later query for.
             .setCustomId('select')
-            .setPlaceholder('Nothing selected')
+            .setPlaceholder('Select the correct move.')
+            // Add options for each possible move.
             .addOptions(
               possibleMoves.map((move) => {
                 return {

@@ -1,4 +1,5 @@
 import { Hitbox } from './hitbox';
+import { MoveType } from './move-type';
 
 export interface Move {
   id: number;
@@ -13,7 +14,7 @@ export interface Move {
   autoCancelAfter?: number;
   start?: number;
   end?: number;
-  type: number;
+  type: MoveType;
   notes?: string;
   percent?: string;
   source: string;
