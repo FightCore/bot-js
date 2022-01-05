@@ -1,10 +1,4 @@
-import {
-  MessageEmbed,
-  EmbedFieldData,
-  MessageActionRow,
-  MessageButton,
-  MessageSelectMenu,
-} from 'discord.js';
+import { MessageEmbed, EmbedFieldData, MessageActionRow, MessageButton, MessageSelectMenu } from 'discord.js';
 import { Character } from '../models/character';
 import { Hitbox } from '../models/hitbox';
 import { Move } from '../models/move';
@@ -31,9 +25,7 @@ export class MoveEmbedCreator {
     if (this.move.hitboxes && this.move.hitboxes.length > 0) {
       moveEmbedFields.push({
         name: 'Hitbox summary',
-        value:
-          this.getHitboxes(this.move.hitboxes) +
-          `**Source:** [IKneeData](https://www.ikneedata.com)`,
+        value: this.getHitboxes(this.move.hitboxes) + `**Source:** [IKneeData](https://www.ikneedata.com)`,
         inline: false,
       });
     }
@@ -43,14 +35,9 @@ export class MoveEmbedCreator {
       .setURL(this.move.source)
       // TODO: Do not hardcode this somehow.
       .setColor('#e74c3c')
-      .setImage(
-        `https://i.fightcore.gg/melee/moves/${this.character.normalizedName}/${this.move.normalizedName}.gif`
-      )
-      // TODO: Replace with actual currect version of the bot.
-      .setFooter(
-        'FightCore Bot Version 2.0.0',
-        'https://i.fightcore.gg/clients/fightcore.png'
-      )
+      .setImage(`https://i.fightcore.gg/melee/moves/${this.character.normalizedName}/${this.move.normalizedName}.gif`)
+      // TODO: Replace with actual current version of the bot.
+      .setFooter('FightCore Bot Version 2.0.0', 'https://i.fightcore.gg/clients/fightcore.png')
       .setTimestamp()
       .addFields(moveEmbedFields);
 
@@ -68,17 +55,12 @@ export class MoveEmbedCreator {
       this.move.type === MoveType.special &&
       this.move.normalizedName[0] !== 'a' &&
       // Find the aerial move that corresponds with the provided grounded move.
-      this.character.moves.findIndex(
-        (groundedMove) =>
-          groundedMove.normalizedName === 'a' + this.move.normalizedName
-      ) !== -1
+      this.character.moves.findIndex((groundedMove) => groundedMove.normalizedName === 'a' + this.move.normalizedName) !== -1
     ) {
       result.push(
         new MessageActionRow().addComponents(
           new MessageButton()
-            .setCustomId(
-              `${this.character.normalizedName} a${this.move.normalizedName}`
-            )
+            .setCustomId(`${this.character.normalizedName} a${this.move.normalizedName}`)
             .setLabel('Aerial version')
             .setStyle('PRIMARY')
         )
@@ -230,10 +212,7 @@ export class MoveEmbedCreator {
     return result;
   }
 
-  private createLine(
-    title: string,
-    value?: string | number
-  ): string | undefined {
+  private createLine(title: string, value?: string | number): string | undefined {
     if (!value) {
       return undefined;
     }

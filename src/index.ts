@@ -10,31 +10,19 @@ dataLoader.load();
 // Add the GUILD, DIRECT_MESSAGES and GUILD_MESSAGES to allow both DMs and
 // @ messages from within the servers.
 const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.DIRECT_MESSAGES,
-    Intents.FLAGS.GUILD_MESSAGES,
-  ],
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES],
   partials: ['CHANNEL'],
 });
 
 client.on('messageCreate', async (message: Message) => {
   if (message.author.bot) return;
 
-  if (
-    !message.mentions ||
-    !message.mentions.users ||
-    message.mentions.users.firstKey() !== client.user?.id
-  ) {
+  if (!message.mentions || !message.mentions.users || message.mentions.users.firstKey() !== client.user?.id) {
     return;
   }
 
-  const modifiedMessage = message.content.replace(
-    `<@!${client.user?.id}> `,
-    ''
-  );
-
-  console.log(modifiedMessage);
+  // Replace the content of the message with just the search query and no user tag.
+  const modifiedMessage = message.content.replace(`<@!${client.user?.id}> `, '');
 
   const search = new Search(dataLoader);
   await message.channel.sendTyping();
@@ -46,14 +34,10 @@ client.on('messageCreate', async (message: Message) => {
     return;
   }
 
-  const embedCreator = new MoveEmbedCreator(
-    characterMove.move,
-    characterMove.character
-  );
+  // Create the move embed.
+  const embedCreator = new MoveEmbedCreator(characterMove.move, characterMove.character);
 
-  console.log(
-    `Replying with ${characterMove.character.name} and ${characterMove.move.name}`
-  );
+  console.log(`Replying with ${characterMove.character.name} and ${characterMove.move.name}`);
 
   await message.reply({
     embeds: embedCreator.createEmbed(),
@@ -68,19 +52,14 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     });
 
     const search = new Search(dataLoader);
-    const characterMove = search.search(
-      interaction.isSelectMenu() ? interaction.values[0] : interaction.customId
-    );
+    const characterMove = search.search(interaction.isSelectMenu() ? interaction.values[0] : interaction.customId);
 
     if (!characterMove) {
       console.log('Move not found for interaction');
       return;
     }
 
-    const embedCreator = new MoveEmbedCreator(
-      characterMove.move,
-      characterMove.character
-    );
+    const embedCreator = new MoveEmbedCreator(characterMove.move, characterMove.character);
 
     await (interaction.message as Message).edit({
       embeds: embedCreator.createEmbed(),
