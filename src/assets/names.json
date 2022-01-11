@@ -1,0 +1,260 @@
+[
+    {
+        "name": "Bowser",
+        "names": [
+            "bowser"
+        ],
+        "fightCoreId": 241
+    },
+    {
+        "name": "Captain Falcon",
+        "names": [
+            "falcon",
+            "captainfalcon",
+            "cptfalcon",
+            "cf",
+            "cp",
+            "cpt"
+        ],
+        "moves": {
+            "knee": "fair"
+        },
+        "fightCoreId": 227
+    },
+    {
+        "name": "Donkey Kong",
+        "names": [
+            "donkeykong",
+            "dk"
+        ],
+        "fightCoreId": 242
+    },
+    {
+        "name": "Dr. Mario",
+        "names": [
+            "drmario",
+            "doc",
+            "doctormario"
+        ],
+        "moves": {
+            "pill": "neutralb",
+            "cape": "sideb"
+        },
+        "fightCoreId": 215
+    },
+    {
+        "name": "Falco",
+        "names": [
+            "falco"
+        ],
+        "moves": {
+            "laser": "neutralb",
+            "shine": "downb",
+            "aerialblaster": "aneutralb",
+            "aeriallaser": "aneutralb",
+            "drill": "dair"
+        },
+        "fightCoreId": 218
+    },
+    {
+        "name": "Fox",
+        "names": [
+            "fox"
+        ],
+        "fightCoreId": 224,
+        "moves": {
+            "shine": "downb",
+            "laser": "neutralb",
+            "aerialblaster": "aneutralb",
+            "aeriallaser": "aneutralb",
+            "drill": "dair"
+        }
+    },
+    {
+        "name": "Ganondorf",
+        "names": [
+            "ganondorf",
+            "ganon"
+        ],
+        "fightCoreId": 216
+    },
+    {
+        "name": "Ice Climbers",
+        "names": [
+            "iceclimbers",
+            "ic",
+            "ics",
+            "icies"
+        ],
+        "fightCoreId": 209
+    },
+    {
+        "name": "Jigglypuff",
+        "names": [
+            "jigglypuff",
+            "jiggs",
+            "puff",
+            "purin",
+            "rondoudou",
+            "pummeluff"
+        ],
+        "fightCoreId": 214
+    },
+    {
+        "name": "Kirby",
+        "names": [
+            "kirby"
+        ],
+        "fightCoreId": 210
+    },
+    {
+        "name": "Link",
+        "names": [
+            "link"
+        ],
+        "fightCoreId": 238
+    },
+    {
+        "name": "Luigi",
+        "names": [
+            "luigi"
+        ],
+        "fightCoreId": 213
+    },
+    {
+        "name": "Mario",
+        "names": [
+            "mario"
+        ],
+        "fightCoreId": 236
+    },
+    {
+        "name": "Marth",
+        "names": [
+            "marth"
+        ],
+        "fightCoreId": 222
+    },
+    {
+        "name": "Mewtwo",
+        "names": [
+            "mewtwo",
+            "mew2",
+            "m2"
+        ],
+        "fightCoreId": 217
+    },
+    {
+        "name": "Mr. Game & Watch",
+        "names": [
+            "mrgame&watch",
+            "mrgameandwatch",
+            "gameandwatch",
+            "game&watch",
+            "gamenwatch",
+            "g&w",
+            "gnw",
+            "gw"
+        ],
+        "moves": {
+            "hammer": "sideb"
+        },
+        "fightCoreId": 219
+    },
+    {
+        "name": "Ness",
+        "names": [
+            "ness"
+        ],
+        "fightCoreId": 243
+    },
+    {
+        "name": "Pichu",
+        "names": [
+            "pichu"
+        ],
+        "fightCoreId": 221
+    },
+    {
+        "name": "Pikachu",
+        "names": [
+            "pikachu",
+            "pika"
+        ],
+        "fightCoreId": 237
+    },
+    {
+        "name": "Peach",
+        "names": [
+            "princesspeach",
+            "peach"
+        ],
+        "moves": {
+            "turnip": "downb"
+        },
+        "fightCoreId": 240
+    },
+    {
+        "name": "Zelda",
+        "names": [
+            "princesszelda",
+            "zelda"
+        ],
+        "fightCoreId": 239
+    },
+    {
+        "name": "Roy",
+        "names": [
+            "roy"
+        ],
+        "fightCoreId": 223
+    },
+    {
+        "name": "Samus",
+        "names": [
+            "samus"
+        ],
+        "moves": {
+            "rocket": "sideb"
+        },
+        "fightCoreId": 212
+    },
+    {
+        "name": "Sheik",
+        "names": [
+            "sheik",
+            "shiek"
+        ],
+        "moves": {
+            "boostgrab": "dashgrab"
+        },
+        "fightCoreId": 260
+    },
+    {
+        "name": "Yoshi",
+        "names": [
+            "yoshi"
+        ],
+        "fightCoreId": 211
+    },
+    {
+        "name": "Young Link",
+        "names": [
+            "young link",
+            "ylink",
+            "yink",
+            "yl",
+            "young"
+        ],
+        "fightCoreId": 220
+    },
+    {
+        "name": "F-Wireframe",
+        "names": [
+            "fwireframe",
+            "female",
+            "femalewireframe"
+        ],
+        "fightCoreId": -1
+    }
+]
