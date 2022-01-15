@@ -4,6 +4,7 @@
       "module": "CommonJS",
       "rootDir": "./src",
       "outDir": "./prod",
+      "sourceMap": true,
       "strict": true,
       "esModuleInterop": true,
       "skipLibCheck": true,
