@@ -7,7 +7,7 @@
     "build": "tsc",
     "start": "node -r dotenv/config ./prod/index.js",
     "debug": "tsc && node -r dotenv/config ./prod/index.js",
-    "lint": "eslint src/**/*.ts --ext .ts --fix"
+    "lint": "eslint src/**/*.ts --ext .ts"
   },
   "repository": {
     "type": "git",
