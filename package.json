@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node -r dotenv/config ./prod/index.js",
-    "debug": "tsc && node -r dotenv/config ./prod/index.js",
+    "start": "node -r dotenv/config ./build/index.js",
+    "debug": "tsc && node -r dotenv/config ./build/index.js",
     "lint": "eslint src/**/*.ts --ext .ts"
   },
   "repository": {

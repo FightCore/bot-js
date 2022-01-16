@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # Ignore the prod folder to exclude the build output files
-prod/
+build/
