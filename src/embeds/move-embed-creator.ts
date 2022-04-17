@@ -1,4 +1,4 @@
-import { MessageEmbed, EmbedFieldData, MessageActionRow, MessageButton, MessageSelectMenu } from 'discord.js';
+import { MessageEmbed, EmbedFieldData, MessageActionRow, MessageButton, MessageSelectMenu, ColorResolvable } from 'discord.js';
 import { Character } from '../models/character';
 import { Hitbox } from '../models/hitbox';
 import { Move } from '../models/move';
@@ -7,10 +7,12 @@ import { MoveType } from '../models/move-type';
 export class MoveEmbedCreator {
   private readonly move: Move;
   private readonly character: Character;
+  private readonly embedColor: ColorResolvable;
 
   constructor(move: Move, character: Character) {
     this.move = move;
     this.character = character;
+    this.embedColor = (process.env.EMBED_COLOR as ColorResolvable) ?? '#e74c3c';
   }
 
   public createEmbed(): MessageEmbed[] {
@@ -33,11 +35,13 @@ export class MoveEmbedCreator {
     const moveEmbed = new MessageEmbed()
       .setTitle(`${this.character.name} - ${this.move.name}`)
       .setURL(this.move.source)
-      // TODO: Do not hardcode this somehow.
-      .setColor('#e74c3c')
+      .setColor(this.embedColor)
       .setImage(`https://i.fightcore.gg/melee/moves/${this.character.normalizedName}/${this.move.normalizedName}.gif`)
       // TODO: Replace with actual current version of the bot.
-      .setFooter('FightCore Bot Version 2.0.0', 'https://i.fightcore.gg/clients/fightcore.png')
+      .setFooter({
+        text: 'FightCore Bot Version ' + process.env.npm_package_version,
+        iconURL: 'https://i.fightcore.gg/clients/fightcore.png',
+      })
       .setTimestamp()
       .addFields(moveEmbedFields);
 
