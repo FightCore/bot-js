@@ -52,7 +52,6 @@ export class Search {
 
         // If the distance is above the threshold, change the query to the normalized name.
         if (distance > this.threshold) {
-          console.log(`Found ${value} for query ${moveQuery}`);
           moveQuery = value;
         }
       }
@@ -80,7 +79,7 @@ export class Search {
     foundMoves.sort(this.sortDistanceResults);
 
     if (foundMoves.length === 0) {
-      return undefined;
+      return new SearchResult(foundAlias.character);
     }
 
     return {

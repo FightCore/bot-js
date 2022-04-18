@@ -3,13 +3,15 @@ import { Character } from '../models/character';
 import { Hitbox } from '../models/hitbox';
 import { Move } from '../models/move';
 import { MoveType } from '../models/move-type';
+import { BaseEmbedCreator } from './base-embed-creator';
 
-export class MoveEmbedCreator {
+export class MoveEmbedCreator extends BaseEmbedCreator {
   private readonly move: Move;
   private readonly character: Character;
   private readonly embedColor: ColorResolvable;
 
   constructor(move: Move, character: Character) {
+    super();
     this.move = move;
     this.character = character;
     this.embedColor = (process.env.EMBED_COLOR as ColorResolvable) ?? '#e74c3c';
@@ -32,17 +34,11 @@ export class MoveEmbedCreator {
       });
     }
 
-    const moveEmbed = new MessageEmbed()
+    const moveEmbed = this.baseEmbed()
       .setTitle(`${this.character.name} - ${this.move.name}`)
       .setURL(this.move.source)
       .setColor(this.embedColor)
       .setImage(`https://i.fightcore.gg/melee/moves/${this.character.normalizedName}/${this.move.normalizedName}.gif`)
-      // TODO: Replace with actual current version of the bot.
-      .setFooter({
-        text: 'FightCore Bot Version ' + process.env.npm_package_version,
-        iconURL: 'https://i.fightcore.gg/clients/fightcore.png',
-      })
-      .setTimestamp()
       .addFields(moveEmbedFields);
 
     // Return the embed inside of an array.

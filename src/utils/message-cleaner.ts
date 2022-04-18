@@ -1,6 +1,8 @@
 import { Client, Message } from 'discord.js';
 
 export class MessageCleaner {
+  private static illegalCharacters = ['@', '`'];
+
   public static containMention(message: Message, client: Client): boolean {
     // Never accept a message if it is from another bot.
     if (message.author.bot) {
@@ -30,6 +32,15 @@ export class MessageCleaner {
       if (startLength !== modifiedMessage.length) {
         return modifiedMessage;
       }
+    }
+
+    return modifiedMessage;
+  }
+
+  public static removeIllegalCharacters(message: string): string {
+    let modifiedMessage = message;
+    for (const illegalCharacter of MessageCleaner.illegalCharacters) {
+      modifiedMessage = modifiedMessage.replace(new RegExp(illegalCharacter, 'g'), '');
     }
 
     return modifiedMessage;
