@@ -58,18 +58,11 @@ export class DiscordClient {
         components: embedCreator.createButtons(),
       });
     } catch (error) {
-      try {
-        if (!interaction.isButton() && !interaction.isSelectMenu()) {
-          return;
-        }
-
-        LogSingleton.get().error(error);
-        await (interaction.message as Message).reply({
-          embeds: ErrorEmbedCreator.createErrorEmbed(),
-        });
-      } catch {
-        LogSingleton.get().error(`An internal error ocurred when trying to respond with an error.`);
+      if (!interaction.isButton() && !interaction.isSelectMenu()) {
+        return;
       }
+
+      await this.handleError(error, interaction.message as Message);
     }
   }
 
@@ -111,14 +104,18 @@ export class DiscordClient {
         components: embedCreator.createButtons(characterMove.possibleMoves),
       });
     } catch (error) {
-      try {
-        LogSingleton.get().error(error);
-        await message.reply({
-          embeds: ErrorEmbedCreator.createErrorEmbed(),
-        });
-      } catch {
-        LogSingleton.get().error(`An internal error ocurred when trying to respond with an error.`);
-      }
+      await this.handleError(error, message);
+    }
+  }
+
+  private async handleError(error: unknown, message: Message): Promise<void> {
+    try {
+      LogSingleton.get().error(error);
+      await message.reply({
+        embeds: ErrorEmbedCreator.createErrorEmbed(),
+      });
+    } catch {
+      LogSingleton.get().error(`An internal error ocurred when trying to respond with an error.`);
     }
   }
 }
