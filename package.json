@@ -1,6 +1,6 @@
 {
   "name": "fightcore.bot",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "FightCore Discord bot to display frame data",
   "main": "index.js",
   "scripts": {

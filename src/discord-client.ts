@@ -1,4 +1,5 @@
-import { Message, Client, Intents, Interaction } from 'discord.js';
+import { Message, Client, Intents, Interaction, PartialMessage, MessagePayload } from 'discord.js';
+import { FailureStore } from './data/failure-store';
 import { Loader } from './data/loader';
 import { Search } from './data/search';
 import { ErrorEmbedCreator } from './embeds/error-embed-creator';
@@ -10,9 +11,7 @@ import { MessageCleaner } from './utils/message-cleaner';
 export class DiscordClient {
   private client: Client;
   private dataLoader = new Loader();
-  /**
-   *
-   */
+
   constructor() {
     this.dataLoader.load();
     this.client = new Client({
@@ -22,6 +21,7 @@ export class DiscordClient {
 
     this.client.on('messageCreate', this.handleMessage.bind(this));
     this.client.on('interactionCreate', this.handleInteraction.bind(this));
+    this.client.on('messageUpdate', this.handleMessageUpdate.bind(this));
 
     // When the client is ready, run this code (only once)
     this.client.once('ready', () => {
@@ -45,7 +45,6 @@ export class DiscordClient {
 
       const search = new Search(this.dataLoader);
       const characterMove = search.search(interaction.isSelectMenu() ? interaction.values[0] : interaction.customId);
-
       if (!characterMove || !characterMove.move) {
         LogSingleton.get().error('Move not found for interaction');
         return;
@@ -66,17 +65,24 @@ export class DiscordClient {
     }
   }
 
-  private async handleMessage(message: Message) {
+  private async handleMessageUpdate(
+    oldMessage: Message<boolean> | PartialMessage,
+    newMessage: Message<boolean> | PartialMessage
+  ): Promise<void> {
+    await this.handleMessage(newMessage as Message<boolean>, true);
+  }
+
+  private async handleMessage(message: Message, isUpdate = false): Promise<void> {
     try {
       if (!MessageCleaner.containMention(message, this.client)) {
         return;
       }
+      await message.channel.sendTyping();
 
       // Replace the content of the message with just the search query and no user tag.
       let modifiedMessage = MessageCleaner.removeMention(message, this.client);
 
       const search = new Search(this.dataLoader);
-      await message.channel.sendTyping();
 
       const characterMove = search.search(modifiedMessage);
       if (!characterMove?.move) {
@@ -87,10 +93,20 @@ export class DiscordClient {
         modifiedMessage = MessageCleaner.removeIllegalCharacters(modifiedMessage);
 
         LogSingleton.get().warn(`No character or move found for "${modifiedMessage}"`);
-        const embed = characterMove?.character
+        const embeds = characterMove?.character
           ? NotFoundEmbedCreator.createMoveNotFoundEmbed(characterMove.character, modifiedMessage)
           : NotFoundEmbedCreator.createNotFoundEmbed(modifiedMessage);
-        await message.reply({ embeds: embed });
+        if (isUpdate) {
+          const botMessageId = FailureStore.get().get(message.id);
+          if (botMessageId) {
+            const botMessage = await message.channel.messages.fetch(botMessageId);
+            await botMessage.edit({ embeds });
+          }
+        } else {
+          const replyMessage = await message.reply({ embeds });
+          FailureStore.get().add(message.id, replyMessage.id);
+        }
+
         return;
       }
 
@@ -99,10 +115,22 @@ export class DiscordClient {
 
       LogSingleton.get().info(`Replying with ${characterMove.character.name} and ${characterMove.move.name}`);
 
-      await message.reply({
-        embeds: embedCreator.createEmbed(),
-        components: embedCreator.createButtons(characterMove.possibleMoves),
-      });
+      if (isUpdate) {
+        const botMessageId = FailureStore.get().get(message.id);
+        if (botMessageId) {
+          const botMessage = await message.channel.messages.fetch(botMessageId);
+          await botMessage.edit({
+            embeds: embedCreator.createEmbed(),
+            components: embedCreator.createButtons(characterMove.possibleMoves),
+          });
+          FailureStore.get().remove(message.id);
+        }
+      } else {
+        await message.reply({
+          embeds: embedCreator.createEmbed(),
+          components: embedCreator.createButtons(characterMove.possibleMoves),
+        });
+      }
     } catch (error) {
       await this.handleError(error, message);
     }

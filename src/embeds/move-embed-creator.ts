@@ -14,7 +14,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     super();
     this.move = move;
     this.character = character;
-    this.embedColor = (process.env.EMBED_COLOR as ColorResolvable) ?? '#e74c3c';
+    this.embedColor = (process.env.EMBED_COLOR as ColorResolvable) ?? '#a9e5fd';
   }
 
   public createEmbed(): MessageEmbed[] {
