@@ -27,4 +27,8 @@ export class FailureStore {
   remove(messageId: string): void {
     this.failures.delete(messageId);
   }
+
+  contains(messageId: string): boolean {
+    return this.failures.has(messageId);
+  }
 }

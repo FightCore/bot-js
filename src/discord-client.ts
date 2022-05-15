@@ -1,4 +1,4 @@
-import { Message, Client, Intents, Interaction, PartialMessage, MessagePayload } from 'discord.js';
+import { Message, Client, Intents, Interaction, PartialMessage, MessageMentions } from 'discord.js';
 import { FailureStore } from './data/failure-store';
 import { Loader } from './data/loader';
 import { Search } from './data/search';
@@ -39,9 +39,21 @@ export class DiscordClient {
       if (!interaction.isButton() && !interaction.isSelectMenu()) {
         return;
       }
-      await interaction.update({
-        components: [],
-      });
+
+      let isFromOriginalUser = false;
+      const messageMentions = interaction.message.mentions as MessageMentions;
+      if (interaction.isSelectMenu() && (messageMentions === null || messageMentions.repliedUser?.id === interaction.user.id)) {
+        isFromOriginalUser = true;
+      }
+
+      if (isFromOriginalUser) {
+        await interaction.update({
+          components: [],
+        });
+        FailureStore.get().remove(interaction.message.id);
+      } else {
+        await interaction.deferUpdate();
+      }
 
       const search = new Search(this.dataLoader);
       const characterMove = search.search(interaction.isSelectMenu() ? interaction.values[0] : interaction.customId);
@@ -52,7 +64,8 @@ export class DiscordClient {
 
       const embedCreator = new MoveEmbedCreator(characterMove.move, characterMove.character);
 
-      await (interaction.message as Message).edit({
+      await interaction.followUp({
+        ephemeral: !isFromOriginalUser,
         embeds: embedCreator.createEmbed(),
         components: embedCreator.createButtons(),
       });
@@ -66,21 +79,28 @@ export class DiscordClient {
   }
 
   private async handleMessageUpdate(
-    oldMessage: Message<boolean> | PartialMessage,
+    _oldMessage: Message<boolean> | PartialMessage,
     newMessage: Message<boolean> | PartialMessage
   ): Promise<void> {
+    const failureStore = FailureStore.get();
+    if (!failureStore.contains(newMessage.id)) {
+      return;
+    }
+
     await this.handleMessage(newMessage as Message<boolean>, true);
   }
 
   private async handleMessage(message: Message, isUpdate = false): Promise<void> {
+    const failureStore = FailureStore.get();
     try {
-      if (!MessageCleaner.containMention(message, this.client)) {
+      const messageSearchResult = MessageCleaner.containMention(message, this.client);
+      if (!messageSearchResult.shouldRespond) {
         return;
       }
       await message.channel.sendTyping();
 
       // Replace the content of the message with just the search query and no user tag.
-      let modifiedMessage = MessageCleaner.removeMention(message, this.client);
+      let modifiedMessage = MessageCleaner.removeMention(message, messageSearchResult);
 
       const search = new Search(this.dataLoader);
 
@@ -97,14 +117,14 @@ export class DiscordClient {
           ? NotFoundEmbedCreator.createMoveNotFoundEmbed(characterMove.character, modifiedMessage)
           : NotFoundEmbedCreator.createNotFoundEmbed(modifiedMessage);
         if (isUpdate) {
-          const botMessageId = FailureStore.get().get(message.id);
+          const botMessageId = failureStore.get(message.id);
           if (botMessageId) {
             const botMessage = await message.channel.messages.fetch(botMessageId);
             await botMessage.edit({ embeds });
           }
         } else {
           const replyMessage = await message.reply({ embeds });
-          FailureStore.get().add(message.id, replyMessage.id);
+          failureStore.add(message.id, replyMessage.id);
         }
 
         return;
@@ -113,23 +133,34 @@ export class DiscordClient {
       // Create the move embed.
       const embedCreator = new MoveEmbedCreator(characterMove.move, characterMove.character);
 
-      LogSingleton.get().info(`Replying with ${characterMove.character.name} and ${characterMove.move.name}`);
-
       if (isUpdate) {
-        const botMessageId = FailureStore.get().get(message.id);
+        LogSingleton.get().info(`Updating existing to ${characterMove.character.name} and ${characterMove.move.name}`);
+
+        const botMessageId = failureStore.get(message.id);
         if (botMessageId) {
           const botMessage = await message.channel.messages.fetch(botMessageId);
-          await botMessage.edit({
+          const replyMessage = await botMessage.edit({
             embeds: embedCreator.createEmbed(),
             components: embedCreator.createButtons(characterMove.possibleMoves),
           });
-          FailureStore.get().remove(message.id);
+
+          if (replyMessage.components.length > 0) {
+            failureStore.add(message.id, replyMessage.id);
+          } else {
+            failureStore.remove(message.id);
+          }
         }
       } else {
-        await message.reply({
+        LogSingleton.get().info(`Replying with ${characterMove.character.name} and ${characterMove.move.name}`);
+        const replyMessage = await message.reply({
           embeds: embedCreator.createEmbed(),
           components: embedCreator.createButtons(characterMove.possibleMoves),
         });
+
+        // If there are any components, see it as a bad message.
+        if (replyMessage.components.length > 0) {
+          failureStore.add(message.id, replyMessage.id);
+        }
       }
     } catch (error) {
       await this.handleError(error, message);
@@ -143,7 +174,7 @@ export class DiscordClient {
         embeds: ErrorEmbedCreator.createErrorEmbed(),
       });
     } catch {
-      LogSingleton.get().error(`An internal error ocurred when trying to respond with an error.`);
+      LogSingleton.get().error(`An internal error occurred when trying to respond with an error.`);
     }
   }
 }
