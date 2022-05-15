@@ -28,25 +28,27 @@ export class Search {
     // No character was found.
     // Going to look for the exact match in terms of name of the move.
     // Like Rest or Counter.
-    if (!foundAlias || !foundAlias.character) {
+    if (!foundAlias || !foundAlias.record.character) {
       return this.searchForSingleMove(query);
+    }
+
+    if (foundAlias.remainder.length === 0) {
+      return new SearchResult(foundAlias.record.character, undefined, undefined, false);
     }
 
     // Character was found and the first word in the query was the name of the character.
     // We can shift out the first word and continue with just the move name.
     // For example, "marth fsmash" would be reduced to "fsmash".
-    keyWords.shift();
-
     const foundMoves: DistanceResult[] = [];
-    let moveQuery = keyWords.join(' ');
+    let moveQuery = foundAlias.remainder;
 
     // If there are any moves within the alias, we should loop over them to check
     // for a match.
     // Alias for moves unofficial names like "shine" for Fox and Falco or "knee" for falcon.
-    if (foundAlias.moves) {
+    if (foundAlias.record.moves) {
       // Loop over the move aliases, these are structured as a Map<string, string>
       // The key being the alias, the value being the actual normalized name of the move.
-      for (const [key, value] of foundAlias.moves) {
+      for (const [key, value] of foundAlias.record.moves) {
         // Check the distance between the key and the query
         const distance = jaroWinkler(key, moveQuery, this.distanceConfiguration);
 
@@ -57,7 +59,7 @@ export class Search {
       }
     }
 
-    for (const move of foundAlias.character.moves) {
+    for (const move of foundAlias.record.character.moves) {
       const distance = this.compareToMove(move, moveQuery);
 
       // If the distance is null, it is bellow the threshold.
@@ -69,7 +71,7 @@ export class Search {
       // The distance between the move and the query is perfect and we can return
       // it with full confidence.
       if (distance === 1) {
-        return { move: move, character: foundAlias.character };
+        return { move: move, character: foundAlias.record.character, noMovesFound: false };
       }
 
       // Distance isn't perfect but above the threshold, so we can add it to the list.
@@ -79,33 +81,36 @@ export class Search {
     foundMoves.sort(this.sortDistanceResults);
 
     if (foundMoves.length === 0) {
-      return new SearchResult(foundAlias.character);
+      return new SearchResult(foundAlias.record.character, undefined, undefined, true);
     }
 
     return {
       // Sort the moves by distance and take the first item.
       // This is the item that is the closest to the query.
       move: foundMoves[0].move,
-      character: foundAlias.character,
+      character: foundAlias.record.character,
       // The possible moves are the moves that are close in distance to the query.
       // We show these to the user so they can choose the best one.
       possibleMoves:
         // If there is only a single move found within the threshold.
         // We can simply put the array to undefined, a dropdown with 1 option isn't useful.
         foundMoves.length === 1 ? undefined : foundMoves.map((move) => move.move),
+      noMovesFound: false,
     };
   }
 
   public searchCharacter(keyWords: string[]): Character | undefined {
     const alias = this.searchAlias(keyWords);
-    return alias?.character;
+    return alias?.record?.character;
   }
 
-  private searchAlias(keyWords: string[]): AliasRecord | undefined {
+  private searchAlias(keyWords: string[]): { record: AliasRecord; remainder: string } | undefined {
     let characterName = '';
     let foundAlias: AliasRecord | undefined = undefined;
     let topDistance = 0;
-    for (const word of keyWords) {
+    let lastIndex = 0;
+    for (let index = 0; index < keyWords.length; index++) {
+      const word = keyWords[index];
       characterName += word;
       for (const alias of this.aliases) {
         const distance = this.compareToCharacter(alias, characterName);
@@ -118,21 +123,23 @@ export class Search {
         } else if (distance > topDistance) {
           foundAlias = alias;
           topDistance = distance;
+          lastIndex = index;
         }
       }
 
       // Character has been found and can be returned.
-      if (foundAlias != null) {
-        return foundAlias;
-      }
 
       // Add a space to the character name to prepare to add the next word.
       // For example, "captain falcon" first word is "captain" and the next word is "falcon".
       // We need the space else it would be "captainfalcon" and no result would be found.
-      characterName += ' ';
+      //characterName += ' ';
     }
 
-    return foundAlias;
+    if (foundAlias != null) {
+      return { record: foundAlias, remainder: keyWords.slice(lastIndex + 1).join(' ') };
+    }
+
+    return undefined;
   }
 
   private compareToMove(move: Move, query: string, doNormalizedName = true): number | undefined {
@@ -211,6 +218,7 @@ export class Search {
               return {
                 move: move,
                 character: character,
+                noMovesFound: false,
               };
             })
         )

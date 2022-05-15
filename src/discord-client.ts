@@ -2,6 +2,7 @@ import { Message, Client, Intents, Interaction, PartialMessage, MessageMentions 
 import { FailureStore } from './data/failure-store';
 import { Loader } from './data/loader';
 import { Search } from './data/search';
+import { CharacterEmbedCreator } from './embeds/character-embed-creator';
 import { ErrorEmbedCreator } from './embeds/error-embed-creator';
 import { MoveEmbedCreator } from './embeds/move-embed-creator';
 import { NotFoundEmbedCreator } from './embeds/not-found-embed-creator';
@@ -42,7 +43,7 @@ export class DiscordClient {
 
       let isFromOriginalUser = false;
       const messageMentions = interaction.message.mentions as MessageMentions;
-      if (interaction.isSelectMenu() && (messageMentions === null || messageMentions.repliedUser?.id === interaction.user.id)) {
+      if (messageMentions === null || messageMentions.repliedUser?.id === interaction.user.id) {
         isFromOriginalUser = true;
       }
 
@@ -105,7 +106,7 @@ export class DiscordClient {
       const search = new Search(this.dataLoader);
 
       const characterMove = search.search(modifiedMessage);
-      if (!characterMove?.move) {
+      if (!characterMove || characterMove.noMovesFound) {
         if (modifiedMessage.length > 75) {
           modifiedMessage = modifiedMessage.substring(0, 75) + '...';
         }
@@ -127,6 +128,11 @@ export class DiscordClient {
           failureStore.add(message.id, replyMessage.id);
         }
 
+        return;
+      }
+
+      if (!characterMove.move) {
+        await message.reply({ embeds: CharacterEmbedCreator.createCharacterEmbed(characterMove.character) });
         return;
       }
 
