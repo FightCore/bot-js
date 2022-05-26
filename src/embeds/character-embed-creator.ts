@@ -24,11 +24,15 @@ export class CharacterEmbedCreator extends BaseEmbedCreator {
       { name: 'Wave dash length (rank)', value: characterStatistics.waveDashLengthRank },
       { name: 'Perfect wave dash length', value: characterStatistics.waveDashLength },
       { name: 'PLA intangibility frames', value: characterStatistics.plaIntangibilityFrames },
-      { name: 'Source', value: 'https://smashboards.com/threads/ultimate-ground-movement-analysis-turbo-edition.392367/' },
+      {
+        name: 'Source',
+        value: '[Smashboards](https://smashboards.com/threads/ultimate-ground-movement-analysis-turbo-edition.392367)',
+      },
     ];
     return {
       name: 'Ground movement',
       value: fields.map((field) => `**${field.name}:** ${field.value}`).join('\n'),
+      inline: true,
     };
   }
 
@@ -42,6 +46,7 @@ export class CharacterEmbedCreator extends BaseEmbedCreator {
     return {
       name: 'Frame data',
       value: fields.map((field) => `**${field.name}:** ${field.value}`).join('\n'),
+      inline: true,
     };
   }
 }

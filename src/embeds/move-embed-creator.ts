@@ -30,7 +30,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       moveEmbedFields.push({
         name: 'Hitbox summary',
         value: this.getHitboxes(this.move.hitboxes) + `**Source:** [IKneeData](https://www.ikneedata.com)`,
-        inline: false,
+        inline: true,
       });
     }
 
