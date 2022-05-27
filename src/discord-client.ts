@@ -131,6 +131,8 @@ export class DiscordClient {
             embeds: new HelpEmbedCreator().create(),
           });
           break;
+        case SearchResultType.MoveList:
+          await message.reply('Shmoovement');
       }
     } catch (error) {
       await this.handleError(error, message);

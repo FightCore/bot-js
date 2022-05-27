@@ -30,7 +30,7 @@ export class Search {
     }
 
     const firstKeyWord = keyWords[0];
-    if (firstKeyWord.toLocaleLowerCase() === 'help') {
+    if (jaroWinkler('help', firstKeyWord, this.distanceConfiguration) > this.threshold) {
       return new SearchResult(SearchResultType.Help);
     }
 
@@ -52,6 +52,10 @@ export class Search {
     // For example, "marth fsmash" would be reduced to "fsmash".
     const foundMoves: DistanceResult[] = [];
     let moveQuery = foundAlias.remainder;
+
+    if (jaroWinkler('moves', moveQuery, this.distanceConfiguration) > this.threshold) {
+      return new SearchResult(SearchResultType.MoveList, foundAlias.record.character);
+    }
 
     // If there are any moves within the alias, we should loop over them to check
     // for a match.
