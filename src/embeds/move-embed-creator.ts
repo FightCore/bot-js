@@ -68,7 +68,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     }
 
     // Check if there are any moves that were seen as possible for this query.
-    if (possibleMoves) {
+    if (possibleMoves && possibleMoves.length > 0) {
       // Push a new row.
       result.push(
         // Add the select menu to the row.

@@ -7,6 +7,7 @@ import { DistanceResult } from './models/distance-result';
 import { MoveType } from '../models/move-type';
 import { AliasRecord } from './models/alias-record';
 import { AliasParser } from './alias-parser';
+import { SearchResultType } from '../models/search/search-result-type';
 
 export class Search {
   private readonly threshold = 0.8;
@@ -19,21 +20,31 @@ export class Search {
     this.aliases = AliasParser.load(loader);
   }
 
-  public search(query: string): SearchResult | undefined {
+  public search(query: string): SearchResult {
     // Split the query string into words to separate the character from the move.
     // For example, "marth fsmash" will be split into ["marth", "fsmash"].
     const keyWords = query.split(' ');
+
+    if (keyWords.length === 0) {
+      return new SearchResult(SearchResultType.NotFound);
+    }
+
+    const firstKeyWord = keyWords[0];
+    if (firstKeyWord.toLocaleLowerCase() === 'help') {
+      return new SearchResult(SearchResultType.Help);
+    }
+
     const foundAlias = this.searchAlias(keyWords);
 
     // No character was found.
     // Going to look for the exact match in terms of name of the move.
     // Like Rest or Counter.
     if (!foundAlias || !foundAlias.record.character) {
-      return this.searchForSingleMove(query);
+      return this.searchForSingleMove(query) ?? new SearchResult(SearchResultType.NotFound);
     }
 
     if (foundAlias.remainder.length === 0) {
-      return new SearchResult(foundAlias.record.character, undefined, undefined, false);
+      return new SearchResult(SearchResultType.Character, foundAlias.record.character);
     }
 
     // Character was found and the first word in the query was the name of the character.
@@ -71,7 +82,7 @@ export class Search {
       // The distance between the move and the query is perfect and we can return
       // it with full confidence.
       if (distance === 1) {
-        return { move: move, character: foundAlias.record.character, noMovesFound: false };
+        return new SearchResult(SearchResultType.Move, foundAlias.record.character, move);
       }
 
       // Distance isn't perfect but above the threshold, so we can add it to the list.
@@ -81,22 +92,21 @@ export class Search {
     foundMoves.sort(this.sortDistanceResults);
 
     if (foundMoves.length === 0) {
-      return new SearchResult(foundAlias.record.character, undefined, undefined, true);
+      return new SearchResult(SearchResultType.MoveNotFound, foundAlias.record.character);
     }
 
-    return {
+    return new SearchResult(
+      SearchResultType.Move,
       // Sort the moves by distance and take the first item.
       // This is the item that is the closest to the query.
-      move: foundMoves[0].move,
-      character: foundAlias.record.character,
+      foundAlias.record.character,
+      foundMoves[0].move,
       // The possible moves are the moves that are close in distance to the query.
       // We show these to the user so they can choose the best one.
-      possibleMoves:
-        // If there is only a single move found within the threshold.
-        // We can simply put the array to undefined, a dropdown with 1 option isn't useful.
-        foundMoves.length === 1 ? undefined : foundMoves.map((move) => move.move),
-      noMovesFound: false,
-    };
+      // If there is only a single move found within the threshold.
+      // We can simply put the array to undefined, a dropdown with 1 option isn't useful.
+      foundMoves.length === 1 ? undefined : foundMoves.map((move) => move.move)
+    );
   }
 
   public searchCharacter(keyWords: string[]): Character | undefined {
@@ -215,11 +225,7 @@ export class Search {
             // These are the only moves that contain special names.
             .filter((move) => move.type === MoveType.special)
             .map((move) => {
-              return {
-                move: move,
-                character: character,
-                noMovesFound: false,
-              };
+              return new SearchResult(SearchResultType.Move, character, move);
             })
         )
         // Find the first move that has a distance of 1 (direct reference).
