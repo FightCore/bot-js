@@ -4,6 +4,7 @@ import { Loader } from './data/loader';
 import { Search } from './data/search';
 import { CharacterEmbedCreator } from './embeds/character-embed-creator';
 import { ErrorEmbedCreator } from './embeds/error-embed-creator';
+import { HelpEmbedCreator } from './embeds/help-embed-creator';
 import { MoveEmbedCreator } from './embeds/move-embed-creator';
 import { NotFoundEmbedCreator } from './embeds/not-found-embed-creator';
 import { LogSingleton } from './utils/logs-singleton';
@@ -102,6 +103,13 @@ export class DiscordClient {
 
       // Replace the content of the message with just the search query and no user tag.
       let modifiedMessage = MessageCleaner.removeMention(message, messageSearchResult);
+
+      if (modifiedMessage === 'help') {
+        await message.reply({
+          embeds: new HelpEmbedCreator().create(),
+        });
+        return;
+      }
 
       const search = new Search(this.dataLoader);
 
