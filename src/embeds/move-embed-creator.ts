@@ -199,6 +199,22 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
         title: 'Shieldstun',
         value: hitboxes.map((hitbox) => hitbox.shieldstun).join('/'),
       },
+      {
+        title: 'Hitlag for attacker',
+        value: hitboxes.map((hitbox) => this.calculateHitlag(hitbox.damage, hitbox.effect, false, false)).join('/'),
+      },
+      {
+        title: 'Hitlag for victim',
+        value: hitboxes.map((hitbox) => this.calculateHitlag(hitbox.damage, hitbox.effect, true, false)).join('/'),
+      },
+      {
+        title: 'Hitlag for attacker (crouch canceled)',
+        value: hitboxes.map((hitbox) => this.calculateHitlag(hitbox.damage, hitbox.effect, false, true)).join('/'),
+      },
+      {
+        title: 'Hitlag for victim (crouch canceled)',
+        value: hitboxes.map((hitbox) => this.calculateHitlag(hitbox.damage, hitbox.effect, true, true)).join('/'),
+      },
     ];
 
     let result = '';
@@ -210,6 +226,25 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     }
 
     return result;
+  }
+
+  private calculateHitlag(damage: number, effect: string, isVictim: boolean, crouchCancel: boolean): number {
+    if (damage === 0) {
+      return 0;
+    }
+
+    // Calculate base hitlag based on damage.
+    let hitlag = Math.round(damage / 3 + 3);
+
+    if (effect === 'Electric' && isVictim) {
+      hitlag = Math.round(hitlag * 1.5);
+    }
+
+    if (crouchCancel) {
+      hitlag = Math.round(hitlag * 0.666667);
+    }
+
+    return hitlag >= 20 ? 20 : hitlag;
   }
 
   private createLine(title: string, value?: string | number): string | undefined {

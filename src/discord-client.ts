@@ -6,6 +6,7 @@ import { CharacterEmbedCreator } from './embeds/character-embed-creator';
 import { ErrorEmbedCreator } from './embeds/error-embed-creator';
 import { HelpEmbedCreator } from './embeds/help-embed-creator';
 import { MoveEmbedCreator } from './embeds/move-embed-creator';
+import { MoveListEmbedCreator } from './embeds/move-list-embed-creator';
 import { NotFoundEmbedCreator } from './embeds/not-found-embed-creator';
 import { SearchResult } from './models/search/search-result';
 import { SearchResultType } from './models/search/search-result-type';
@@ -50,15 +51,6 @@ export class DiscordClient {
         isFromOriginalUser = true;
       }
 
-      if (isFromOriginalUser) {
-        await interaction.update({
-          components: [],
-        });
-        FailureStore.get().remove(interaction.message.id);
-      } else {
-        await interaction.deferUpdate();
-      }
-
       const search = new Search(this.dataLoader);
       const characterMove = search.search(interaction.isSelectMenu() ? interaction.values[0] : interaction.customId);
       if (!characterMove || !characterMove.move) {
@@ -68,11 +60,20 @@ export class DiscordClient {
 
       const embedCreator = new MoveEmbedCreator(characterMove.move, characterMove.character);
 
-      await interaction.followUp({
-        ephemeral: !isFromOriginalUser,
-        embeds: embedCreator.createEmbed(),
-        components: embedCreator.createButtons(),
-      });
+      if (isFromOriginalUser) {
+        await interaction.update({
+          embeds: embedCreator.createEmbed(),
+          components: [],
+        });
+        FailureStore.get().remove(interaction.message.id);
+      } else {
+        await interaction.deferUpdate();
+        await interaction.followUp({
+          ephemeral: true,
+          embeds: embedCreator.createEmbed(),
+          components: embedCreator.createButtons(),
+        });
+      }
     } catch (error) {
       if (!interaction.isButton() && !interaction.isSelectMenu()) {
         return;
@@ -131,8 +132,10 @@ export class DiscordClient {
             embeds: new HelpEmbedCreator().create(),
           });
           break;
-        case SearchResultType.MoveList:
-          await message.reply('Shmoovement');
+        case SearchResultType.MoveList: {
+          const movesEmbed = new MoveListEmbedCreator(searchResult.character);
+          await message.reply({ embeds: movesEmbed.create() });
+        }
       }
     } catch (error) {
       await this.handleError(error, message);
