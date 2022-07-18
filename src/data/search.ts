@@ -8,6 +8,7 @@ import { MoveType } from '../models/move-type';
 import { AliasRecord } from './models/alias-record';
 import { AliasParser } from './alias-parser';
 import { SearchResultType } from '../models/search/search-result-type';
+import { MovesParser } from './moves-parser';
 
 export class Search {
   private readonly threshold = 0.8;
@@ -52,6 +53,11 @@ export class Search {
     // For example, "marth fsmash" would be reduced to "fsmash".
     const foundMoves: DistanceResult[] = [];
     let moveQuery = foundAlias.remainder;
+    const aliasQuery = MovesParser.search(moveQuery);
+
+    if (aliasQuery) {
+      moveQuery = aliasQuery;
+    }
 
     if (jaroWinkler('moves', moveQuery, this.distanceConfiguration) > this.threshold) {
       return new SearchResult(SearchResultType.MoveList, foundAlias.record.character);

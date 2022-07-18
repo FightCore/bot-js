@@ -3,13 +3,18 @@
         "move": "neutralb",
         "alias": [
             "b",
-            "neutralspecial"
+            "neutralspecial",
+            "nb",
+            "nspecial"
         ]
     },
     {
         "move": "neutraltech",
         "alias": [
-            "tech"
+            "tech",
+            "techinplace",
+            "techneutral",
+            "tip"
         ]
     },
     {
