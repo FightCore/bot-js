@@ -17,7 +17,8 @@
             "cpt"
         ],
         "moves": {
-            "knee": "fair"
+            "knee": "fair",
+            "stomp": "dair"
         },
         "fightCoreId": 227
     },
@@ -76,6 +77,9 @@
             "ganondorf",
             "ganon"
         ],
+        "moves": {
+            "stomp": "dair"
+        },
         "fightCoreId": 216
     },
     {
@@ -112,6 +116,9 @@
         "names": [
             "link"
         ],
+        "moves": {
+            "tether": "zair"
+        },
         "fightCoreId": 238
     },
     {
@@ -173,6 +180,9 @@
         "names": [
             "pichu"
         ],
+        "moves": {
+            "jolt": "neutralb"
+        },
         "fightCoreId": 221
     },
     {
@@ -181,6 +191,9 @@
             "pikachu",
             "pika"
         ],
+        "moves": {
+            "jolt": "neutralb"
+        },
         "fightCoreId": 237
     },
     {
@@ -246,6 +259,9 @@
             "yl",
             "young"
         ],
+        "moves": {
+            "hookshot": "zair"
+        },
         "fightCoreId": 220
     },
     {

@@ -20,7 +20,8 @@ export class MessageCleaner {
       return { shouldRespond: true, id: client.user?.id };
     }
 
-    if (message.mentions?.users?.firstKey() === client.user?.id) {
+    const mentionedUser = message.mentions?.users?.first();
+    if (mentionedUser && mentionedUser.id === client.user?.id && message.mentions.repliedUser == null) {
       return { shouldRespond: true, id: client.user?.id };
     }
 

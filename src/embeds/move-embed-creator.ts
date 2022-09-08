@@ -4,6 +4,7 @@ import { Hitbox } from '../models/hitbox';
 import { Move } from '../models/move';
 import { MoveType } from '../models/move-type';
 import { BaseEmbedCreator } from './base-embed-creator';
+import { HitlagFieldCreator } from './field-creator/hitlag-field-creator';
 
 export class MoveEmbedCreator extends BaseEmbedCreator {
   private readonly move: Move;
@@ -32,6 +33,15 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
         value: this.getHitboxes(this.move.hitboxes) + `**Source:** [IKneeData](https://www.ikneedata.com)`,
         inline: true,
       });
+
+      const hitlagInfo = HitlagFieldCreator.createHitlagFields(this.move.hitboxes);
+      if (hitlagInfo) {
+        moveEmbedFields.push({
+          name: 'Hitlag summary',
+          value: hitlagInfo,
+          inline: true,
+        });
+      }
     }
 
     const moveEmbed = this.baseEmbed()
@@ -202,6 +212,25 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       {
         title: 'Shieldstun',
         value: hitboxes.map((hitbox) => hitbox.shieldstun).join('/'),
+      },
+    ];
+
+    let result = '';
+    for (const property of properties) {
+      const textValue = this.createLine(property.title, property.value);
+      if (textValue) {
+        result += textValue + '\n';
+      }
+    }
+
+    return result;
+  }
+
+  private getHitlagFields(hitboxes: Hitbox[]): string {
+    const properties = [
+      {
+        title: 'Name',
+        value: hitboxes.map((hitbox) => hitbox.name).join('/'),
       },
       {
         title: 'Hitlag for attacker',

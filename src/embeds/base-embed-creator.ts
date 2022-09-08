@@ -8,7 +8,7 @@ export abstract class BaseEmbedCreator {
   public static baseEmbed(): MessageEmbed {
     return new MessageEmbed()
       .setFooter({
-        text: 'FightCore Bot Version 2.0.1-dev',
+        text: 'FightCore Bot Version 2.0.1',
         iconURL: 'https://i.fightcore.gg/clients/fightcore.png',
       })
       .setTimestamp();
