@@ -172,6 +172,10 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
         value: hitboxes.map((hitbox) => hitbox.name).join('/'),
       },
       {
+        title: 'Colors',
+        value: 'id0=Red, id1=Green, id2=Purple, id3=Orange',
+      },
+      {
         title: 'Damage',
         value: hitboxes.map((hitbox) => hitbox.damage).join('/'),
       },
