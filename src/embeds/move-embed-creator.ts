@@ -1,10 +1,13 @@
 import { MessageEmbed, EmbedFieldData, MessageActionRow, MessageButton, MessageSelectMenu, ColorResolvable } from 'discord.js';
+import { ShieldAdvantageCalculator } from '../calculation/shield-advantange-calculator';
 import { Character } from '../models/character';
 import { Hitbox } from '../models/hitbox';
 import { Move } from '../models/move';
 import { MoveType } from '../models/move-type';
+import { YoshiArmorBreak } from '../models/yoshi-armor-break';
 import { BaseEmbedCreator } from './base-embed-creator';
 import { HitlagFieldCreator } from './field-creator/hitlag-field-creator';
+import { ShieldAdvantageFieldCreator } from './field-creator/shield-advantage-field-creator';
 
 export class MoveEmbedCreator extends BaseEmbedCreator {
   private readonly move: Move;
@@ -22,7 +25,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     const moveEmbedFields: EmbedFieldData[] = [
       {
         name: 'Frame data',
-        value: this.getMove(this.move) + `[Source](${this.move.source})`,
+        value: this.getMove(this.move), //+ `[Source](${this.move.source})`,
         inline: true,
       },
     ];
@@ -30,7 +33,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     if (this.move.hitboxes && this.move.hitboxes.length > 0) {
       moveEmbedFields.push({
         name: 'Hitbox summary',
-        value: this.getHitboxes(this.move.hitboxes) + `**Source:** [IKneeData](https://www.ikneedata.com)`,
+        value: this.getHitboxes(this.move.hitboxes, this.move), // + `**Source:** [IKneeData](https://www.ikneedata.com)`,
         inline: true,
       });
 
@@ -42,6 +45,15 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
           inline: true,
         });
       }
+
+      const shieldAdvantageInfo = ShieldAdvantageFieldCreator.createShieldAdvantageField(this.move.hitboxes, this.move);
+      if (shieldAdvantageInfo) {
+        moveEmbedFields.push({
+          name: 'Shield advantage',
+          value: shieldAdvantageInfo,
+          inline: true,
+        });
+      }
     }
 
     const moveEmbed = this.baseEmbed()
@@ -49,7 +61,8 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       .setURL(this.move.source)
       .setColor(this.embedColor)
       .setImage(`https://i.fightcore.gg/melee/moves/${this.character.normalizedName}/${this.move.normalizedName}.gif`)
-      .addFields(moveEmbedFields);
+      .addFields(moveEmbedFields)
+      .addField('New website', 'We also have a refreshed website, checkout it out [here](https://www.fightcore.gg)');
 
     // Return the embed inside of an array.
     // Multiple embeds could be created and returned but this is not needed for this use case.
@@ -175,7 +188,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     return result;
   }
 
-  private getHitboxes(hitboxes: Hitbox[]): string {
+  private getHitboxes(hitboxes: Hitbox[], move: Move): string {
     const properties = [
       {
         title: 'Name',
@@ -213,40 +226,9 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
         title: 'Shieldstun',
         value: hitboxes.map((hitbox) => hitbox.shieldstun).join('/'),
       },
-    ];
-
-    let result = '';
-    for (const property of properties) {
-      const textValue = this.createLine(property.title, property.value);
-      if (textValue) {
-        result += textValue + '\n';
-      }
-    }
-
-    return result;
-  }
-
-  private getHitlagFields(hitboxes: Hitbox[]): string {
-    const properties = [
       {
-        title: 'Name',
-        value: hitboxes.map((hitbox) => hitbox.name).join('/'),
-      },
-      {
-        title: 'Hitlag for attacker',
-        value: hitboxes.map((hitbox) => this.calculateHitlag(hitbox.damage, hitbox.effect, false, false)).join('/'),
-      },
-      {
-        title: 'Hitlag for victim',
-        value: hitboxes.map((hitbox) => this.calculateHitlag(hitbox.damage, hitbox.effect, true, false)).join('/'),
-      },
-      {
-        title: 'Hitlag for attacker (crouch canceled)',
-        value: hitboxes.map((hitbox) => this.calculateHitlag(hitbox.damage, hitbox.effect, false, true)).join('/'),
-      },
-      {
-        title: 'Hitlag for victim (crouch canceled)',
-        value: hitboxes.map((hitbox) => this.calculateHitlag(hitbox.damage, hitbox.effect, true, true)).join('/'),
+        title: 'Yoshi armor break at',
+        value: hitboxes.map((hitbox) => YoshiArmorBreak.calculate(hitbox)).join('/'),
       },
     ];
 
@@ -259,25 +241,6 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     }
 
     return result;
-  }
-
-  private calculateHitlag(damage: number, effect: string, isVictim: boolean, crouchCancel: boolean): number {
-    if (damage === 0) {
-      return 0;
-    }
-
-    // Calculate base hitlag based on damage.
-    let hitlag = Math.round(damage / 3 + 3);
-
-    if (effect === 'Electric' && isVictim) {
-      hitlag = Math.round(hitlag * 1.5);
-    }
-
-    if (crouchCancel) {
-      hitlag = Math.round(hitlag * 0.666667);
-    }
-
-    return hitlag >= 20 ? 20 : hitlag;
   }
 
   private createLine(title: string, value?: string | number): string | undefined {
