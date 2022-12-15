@@ -8,7 +8,7 @@ export class Loader {
   }
 
   async load(): Promise<void | Character[]> {
-    const result = await axios.get('https://api.fightcore.gg/framedata/moves');
+    const result = await axios.get('https://apiv2.fightcore.gg/exports/full');
     this.characters = result.data as Character[];
   }
 }

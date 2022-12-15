@@ -18,7 +18,8 @@
         ],
         "moves": {
             "knee": "fair",
-            "stomp": "dair"
+            "stomp": "dair",
+            "punch": "neurtalb"
         },
         "fightCoreId": 227
     },

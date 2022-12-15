@@ -97,6 +97,13 @@ export class DiscordClient {
 
   private async handleMessage(message: Message, isUpdate = false): Promise<void> {
     try {
+      // Lock the conversation to a single channel if wanted.
+      if (process.env.CHANNEL_LOCK) {
+        if (message.channelId !== process.env.CHANNEL_LOCK) {
+          return;
+        }
+      }
+
       const messageSearchResult = MessageCleaner.containMention(message, this.client);
       if (!messageSearchResult.shouldRespond) {
         return;

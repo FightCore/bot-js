@@ -1,13 +1,14 @@
 import { MessageEmbed, EmbedFieldData, MessageActionRow, MessageButton, MessageSelectMenu, ColorResolvable } from 'discord.js';
-import { ShieldAdvantageCalculator } from '../calculation/shield-advantange-calculator';
 import { Character } from '../models/character';
 import { Hitbox } from '../models/hitbox';
 import { Move } from '../models/move';
 import { MoveType } from '../models/move-type';
-import { YoshiArmorBreak } from '../models/yoshi-armor-break';
 import { BaseEmbedCreator } from './base-embed-creator';
 import { HitlagFieldCreator } from './field-creator/hitlag-field-creator';
 import { ShieldAdvantageFieldCreator } from './field-creator/shield-advantage-field-creator';
+import { BodyFormatter } from './formatting/body-formatter';
+import { InfoLine } from './formatting/info-line';
+import { LineProperty } from './formatting/line-property';
 
 export class MoveEmbedCreator extends BaseEmbedCreator {
   private readonly move: Move;
@@ -38,19 +39,43 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       });
 
       const hitlagInfo = HitlagFieldCreator.createHitlagFields(this.move.hitboxes);
-      if (hitlagInfo) {
+      const shieldAdvantageInfo = ShieldAdvantageFieldCreator.createShieldAdvantageField(this.move.hitboxes, this.move);
+      if (hitlagInfo || shieldAdvantageInfo) {
+        let text = InfoLine.createLine({
+          title: 'Name',
+          value: this.move.hitboxes.map((hitbox) => hitbox.name).join('/'),
+        }) as string;
+
+        if (hitlagInfo) {
+          text += '\n' + hitlagInfo;
+        }
+        if (shieldAdvantageInfo) {
+          text += '\n' + shieldAdvantageInfo;
+        }
+
         moveEmbedFields.push({
-          name: 'Hitlag summary',
-          value: hitlagInfo,
+          name: 'Other info',
+          value: text,
           inline: true,
         });
-      }
 
-      const shieldAdvantageInfo = ShieldAdvantageFieldCreator.createShieldAdvantageField(this.move.hitboxes, this.move);
-      if (shieldAdvantageInfo) {
+        if (shieldAdvantageInfo) {
+          const explanation = `Please note that the shield advantage calculation s done assuming the frame 1 hit case and WILL be inaccurate.
+          For more information check out this [RadarSSBM Video on Shield Advantage](https://www.youtube.com/watch?v=obxZu6lADi4)`;
+
+          moveEmbedFields.push({
+            name: 'Shield advantage',
+            value: explanation,
+            inline: true,
+          });
+        }
+
+        const newStuffText = `We have refreshed our website at [FightCore.gg](https://fightcore.gg) and are working on a lot of new data including Yoshi armor break.
+        Stay up to date by following @FightCoregg on Twitter or joining our [Discord](https://discord.gg/CVqDy6c)`;
+
         moveEmbedFields.push({
-          name: 'Shield advantage',
-          value: shieldAdvantageInfo,
+          name: 'New Stuff',
+          value: newStuffText,
           inline: true,
         });
       }
@@ -61,8 +86,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       .setURL(this.move.source)
       .setColor(this.embedColor)
       .setImage(`https://i.fightcore.gg/melee/moves/${this.character.normalizedName}/${this.move.normalizedName}.gif`)
-      .addFields(moveEmbedFields)
-      .addField('New website', 'We also have a refreshed website, checkout it out [here](https://www.fightcore.gg)');
+      .addFields(moveEmbedFields);
 
     // Return the embed inside of an array.
     // Multiple embeds could be created and returned but this is not needed for this use case.
@@ -145,7 +169,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       ...hitFrameData,
       {
         title: 'IASA',
-        value: move.iasa,
+        value: move.iasa === 0 ? undefined : move.iasa,
       },
       {
         title: 'Auto cancel before',
@@ -177,25 +201,17 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       },
     ];
 
-    let result = '';
-    for (const property of properties) {
-      const textValue = this.createLine(property.title, property.value);
-      if (textValue) {
-        result += textValue + '\n';
-      }
-    }
-
-    return result;
+    return BodyFormatter.create(properties) as string;
   }
 
   private getHitboxes(hitboxes: Hitbox[], move: Move): string {
-    const properties = [
+    const properties: LineProperty[] = [
       {
         title: 'Name',
         value: hitboxes.map((hitbox) => hitbox.name).join('/'),
       },
       {
-        title: 'Colors',
+        title: 'GIF Colors',
         value: 'id0=Red, id1=Green, id2=Purple, id3=Orange',
       },
       {
@@ -226,28 +242,12 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
         title: 'Shieldstun',
         value: hitboxes.map((hitbox) => hitbox.shieldstun).join('/'),
       },
-      {
-        title: 'Yoshi armor break at',
-        value: hitboxes.map((hitbox) => YoshiArmorBreak.calculate(hitbox)).join('/'),
-      },
+      // {
+      //   title: 'Yoshi armor break at',
+      //   value: hitboxes.map((hitbox) => YoshiArmorBreak.calculate(hitbox)).join('/'),
+      // },
     ];
 
-    let result = '';
-    for (const property of properties) {
-      const textValue = this.createLine(property.title, property.value);
-      if (textValue) {
-        result += textValue + '\n';
-      }
-    }
-
-    return result;
-  }
-
-  private createLine(title: string, value?: string | number): string | undefined {
-    if (!value) {
-      return undefined;
-    }
-
-    return `**${title}**: ${value}`;
+    return BodyFormatter.create(properties) as string;
   }
 }

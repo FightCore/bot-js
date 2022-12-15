@@ -2,6 +2,8 @@ import { ColorResolvable, EmbedFieldData, MessageEmbed } from 'discord.js';
 import { Character } from '../models/character';
 import { CharacterStatistics } from '../models/character-statistics';
 import { BaseEmbedCreator } from './base-embed-creator';
+import { BodyFormatter } from './formatting/body-formatter';
+W;
 
 export class CharacterEmbedCreator extends BaseEmbedCreator {
   public static createCharacterEmbed(character: Character): MessageEmbed[] {
@@ -16,36 +18,36 @@ export class CharacterEmbedCreator extends BaseEmbedCreator {
   }
 
   private static groundMovement(characterStatistics: CharacterStatistics): EmbedFieldData {
-    const fields = [
-      { name: 'Walk speed', value: characterStatistics.walkSpeed },
-      { name: 'Initial dash speed', value: characterStatistics.initialDash },
-      { name: 'Initial dash frames', value: characterStatistics.dashFrames },
-      { name: 'Run speed', value: characterStatistics.runSpeed },
-      { name: 'Wave dash length (rank)', value: characterStatistics.waveDashLengthRank },
-      { name: 'Perfect wave dash length', value: characterStatistics.waveDashLength },
-      { name: 'PLA intangibility frames', value: characterStatistics.plaIntangibilityFrames },
+    const properties = [
+      { title: 'Walk speed', value: characterStatistics.walkSpeed },
+      { title: 'Initial dash speed', value: characterStatistics.initialDash },
+      { title: 'Initial dash frames', value: characterStatistics.dashFrames },
+      { title: 'Run speed', value: characterStatistics.runSpeed },
+      { title: 'Wave dash length (rank)', value: characterStatistics.waveDashLengthRank },
+      { title: 'Perfect wave dash length', value: characterStatistics.waveDashLength },
+      { title: 'PLA intangibility frames', value: characterStatistics.plaIntangibilityFrames },
       {
-        name: 'Source',
+        title: 'Source',
         value: '[Smashboards](https://smashboards.com/threads/ultimate-ground-movement-analysis-turbo-edition.392367)',
       },
     ];
     return {
       name: 'Ground movement',
-      value: fields.map((field) => `**${field.name}:** ${field.value}`).join('\n'),
+      value: BodyFormatter.create(properties) as string,
       inline: true,
     };
   }
 
   private static frameData(characterStatistics: CharacterStatistics): EmbedFieldData {
-    const fields = [
-      { name: 'Weight', value: characterStatistics.weight },
-      { name: 'Gravity', value: characterStatistics.gravity },
-      { name: 'Can wall jump', value: characterStatistics.canWallJump },
-      { name: 'Jump squad frames', value: characterStatistics.jumpSquat },
+    const properties = [
+      { title: 'Weight', value: characterStatistics.weight },
+      { title: 'Gravity', value: characterStatistics.gravity },
+      { title: 'Can wall jump', value: characterStatistics.canWallJump },
+      { title: 'Jump squad frames', value: characterStatistics.jumpSquat },
     ];
     return {
       name: 'Frame data',
-      value: fields.map((field) => `**${field.name}:** ${field.value}`).join('\n'),
+      value: BodyFormatter.create(properties) as string,
       inline: true,
     };
   }

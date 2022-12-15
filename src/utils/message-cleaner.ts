@@ -20,6 +20,12 @@ export class MessageCleaner {
       return { shouldRespond: true, id: client.user?.id };
     }
 
+    // Check if we are using the legacy prefix system. If so check for the prefix
+    // with a space afterwards.
+    if (process.env.PREFIX && message.content.startsWith(process.env.PREFIX + ' ')) {
+      return { shouldRespond: true, id: undefined };
+    }
+
     const mentionedUser = message.mentions?.users?.first();
     if (mentionedUser && mentionedUser.id === client.user?.id && message.mentions.repliedUser == null) {
       return { shouldRespond: true, id: client.user?.id };
@@ -43,6 +49,13 @@ export class MessageCleaner {
   }
 
   public static removeMention(message: Message, messageResult: MessageSearchResult): string {
+    // Check if we are working with the prefix system and no mention was found.
+    // If so remove the prefix from the message.
+    if (process.env.PREFIX && messageResult.id === undefined) {
+      // Remove the prefix (+1 for the space behind it)
+      return message.content.substring(process.env.PREFIX.length + 1);
+    }
+
     // If there is no mention, there is nothing to remove.
     if (messageResult.id == null) {
       return message.content;

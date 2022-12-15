@@ -1,5 +1,6 @@
 import { Hitbox } from '../../models/hitbox';
 import { Hitlag } from '../../models/hitlag';
+import { BodyFormatter } from '../formatting/body-formatter';
 
 export class HitlagFieldCreator {
   static createHitlagFields(hitboxes: Hitbox[]): string | undefined {
@@ -8,68 +9,50 @@ export class HitlagFieldCreator {
       return undefined;
     }
 
-    const properties = [
-      {
-        title: 'Name',
-        value: hitboxes.map((hitbox) => hitbox.name).join('/'),
-      },
-    ];
-
     const hitlagValues = hitboxes.map((hitbox) => {
       return Hitlag.createFromHitbox(hitbox);
     });
 
+    // check if the hitlag is equal for the defender and attacker, if so we dont need
+    // to display all values.
     const complicatedValues = hitlagValues.some(
       (hitlag) => hitlag.hitlagDefender !== hitlag.hitlagAttacker || hitlag.hitlagDefenderCrouch !== hitlag.hitlagAttackerCrouch
     );
 
     if (complicatedValues) {
-      properties.push({
-        title: 'Hitlag for attacker',
-        value: hitlagValues.map((hitlag) => hitlag.hitlagAttacker).join('/'),
-      });
-      properties.push({
-        title: 'Hitlag for victim',
-        value: hitlagValues.map((hitlag) => hitlag.hitlagDefender).join('/'),
-      });
-      properties.push({
-        title: 'Hitlag for attacker (crouch canceled)',
-        value: hitlagValues.map((hitlag) => hitlag.hitlagAttackerCrouch).join('/'),
-      });
-      properties.push({
-        title: 'Hitlag for victim (crouch canceled)',
-        value: hitlagValues.map((hitlag) => hitlag.hitlagDefenderCrouch).join('/'),
-      });
-    } else {
-      properties.push({
+      return BodyFormatter.create([
+        {
+          title: 'Hitlag for attacker',
+          value: hitlagValues.map((hitlag) => hitlag.hitlagAttacker).join('/'),
+        },
+        {
+          title: 'Hitlag for victim',
+          value: hitlagValues.map((hitlag) => hitlag.hitlagDefender).join('/'),
+        },
+        {
+          title: 'Hitlag for attacker (crouch canceled)',
+          value: hitlagValues.map((hitlag) => hitlag.hitlagAttackerCrouch).join('/'),
+        },
+        {
+          title: 'Hitlag for victim (crouch canceled)',
+          value: hitlagValues.map((hitlag) => hitlag.hitlagDefenderCrouch).join('/'),
+        },
+      ]);
+    }
+
+    return BodyFormatter.create([
+      {
         title: 'Hitlag',
         value: hitlagValues.map((hitlag) => hitlag.hitlagAttacker).join('/'),
-      });
-      properties.push({
+      },
+      {
         title: 'Hitlag (crouch canceled)',
         value: hitlagValues.map((hitlag) => hitlag.hitlagAttackerCrouch).join('/'),
-      });
-      properties.push({
+      },
+      {
         title: 'Note',
         value: 'Hitlag is the same for attacker and defender',
-      });
-    }
-    let result = '';
-    for (const property of properties) {
-      const textValue = this.createLine(property.title, property.value);
-      if (textValue) {
-        result += textValue + '\n';
-      }
-    }
-
-    return result;
-  }
-
-  private static createLine(title: string, value?: string | number): string | undefined {
-    if (!value) {
-      return undefined;
-    }
-
-    return `**${title}**: ${value}`;
+      },
+    ]);
   }
 }
