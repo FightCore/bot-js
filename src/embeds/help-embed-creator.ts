@@ -1,4 +1,4 @@
-import { EmbedFieldData, MessageEmbed } from 'discord.js';
+import { APIEmbedField, EmbedBuilder } from 'discord.js';
 import { BaseEmbedCreator } from './base-embed-creator';
 
 export class HelpEmbedCreator extends BaseEmbedCreator {
@@ -9,8 +9,8 @@ export class HelpEmbedCreator extends BaseEmbedCreator {
     this.botName = process.env.BOT_NAME ?? 'FightCore';
   }
 
-  public create(): MessageEmbed[] {
-    const moveEmbedFields: EmbedFieldData[] = [
+  public create(): EmbedBuilder[] {
+    const moveEmbedFields: APIEmbedField[] = [
       {
         name: 'Character statistics',
         value: `\`@${this.botName} {{NAME}}\`

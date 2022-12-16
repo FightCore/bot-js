@@ -1,11 +1,11 @@
-import { ColorResolvable, EmbedFieldData, MessageEmbed } from 'discord.js';
+import { APIEmbedField, ColorResolvable, EmbedBuilder } from 'discord.js';
 import { Character } from '../models/character';
 import { CharacterStatistics } from '../models/character-statistics';
 import { BaseEmbedCreator } from './base-embed-creator';
 import { BodyFormatter } from './formatting/body-formatter';
 
 export class CharacterEmbedCreator extends BaseEmbedCreator {
-  public static createCharacterEmbed(character: Character): MessageEmbed[] {
+  public static createCharacterEmbed(character: Character): EmbedBuilder[] {
     const color = (process.env.EMBED_COLOR as ColorResolvable) ?? '#a9e5fd';
     const embed = this.baseEmbed()
       .setTitle(`${character.name}`)
@@ -16,7 +16,7 @@ export class CharacterEmbedCreator extends BaseEmbedCreator {
     return [embed];
   }
 
-  private static groundMovement(characterStatistics: CharacterStatistics): EmbedFieldData {
+  private static groundMovement(characterStatistics: CharacterStatistics): APIEmbedField {
     const properties = [
       { title: 'Walk speed', value: characterStatistics.walkSpeed },
       { title: 'Initial dash speed', value: characterStatistics.initialDash },
@@ -37,7 +37,7 @@ export class CharacterEmbedCreator extends BaseEmbedCreator {
     };
   }
 
-  private static frameData(characterStatistics: CharacterStatistics): EmbedFieldData {
+  private static frameData(characterStatistics: CharacterStatistics): APIEmbedField {
     const properties = [
       { title: 'Weight', value: characterStatistics.weight },
       { title: 'Gravity', value: characterStatistics.gravity },

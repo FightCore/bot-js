@@ -1,4 +1,4 @@
-import { Message, Client, Intents, Interaction, PartialMessage, MessageMentions } from 'discord.js';
+import { Message, Client, Interaction, PartialMessage, Partials, GatewayIntentBits } from 'discord.js';
 import { FailureStore } from './data/failure-store';
 import { Loader } from './data/loader';
 import { Search } from './data/search';
@@ -20,8 +20,8 @@ export class DiscordClient {
   constructor() {
     this.dataLoader.load();
     this.client = new Client({
-      intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES],
-      partials: ['CHANNEL'],
+      intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMessages],
+      partials: [Partials.Channel],
     });
 
     this.client.on('messageCreate', this.handleMessage.bind(this));
@@ -41,18 +41,18 @@ export class DiscordClient {
 
   private async handleInteraction(interaction: Interaction) {
     try {
-      if (!interaction.isButton() && !interaction.isSelectMenu()) {
+      if (!interaction.isButton() && !interaction.isStringSelectMenu()) {
         return;
       }
 
       let isFromOriginalUser = false;
-      const messageMentions = interaction.message.mentions as MessageMentions;
+      const messageMentions = interaction.message.mentions;
       if (messageMentions === null || messageMentions.repliedUser?.id === interaction.user.id) {
         isFromOriginalUser = true;
       }
 
       const search = new Search(this.dataLoader);
-      const characterMove = search.search(interaction.isSelectMenu() ? interaction.values[0] : interaction.customId);
+      const characterMove = search.search(interaction.isStringSelectMenu() ? interaction.values[0] : interaction.customId);
       if (!characterMove || !characterMove.move) {
         LogSingleton.get().error('Move not found for interaction');
         return;
@@ -75,11 +75,11 @@ export class DiscordClient {
         });
       }
     } catch (error) {
-      if (!interaction.isButton() && !interaction.isSelectMenu()) {
+      if (!interaction.isButton() && !interaction.isStringSelectMenu()) {
         return;
       }
 
-      await this.handleError(error, interaction.message as Message);
+      await this.handleError(error, interaction.message);
     }
   }
 

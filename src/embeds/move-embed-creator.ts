@@ -1,4 +1,12 @@
-import { MessageEmbed, EmbedFieldData, MessageActionRow, MessageButton, MessageSelectMenu, ColorResolvable } from 'discord.js';
+import {
+  ColorResolvable,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  APIEmbedField,
+  EmbedBuilder,
+  StringSelectMenuBuilder,
+} from 'discord.js';
 import { Character } from '../models/character';
 import { Hitbox } from '../models/hitbox';
 import { Move } from '../models/move';
@@ -22,8 +30,8 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     this.embedColor = (process.env.EMBED_COLOR as ColorResolvable) ?? '#a9e5fd';
   }
 
-  public createEmbed(): MessageEmbed[] {
-    const moveEmbedFields: EmbedFieldData[] = [
+  public createEmbed(): EmbedBuilder[] {
+    const moveEmbedFields: APIEmbedField[] = [
       {
         name: 'Frame data',
         value: this.getMove(this.move), //+ `[Source](${this.move.source})`,
@@ -93,8 +101,8 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     return [moveEmbed];
   }
 
-  public createButtons(possibleMoves?: Move[]): MessageActionRow[] {
-    const result: MessageActionRow[] = [];
+  public createButtons(possibleMoves?: Move[]): ActionRowBuilder<StringSelectMenuBuilder | ButtonBuilder>[] {
+    const result: ActionRowBuilder<StringSelectMenuBuilder | ButtonBuilder>[] = [];
 
     // Check if its a special
     // Does not start with a (aerial moves always start with 'a' like 'aupb', 'asideb', etc)
@@ -105,11 +113,11 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       this.character.moves.findIndex((groundedMove) => groundedMove.normalizedName === 'a' + this.move.normalizedName) !== -1
     ) {
       result.push(
-        new MessageActionRow().addComponents(
-          new MessageButton()
+        new ActionRowBuilder<ButtonBuilder>().addComponents(
+          new ButtonBuilder()
             .setCustomId(`${this.character.normalizedName} a${this.move.normalizedName}`)
             .setLabel('Aerial version')
-            .setStyle('PRIMARY')
+            .setStyle(ButtonStyle.Primary)
         )
       );
     }
@@ -119,8 +127,8 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       // Push a new row.
       result.push(
         // Add the select menu to the row.
-        new MessageActionRow().addComponents(
-          new MessageSelectMenu()
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+          new StringSelectMenuBuilder()
             // Set the select id to later query for.
             .setCustomId('select')
             .setPlaceholder('Select the correct move.')

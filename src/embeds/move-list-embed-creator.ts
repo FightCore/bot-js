@@ -1,4 +1,4 @@
-import { EmbedFieldData, MessageEmbed } from 'discord.js';
+import { APIEmbedField, EmbedBuilder } from 'discord.js';
 import { Character } from '../models/character';
 import { MoveType } from '../models/move-type';
 import { BaseEmbedCreator } from './base-embed-creator';
@@ -12,8 +12,8 @@ export class MoveListEmbedCreator extends BaseEmbedCreator {
     this.character = character;
   }
 
-  public create(): MessageEmbed[] {
-    const fields: EmbedFieldData[] = [];
+  public create(): EmbedBuilder[] {
+    const fields: APIEmbedField[] = [];
     const categories = [
       { name: 'Tilts', type: MoveType.tilt },
       { name: 'Grounded', type: MoveType.grounded },
@@ -38,7 +38,7 @@ export class MoveListEmbedCreator extends BaseEmbedCreator {
     return [this.baseEmbed().setTitle(`${this.character.name}'s Moves`).setFields(fields)];
   }
 
-  private createField(type: MoveType, name: string): EmbedFieldData | undefined {
+  private createField(type: MoveType, name: string): APIEmbedField | undefined {
     const tilts = this.character.moves.filter((move) => move.type === type);
     if (tilts.length === 0) {
       return undefined;
