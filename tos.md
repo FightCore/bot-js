@@ -6,9 +6,10 @@ These terms of service may be subject to change as the product itself evolves.
 ## Usage Agreement
 
 By inviting and using the bot, you agree to the terms and conditions stated within
-this document as well as the privacy policy. You have the privilege to add, manage,
-remove and use the bot freely, as long as you follow these terms. If any of the terms
-are broken, this privilege may be revoked (either temporary or permanently) at any point.
+this document as well as the [privacy policy](https://github.com/FightCore/bot-js/blob/main/privacy.md).
+You have the privilege to add, manage,remove and use the bot freely, as long as you
+follow these terms. If any of the terms are broken, this privilege may be revoked
+(either temporary or permanently) at any point.
 
 This privilege may also be revoked if you go against one of the following policies:
 
