@@ -12,3 +12,8 @@ error.log
 README.md
 LICENSE
 nodemon.json
+.attachments
+web-assets
+release-notes
+privacy.md
+tos.md
