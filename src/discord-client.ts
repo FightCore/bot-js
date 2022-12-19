@@ -1,4 +1,5 @@
-import { Message, Client, Interaction, PartialMessage, Partials, GatewayIntentBits } from 'discord.js';
+import { Message, Client, Interaction, PartialMessage, Partials, GatewayIntentBits, CommandInteraction } from 'discord.js';
+import { RegisterCommands } from './commands/register-commands';
 import { FailureStore } from './data/failure-store';
 import { Loader } from './data/loader';
 import { Search } from './data/search';
@@ -31,23 +32,53 @@ export class DiscordClient {
     // When the client is ready, run this code (only once)
     this.client.once('ready', () => {
       LogSingleton.get().info('Client ready!');
+      RegisterCommands.register(this.client).then(() => LogSingleton.get().info('Registered slash commands'));
     });
   }
 
   public login(): void {
-    // Login to Discord with your client's token
     this.client.login(process.env.TOKEN);
   }
 
   private async handleInteraction(interaction: Interaction) {
     try {
-      if (!interaction.isButton() && !interaction.isStringSelectMenu()) {
+      if (!interaction.isButton() && !interaction.isStringSelectMenu() && !interaction.isCommand()) {
+        return;
+      }
+
+      if (interaction.isCommand()) {
+        if (interaction.commandName == 'framedata') {
+          const character = interaction.options.get('character', true).value;
+          const move = interaction.options.get('move', true).value;
+
+          const search = new Search(this.dataLoader);
+          const characterMove = search.search(`${character} ${move}`);
+
+          if (
+            !characterMove ||
+            characterMove.type == SearchResultType.MoveNotFound ||
+            characterMove.type == SearchResultType.NotFound
+          ) {
+            await this.sendNoMoveFoundErrorToInteraction(interaction, `${character} ${move}`, characterMove);
+            return;
+          }
+
+          const embedCreator = new MoveEmbedCreator(characterMove.move, characterMove.character);
+          await interaction.reply({
+            embeds: embedCreator.createEmbed(),
+            components: embedCreator.createButtons(),
+          });
+        }
         return;
       }
 
       let isFromOriginalUser = false;
       const messageMentions = interaction.message.mentions;
       if (messageMentions === null || messageMentions.repliedUser?.id === interaction.user.id) {
+        isFromOriginalUser = true;
+      }
+
+      if (interaction.message.interaction && interaction.message.interaction.user?.id === interaction.user.id) {
         isFromOriginalUser = true;
       }
 
@@ -75,11 +106,11 @@ export class DiscordClient {
         });
       }
     } catch (error) {
-      if (!interaction.isButton() && !interaction.isStringSelectMenu()) {
-        return;
+      if (interaction.isButton() || interaction.isStringSelectMenu()) {
+        await this.handleError(error, interaction.message);
+      } else if (interaction.isCommand()) {
+        await this.handleError(error, interaction);
       }
-
-      await this.handleError(error, interaction.message);
     }
   }
 
@@ -154,7 +185,7 @@ export class DiscordClient {
    * @param error the error thrown while processing the message.
    * @param message the message to reply to.
    */
-  private async handleError(error: unknown, message: Message): Promise<void> {
+  private async handleError(error: unknown, message: Message | CommandInteraction): Promise<void> {
     try {
       LogSingleton.get().error(error);
       await message.reply({
@@ -265,5 +296,24 @@ export class DiscordClient {
       const replyMessage = await message.reply({ embeds });
       failureStore.add(message.id, replyMessage.id);
     }
+  }
+
+  private async sendNoMoveFoundErrorToInteraction(
+    interaction: CommandInteraction,
+    content: string,
+    searchResult: SearchResult
+  ): Promise<void> {
+    if (content.length > 75) {
+      content = content.substring(0, 75) + '...';
+    }
+
+    content = MessageCleaner.removeIllegalCharacters(content);
+
+    LogSingleton.get().warn(`No character or move found for "${content}"`);
+    const embeds =
+      searchResult.type === SearchResultType.MoveNotFound
+        ? NotFoundEmbedCreator.createMoveNotFoundEmbed(searchResult.character, content)
+        : NotFoundEmbedCreator.createNotFoundEmbed(content);
+    await interaction.reply({ embeds });
   }
 }

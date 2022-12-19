@@ -29,7 +29,13 @@
             "donkeykong",
             "dk"
         ],
-        "fightCoreId": 242
+        "fightCoreId": 242,
+        "moves": {
+            "punch": "neurtalb",
+            "superpunch": "neurtalb",
+            "megapunch": "neurtalb",
+            "ultrapunch": "neurtalb"
+        }
     },
     {
         "name": "Dr. Mario",

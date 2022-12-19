@@ -66,5 +66,13 @@
         "alias": [
             "stomp"
         ]
+    },
+    {
+        "move": "dashgrab",
+        "alias": [
+            "runninggrab",
+            "rgrab",
+            "rungrab"
+        ]
     }
 ]

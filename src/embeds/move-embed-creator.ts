@@ -31,18 +31,21 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
   }
 
   public createEmbed(): EmbedBuilder[] {
-    const moveEmbedFields: APIEmbedField[] = [
-      {
+    const moveEmbedFields: APIEmbedField[] = [];
+    const moveData = this.getMove(this.move);
+
+    if (moveData) {
+      moveEmbedFields.push({
         name: 'Frame data',
-        value: this.getMove(this.move), //+ `[Source](${this.move.source})`,
+        value: moveData,
         inline: true,
-      },
-    ];
+      });
+    }
 
     if (this.move.hitboxes && this.move.hitboxes.length > 0) {
       moveEmbedFields.push({
         name: 'Hitbox summary',
-        value: this.getHitboxes(this.move.hitboxes, this.move), // + `**Source:** [IKneeData](https://www.ikneedata.com)`,
+        value: this.getHitboxes(this.move.hitboxes, this.move),
         inline: true,
       });
 
