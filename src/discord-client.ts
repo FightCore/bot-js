@@ -1,18 +1,11 @@
-import { Message, Client, Interaction, PartialMessage, Partials, GatewayIntentBits, CommandInteraction } from 'discord.js';
+import { Message, Client, Interaction, PartialMessage, Partials, GatewayIntentBits } from 'discord.js';
 import { RegisterCommands } from './commands/register-commands';
 import { FailureStore } from './data/failure-store';
 import { Loader } from './data/loader';
-import { Search } from './data/search';
-import { CharacterEmbedCreator } from './embeds/character-embed-creator';
-import { ErrorEmbedCreator } from './embeds/error-embed-creator';
-import { HelpEmbedCreator } from './embeds/help-embed-creator';
-import { MoveEmbedCreator } from './embeds/move-embed-creator';
-import { MoveListEmbedCreator } from './embeds/move-list-embed-creator';
-import { NotFoundEmbedCreator } from './embeds/not-found-embed-creator';
-import { SearchResult } from './models/search/search-result';
-import { SearchResultType } from './models/search/search-result-type';
+import { CommandInteractionHandler } from './interactions/command-interaction-handler';
+import { ComponentInteractionHandler } from './interactions/component-interaction-handler';
+import { MessageInteractionHandler } from './interactions/message-interaction-handler';
 import { LogSingleton } from './utils/logs-singleton';
-import { MessageCleaner } from './utils/message-cleaner';
 
 export class DiscordClient {
   private client: Client;
@@ -48,77 +41,34 @@ export class DiscordClient {
   }
 
   private async handleInteraction(interaction: Interaction) {
+    const commandInteractionHandler = new CommandInteractionHandler(this.dataLoader);
+    const componentInteractionHandler = new ComponentInteractionHandler(this.dataLoader);
     try {
       if (!interaction.isButton() && !interaction.isStringSelectMenu() && !interaction.isCommand()) {
+        LogSingleton.get().warn('Interaction not supported');
         return;
       }
 
       if (interaction.isCommand()) {
-        if (interaction.commandName == 'framedata') {
-          const character = interaction.options.get('character', true).value;
-          const move = interaction.options.get('move', true).value;
-
-          const search = new Search(this.dataLoader);
-          const characterMove = search.search(`${character} ${move}`);
-
-          if (
-            !characterMove ||
-            characterMove.type == SearchResultType.MoveNotFound ||
-            characterMove.type == SearchResultType.NotFound
-          ) {
-            await this.sendNoMoveFoundErrorToInteraction(interaction, `${character} ${move}`, characterMove);
-            return;
-          }
-
-          const embedCreator = new MoveEmbedCreator(characterMove.move, characterMove.character);
-          await interaction.reply({
-            embeds: embedCreator.createEmbed(),
-            components: embedCreator.createButtons(),
-          });
-        }
+        await commandInteractionHandler.handle(interaction);
         return;
       }
 
-      let isFromOriginalUser = false;
-      const messageMentions = interaction.message.mentions;
-      if (messageMentions === null || messageMentions.repliedUser?.id === interaction.user.id) {
-        isFromOriginalUser = true;
-      }
-
-      if (interaction.message.interaction && interaction.message.interaction.user?.id === interaction.user.id) {
-        isFromOriginalUser = true;
-      }
-
-      const search = new Search(this.dataLoader);
-      const characterMove = search.search(interaction.isStringSelectMenu() ? interaction.values[0] : interaction.customId);
-      if (!characterMove || !characterMove.move) {
-        LogSingleton.get().error('Move not found for interaction');
-        return;
-      }
-
-      const embedCreator = new MoveEmbedCreator(characterMove.move, characterMove.character);
-
-      if (isFromOriginalUser) {
-        await interaction.update({
-          embeds: embedCreator.createEmbed(),
-          components: [],
-        });
-        FailureStore.get().remove(interaction.message.id);
-      } else {
-        await interaction.deferUpdate();
-        await interaction.followUp({
-          ephemeral: true,
-          embeds: embedCreator.createEmbed(),
-          components: embedCreator.createButtons(),
-        });
+      if (interaction.isButton() || interaction.isStringSelectMenu()) {
+        componentInteractionHandler.handle(interaction);
       }
     } catch (error) {
       if (interaction.isButton() || interaction.isStringSelectMenu()) {
-        await this.handleError(error, interaction.message);
+        await componentInteractionHandler.handleError(error, interaction.message);
       } else if (interaction.isCommand()) {
-        await this.handleError(error, interaction);
+        await commandInteractionHandler.handleError(error, interaction);
       }
     }
+  }
+
+  private async handleMessage(message: Message<boolean> | PartialMessage): Promise<void> {
+    const handler = new MessageInteractionHandler(this.dataLoader, this.client);
+    await handler.handleMessage(message as Message<boolean>, false);
   }
 
   private async handleMessageUpdate(
@@ -129,198 +79,7 @@ export class DiscordClient {
     if (!failureStore.contains(newMessage.id)) {
       return;
     }
-
-    await this.handleMessage(newMessage as Message<boolean>, true);
-  }
-
-  private async handleMessage(message: Message, isUpdate = false): Promise<void> {
-    try {
-      // Lock the conversation to a single channel if wanted.
-      if (process.env.CHANNEL_LOCK) {
-        if (message.channelId !== process.env.CHANNEL_LOCK) {
-          return;
-        }
-      }
-
-      const messageSearchResult = MessageCleaner.containMention(message, this.client);
-      if (!messageSearchResult.shouldRespond) {
-        return;
-      }
-      await message.channel.sendTyping();
-
-      // Replace the content of the message with just the search query and no user tag.
-      const modifiedMessage = MessageCleaner.removeMention(message, messageSearchResult);
-
-      const search = new Search(this.dataLoader);
-      const searchResult = search.search(modifiedMessage);
-
-      switch (searchResult.type) {
-        case SearchResultType.MoveNotFound:
-        case SearchResultType.NotFound:
-          await this.sendNoMoveFoundError(message, modifiedMessage, isUpdate, searchResult);
-          break;
-        case SearchResultType.Character:
-          await message.reply({ embeds: CharacterEmbedCreator.createCharacterEmbed(searchResult.character) });
-          break;
-        case SearchResultType.Move: {
-          // Create the move embed.
-          const embedCreator = new MoveEmbedCreator(searchResult.move, searchResult.character);
-          if (isUpdate) {
-            await this.updateExistingMessage(message, embedCreator, searchResult);
-          } else {
-            await this.sendNewReply(message, embedCreator, searchResult);
-          }
-          break;
-        }
-        case SearchResultType.Help:
-          await message.reply({
-            embeds: new HelpEmbedCreator().create(),
-          });
-          break;
-        case SearchResultType.MoveList: {
-          const movesEmbed = new MoveListEmbedCreator(searchResult.character);
-          await message.reply({ embeds: movesEmbed.create() });
-        }
-      }
-    } catch (error) {
-      await this.handleError(error, message);
-    }
-  }
-
-  /**
-   * Handles any error thrown by the operating client.
-   * @param error the error thrown while processing the message.
-   * @param message the message to reply to.
-   */
-  private async handleError(error: unknown, message: Message | CommandInteraction): Promise<void> {
-    try {
-      LogSingleton.get().error(error);
-      await message.reply({
-        embeds: ErrorEmbedCreator.createErrorEmbed(),
-      });
-    } catch {
-      LogSingleton.get().error(`An internal error occurred when trying to respond with an error.`);
-    }
-  }
-
-  /**
-   * Updates a reply to an existing message which the original user has updated.
-   * @param message the message to update the reply for.
-   * @param embedCreator the embed creator containing the new move embed.
-   * @param searchResult the search result to update the reply with.
-   */
-  private async updateExistingMessage(
-    message: Message,
-    embedCreator: MoveEmbedCreator,
-    searchResult: SearchResult
-  ): Promise<void> {
-    // Check if the move and the searchResult are not null.
-    // This should be already checked in the previous process so throw an error
-    // if this is the case.
-    if (!searchResult.move) {
-      throw new Error('Move was not found with existing message');
-    }
-
-    const failureStore = FailureStore.get();
-    LogSingleton.get().info(`Updating existing to ${searchResult.character.name} and ${searchResult.move.name}`);
-
-    const botMessageId = failureStore.get(message.id);
-    if (botMessageId) {
-      const botMessage = await message.channel.messages.fetch(botMessageId);
-      const replyMessage = await botMessage.edit({
-        embeds: embedCreator.createEmbed(),
-        components: embedCreator.createButtons(searchResult.possibleMoves),
-      });
-
-      if (replyMessage.components.length > 0) {
-        failureStore.add(message.id, replyMessage.id);
-      } else {
-        failureStore.remove(message.id);
-      }
-    }
-  }
-
-  /**
-   * Replies to the provided message with the frame data from the requested move.
-   * @param message the message to reply to.
-   * @param embedCreator the embed creator to use to create the reply.
-   * @param searchResult the search result to use for the reply.
-   */
-  private async sendNewReply(message: Message, embedCreator: MoveEmbedCreator, searchResult: SearchResult) {
-    // Check if the move and the searchResult are not null.
-    // This should be already checked in the previous process so throw an error
-    // if this is the case.
-    if (!searchResult.move) {
-      throw new Error('Move was not found with existing message');
-    }
-
-    const failureStore = FailureStore.get();
-    LogSingleton.get().info(`Replying with ${searchResult.character.name} and ${searchResult.move.name}`);
-    const replyMessage = await message.reply({
-      embeds: embedCreator.createEmbed(),
-      components: embedCreator.createButtons(searchResult.possibleMoves),
-    });
-
-    // If there are any components, see it as a bad message.
-    if (replyMessage.components.length > 0) {
-      failureStore.add(message.id, replyMessage.id);
-    }
-  }
-
-  /**
-   * Replies to a message that the search query has not lead to a result.
-   * Updates the previous reply if a message has been updated.
-   * @param message the message to reply to.
-   * @param content the content of the original message that was not found.
-   * @param isUpdate if the message is an update or not.
-   * @param searchResult the search result of the new message.
-   */
-  private async sendNoMoveFoundError(
-    message: Message,
-    content: string,
-    isUpdate: boolean,
-    searchResult: SearchResult
-  ): Promise<void> {
-    const failureStore = FailureStore.get();
-    if (content.length > 75) {
-      content = content.substring(0, 75) + '...';
-    }
-
-    content = MessageCleaner.removeIllegalCharacters(content);
-
-    LogSingleton.get().warn(`No character or move found for "${content}"`);
-    const embeds =
-      searchResult.type === SearchResultType.MoveNotFound
-        ? NotFoundEmbedCreator.createMoveNotFoundEmbed(searchResult.character, content)
-        : NotFoundEmbedCreator.createNotFoundEmbed(content);
-    if (isUpdate) {
-      const botMessageId = failureStore.get(message.id);
-      if (botMessageId) {
-        const botMessage = await message.channel.messages.fetch(botMessageId);
-        await botMessage.edit({ embeds });
-      }
-    } else {
-      const replyMessage = await message.reply({ embeds });
-      failureStore.add(message.id, replyMessage.id);
-    }
-  }
-
-  private async sendNoMoveFoundErrorToInteraction(
-    interaction: CommandInteraction,
-    content: string,
-    searchResult: SearchResult
-  ): Promise<void> {
-    if (content.length > 75) {
-      content = content.substring(0, 75) + '...';
-    }
-
-    content = MessageCleaner.removeIllegalCharacters(content);
-
-    LogSingleton.get().warn(`No character or move found for "${content}"`);
-    const embeds =
-      searchResult.type === SearchResultType.MoveNotFound
-        ? NotFoundEmbedCreator.createMoveNotFoundEmbed(searchResult.character, content)
-        : NotFoundEmbedCreator.createNotFoundEmbed(content);
-    await interaction.reply({ embeds });
+    const handler = new MessageInteractionHandler(this.dataLoader, this.client);
+    await handler.handleMessage(newMessage as Message<boolean>, true);
   }
 }
