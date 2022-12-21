@@ -22,7 +22,7 @@ export class MessageCleaner {
 
     // Check if we are using the legacy prefix system. If so check for the prefix
     // with a space afterwards.
-    if (process.env.PREFIX && message.content.startsWith(process.env.PREFIX + ' ')) {
+    if (process.env.PREFIX && message.content.toLocaleLowerCase().startsWith(process.env.PREFIX + ' ')) {
       return { shouldRespond: true, id: undefined };
     }
 

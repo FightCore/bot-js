@@ -19,9 +19,16 @@ export class DiscordClient {
   private dataLoader = new Loader();
 
   constructor() {
+    const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMessages];
+
+    if (process.env.PREFIX) {
+      LogSingleton.get().info('Prefix is used, enabling Message Content');
+      intents.push(GatewayIntentBits.MessageContent);
+    }
+
     this.dataLoader.load();
     this.client = new Client({
-      intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMessages],
+      intents: intents,
       partials: [Partials.Channel],
     });
 
