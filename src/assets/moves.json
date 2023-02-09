@@ -74,5 +74,21 @@
             "rgrab",
             "rungrab"
         ]
+    },
+    {
+        "move": "bgetup",
+        "alias": [
+            "getupback"
+        ]
+    },
+    {
+        "move": "fgetup",
+        "alias": [
+            "getupattack",
+            "getupfront",
+            "getup",
+            "getupstomach",
+            "attackstomach"
+        ]
     }
 ]

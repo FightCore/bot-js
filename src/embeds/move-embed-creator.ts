@@ -7,6 +7,8 @@ import {
   EmbedBuilder,
   StringSelectMenuBuilder,
 } from 'discord.js';
+import { YoshiArmorBreakCalculator } from '../calculation/yoshi-armor-break-calculator';
+import { MovesParser } from '../data/moves-parser';
 import { Character } from '../models/character';
 import { Hitbox } from '../models/hitbox';
 import { Move } from '../models/move';
@@ -64,6 +66,18 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
           text += '\n' + shieldAdvantageInfo;
         }
 
+        if (YoshiArmorBreakCalculator.shouldCalculate(this.move)) {
+          const armorBreaks = this.move.hitboxes.map((hitbox) => YoshiArmorBreakCalculator.calculate(hitbox));
+          if (!armorBreaks.every((armorBreak) => armorBreak === null)) {
+            text +=
+              '\n' +
+              InfoLine.createLine({
+                title: 'Yoshi DJ Armor Break',
+                value: armorBreaks.map((armorBreak) => armorBreak ?? ' N/A ').join('/'),
+              });
+          }
+        }
+
         moveEmbedFields.push({
           name: 'Other info',
           value: text,
@@ -80,15 +94,6 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
             inline: true,
           });
         }
-
-        const newStuffText = `We have refreshed our website at [FightCore.gg](https://fightcore.gg) and are working on a lot of new data including Yoshi armor break.
-        Stay up to date by following @FightCoregg on Twitter or joining our [Discord](https://discord.gg/CVqDy6c)`;
-
-        moveEmbedFields.push({
-          name: 'New Stuff',
-          value: newStuffText,
-          inline: true,
-        });
       }
     }
 
@@ -253,10 +258,6 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
         title: 'Shieldstun',
         value: hitboxes.map((hitbox) => hitbox.shieldstun).join('/'),
       },
-      // {
-      //   title: 'Yoshi armor break at',
-      //   value: hitboxes.map((hitbox) => YoshiArmorBreak.calculate(hitbox)).join('/'),
-      // },
     ];
 
     return BodyFormatter.create(properties) as string;
