@@ -1,4 +1,4 @@
-import { Client, Message } from 'discord.js';
+import { Client, Message, StageChannel } from 'discord.js';
 import { Loader } from '../data/loader';
 import { CharacterEmbedCreator } from '../embeds/character-embed-creator';
 import { HelpEmbedCreator } from '../embeds/help-embed-creator';
@@ -7,6 +7,7 @@ import { MoveListEmbedCreator } from '../embeds/move-list-embed-creator';
 import { NotFoundEmbedCreator } from '../embeds/not-found-embed-creator';
 import { SearchResult } from '../models/search/search-result';
 import { SearchResultType } from '../models/search/search-result-type';
+import { Indexer } from '../utils/indexer';
 import { MessageCleaner } from '../utils/message-cleaner';
 import { BaseInteractionHandler } from './base-interaction-handler';
 
@@ -17,6 +18,9 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
 
   async handleMessage(message: Message, isUpdate = false): Promise<void> {
     try {
+      if (!message.channel.isTextBased() || message.channel instanceof StageChannel) {
+        return;
+      }
       // Lock the conversation to a single channel if wanted.
       if (process.env.CHANNEL_LOCK) {
         if (message.channelId !== process.env.CHANNEL_LOCK) {
@@ -78,6 +82,10 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
     embedCreator: MoveEmbedCreator,
     searchResult: SearchResult
   ): Promise<void> {
+    if (!message.channel.isTextBased() || message.channel instanceof StageChannel) {
+      return;
+    }
+
     // Check if the move and the searchResult are not null.
     // This should be already checked in the previous process so throw an error
     // if this is the case.
@@ -118,6 +126,7 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
     }
 
     this.logger.info(`Replying with ${searchResult.character.name} and ${searchResult.move.name}`);
+    new Indexer().indexMove(searchResult.character, searchResult.move);
     const replyMessage = await message.reply({
       embeds: embedCreator.createEmbed(),
       components: embedCreator.createButtons(searchResult.possibleMoves),
@@ -143,6 +152,10 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
     isUpdate: boolean,
     searchResult: SearchResult
   ): Promise<void> {
+    if (!message.channel.isTextBased() || message.channel instanceof StageChannel) {
+      return;
+    }
+
     if (content.length > 75) {
       content = content.substring(0, 75) + '...';
     }
