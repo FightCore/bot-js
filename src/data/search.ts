@@ -1,4 +1,3 @@
-import { Loader } from './loader';
 import { jaroWinkler } from 'jaro-winkler-typescript';
 import { SearchResult } from '../models/search/search-result';
 import { Character } from '../models/character';
@@ -9,7 +8,9 @@ import { AliasRecord } from './models/alias-record';
 import { AliasParser } from './alias-parser';
 import { SearchResultType } from '../models/search/search-result-type';
 import { MovesParser } from './moves-parser';
+import { inject, injectable } from 'inversify';
 
+@injectable()
 export class Search {
   private readonly threshold = 0.8;
   private readonly aliases: AliasRecord[] = [];
@@ -17,8 +18,8 @@ export class Search {
     caseSensitive: false,
   };
 
-  constructor(loader: Loader) {
-    this.aliases = AliasParser.load(loader);
+  constructor(@inject(AliasParser) aliasParser: AliasParser) {
+    this.aliases = aliasParser.aliases;
   }
 
   public search(query: string): SearchResult {

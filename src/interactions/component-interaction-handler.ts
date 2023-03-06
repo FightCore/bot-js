@@ -1,8 +1,18 @@
 import { ButtonInteraction, StringSelectMenuInteraction } from 'discord.js';
+import { inject, injectable } from 'inversify';
+import { Logger } from 'winston';
+import { Symbols } from '../config/symbols';
+import { FailureStore } from '../data/failure-store';
+import { Search } from '../data/search';
 import { MoveEmbedCreator } from '../embeds/move-embed-creator';
 import { BaseInteractionHandler } from './base-interaction-handler';
 
+@injectable()
 export class ComponentInteractionHandler extends BaseInteractionHandler {
+  constructor(search: Search, @inject(Symbols.Logger) logger: Logger, failureStore: FailureStore) {
+    super(search, logger, failureStore);
+  }
+
   public async handle(interaction: ButtonInteraction | StringSelectMenuInteraction): Promise<void> {
     let isFromOriginalUser = false;
     const messageMentions = interaction.message.mentions;

@@ -1,34 +1,35 @@
 import { Client, REST, Routes, SlashCommandBuilder } from 'discord.js';
-import { LogSingleton } from '../utils/logs-singleton';
+import { Logger } from 'winston';
 import { MoveSlashCommand } from './move-slash-command';
 
 export class RegisterCommands {
-  public static register(client: Client): Promise<unknown> {
-    const logger = LogSingleton.get();
+  constructor(private logger: Logger, private client: Client) {}
+
+  public register(): Promise<unknown> {
     if (process.env.COMMAND_GUILD_ID) {
-      logger.info(`Registering commands to Guild ${process.env.COMMAND_GUILD_ID}`);
-      return this.registerToGuild(client);
+      this.logger.info(`Registering commands to Guild ${process.env.COMMAND_GUILD_ID}`);
+      return this.registerToGuild();
     } else {
-      logger.info('No COMMAND_GUILD_ID specified, registering commands globally');
-      return this.registerGlobally(client);
+      this.logger.info('No COMMAND_GUILD_ID specified, registering commands globally');
+      return this.registerGlobally();
     }
   }
 
-  private static registerGlobally(client: Client): Promise<unknown> {
-    return this.registerCommand(Routes.applicationCommands(client.user?.id ?? 'INVALID'));
+  private registerGlobally(): Promise<unknown> {
+    return this.registerCommand(Routes.applicationCommands(this.client.user?.id ?? 'INVALID'));
   }
 
-  private static registerToGuild(client: Client): Promise<unknown> {
+  private registerToGuild(): Promise<unknown> {
     return this.registerCommand(
-      Routes.applicationGuildCommands(client.user?.id ?? 'INVALID', process.env.COMMAND_GUILD_ID ?? 'INVALID')
+      Routes.applicationGuildCommands(this.client.user?.id ?? 'INVALID', process.env.COMMAND_GUILD_ID ?? 'INVALID')
     );
   }
 
-  private static registerCommand(fullRoute: `/${string}`): Promise<unknown> {
+  private registerCommand(fullRoute: `/${string}`): Promise<unknown> {
     const rest = new REST({ version: '10' }).setToken(process.env.TOKEN ?? 'INVALID');
-    const commands = this.getCommandsToRegister();
+    const commands = RegisterCommands.getCommandsToRegister();
 
-    LogSingleton.get().info('Registering commands: ' + commands.map((command) => command.name));
+    this.logger.info('Registering commands: ' + commands.map((command) => command.name));
 
     return rest.put(fullRoute, {
       body: commands,

@@ -1,13 +1,21 @@
 import { CommandInteraction, InteractionResponse } from 'discord.js';
+import { inject, injectable } from 'inversify';
+import { Logger } from 'winston';
+import { Symbols } from '../config/symbols';
+import { FailureStore } from '../data/failure-store';
+import { Search } from '../data/search';
 import { MoveEmbedCreator } from '../embeds/move-embed-creator';
 import { NotFoundEmbedCreator } from '../embeds/not-found-embed-creator';
 import { SearchResult } from '../models/search/search-result';
 import { SearchResultType } from '../models/search/search-result-type';
-import { LogSingleton } from '../utils/logs-singleton';
 import { MessageCleaner } from '../utils/message-cleaner';
 import { BaseInteractionHandler } from './base-interaction-handler';
 
+@injectable()
 export class CommandInteractionHandler extends BaseInteractionHandler {
+  constructor(search: Search, @inject(Symbols.Logger) logger: Logger, failureStore: FailureStore) {
+    super(search, logger, failureStore);
+  }
   async handle(interaction: CommandInteraction): Promise<void> {
     if (interaction.commandName == 'framedata') {
       const character = interaction.options.get('character', true).value;
@@ -44,7 +52,7 @@ export class CommandInteractionHandler extends BaseInteractionHandler {
 
     content = MessageCleaner.removeIllegalCharacters(content);
 
-    LogSingleton.get().warn(`No character or move found for "${content}"`);
+    this.logger.warn(`No character or move found for "${content}"`);
     const embeds =
       searchResult.type === SearchResultType.MoveNotFound
         ? NotFoundEmbedCreator.createMoveNotFoundEmbed(searchResult.character, content)

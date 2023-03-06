@@ -1,13 +1,8 @@
-export class FailureStore {
-  private static instance: FailureStore;
-  private failures: Map<string, string>;
+import { injectable } from 'inversify';
 
-  static get(): FailureStore {
-    if (!FailureStore.instance) {
-      FailureStore.instance = new FailureStore();
-    }
-    return FailureStore.instance;
-  }
+@injectable()
+export class FailureStore {
+  private failures: Map<string, string>;
 
   constructor() {
     this.failures = new Map<string, string>();

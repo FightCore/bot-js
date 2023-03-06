@@ -3,7 +3,7 @@ import { Logger, createLogger, format, transports } from 'winston';
 export class LogSingleton {
   private static logger: Logger;
 
-  public static get(): Logger {
+  public static create(): Logger {
     if (LogSingleton.logger) {
       return LogSingleton.logger;
     }

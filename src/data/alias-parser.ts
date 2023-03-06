@@ -1,17 +1,14 @@
 import { Loader } from './loader';
 import { AliasRecord } from './models/alias-record';
 import moveData from '../assets/names.json';
+import { inject, injectable } from 'inversify';
 
+@injectable()
 export class AliasParser {
-  private static readonly aliases: AliasRecord[] = moveData as AliasRecord[];
-  private static parsedAliases: boolean;
+  private readonly _aliases: AliasRecord[] = moveData as AliasRecord[];
 
-  static load(loader: Loader): AliasRecord[] {
-    if (this.parsedAliases) {
-      return this.aliases;
-    }
-
-    for (const alias of AliasParser.aliases) {
+  constructor(@inject(Loader) loader: Loader) {
+    for (const alias of this._aliases) {
       const localCharacter = loader.data.find((character) => character.name === alias.name);
       if (localCharacter) {
         alias.character = localCharacter;
@@ -20,8 +17,9 @@ export class AliasParser {
       alias.names.push(alias.name);
       alias.moves = new Map<string, string>(Object.entries(alias.moves ?? {}));
     }
+  }
 
-    this.parsedAliases = true;
-    return this.aliases;
+  get aliases(): AliasRecord[] {
+    return this._aliases;
   }
 }

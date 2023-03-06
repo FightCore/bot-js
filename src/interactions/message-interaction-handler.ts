@@ -1,5 +1,10 @@
 import { Client, Message, StageChannel } from 'discord.js';
+import { inject, injectable } from 'inversify';
+import { Logger } from 'winston';
+import { Symbols } from '../config/symbols';
+import { FailureStore } from '../data/failure-store';
 import { Loader } from '../data/loader';
+import { Search } from '../data/search';
 import { CharacterEmbedCreator } from '../embeds/character-embed-creator';
 import { HelpEmbedCreator } from '../embeds/help-embed-creator';
 import { MoveEmbedCreator } from '../embeds/move-embed-creator';
@@ -11,9 +16,15 @@ import { Indexer } from '../utils/indexer';
 import { MessageCleaner } from '../utils/message-cleaner';
 import { BaseInteractionHandler } from './base-interaction-handler';
 
+@injectable()
 export class MessageInteractionHandler extends BaseInteractionHandler {
-  constructor(loader: Loader, private client: Client) {
-    super(loader);
+  constructor(
+    search: Search,
+    @inject(Symbols.Logger) logger: Logger,
+    failureStore: FailureStore,
+    @inject(Symbols.Client) private client: Client
+  ) {
+    super(search, logger, failureStore);
   }
 
   async handleMessage(message: Message, isUpdate = false): Promise<void> {
