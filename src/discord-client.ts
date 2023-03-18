@@ -38,10 +38,10 @@ export class DiscordClient {
     this.client.on('messageUpdate', this.handleMessageUpdate.bind(this));
 
     // When the client is ready, run this code (only once)
-    this.client.once('ready', () => {
+    this.client.once('ready', async () => {
       this.logger.info('Client ready!');
       this.container.bind<Client>(Symbols.Client).toConstantValue(this.client);
-      new RegisterCommands(this.logger, this.client).register().then(() => this.logger.info('Registered slash commands'));
+      this.container.get<RegisterCommands>(RegisterCommands).register();
     });
   }
 

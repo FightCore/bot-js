@@ -235,7 +235,8 @@
             "samus"
         ],
         "moves": {
-            "rocket": "sideb"
+            "rocket": "sideb",
+            "tether": "zair"
         },
         "fightCoreId": 212
     },

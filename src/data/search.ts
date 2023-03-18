@@ -49,6 +49,13 @@ export class Search {
       return new SearchResult(SearchResultType.Character, foundAlias.record.character);
     }
 
+    // Edge case:
+    // The algorithm correctly assumes Young to be young link but doesn't remove the Link part.
+    // Remove the link part manually ourselves to ensure searches work.
+    if (foundAlias.record.character.normalizedName === 'younglink' && foundAlias.remainder.includes('link')) {
+      foundAlias.remainder = foundAlias.remainder.replace('link', '');
+    }
+
     // Character was found and the first word in the query was the name of the character.
     // We can shift out the first word and continue with just the move name.
     // For example, "marth fsmash" would be reduced to "fsmash".

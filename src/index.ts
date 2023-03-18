@@ -11,6 +11,7 @@ import { Symbols } from './config/symbols';
 import { CommandInteractionHandler } from './interactions/command-interaction-handler';
 import { MessageInteractionHandler } from './interactions/message-interaction-handler';
 import { ComponentInteractionHandler } from './interactions/component-interaction-handler';
+import { RegisterCommands } from './commands/register-commands';
 
 // Skip base classes doesn't check for the @injectable() annotation.
 // Needed to load third party libraries like winston's logger.
@@ -22,6 +23,7 @@ container.bind<AliasParser>(AliasParser).toSelf().inSingletonScope();
 container.bind<Search>(Search).toSelf().inSingletonScope();
 container.bind<Container>(Container).toConstantValue(container);
 container.bind<DiscordClient>(DiscordClient).toSelf();
+container.bind<RegisterCommands>(RegisterCommands).toSelf();
 container.bind<CommandInteractionHandler>(CommandInteractionHandler).toSelf().inTransientScope();
 container.bind<MessageInteractionHandler>(MessageInteractionHandler).toSelf().inTransientScope();
 container.bind<ComponentInteractionHandler>(ComponentInteractionHandler).toSelf().inTransientScope();

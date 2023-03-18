@@ -1,9 +1,12 @@
 import { Client, REST, Routes, SlashCommandBuilder } from 'discord.js';
+import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
+import { Symbols } from '../config/symbols';
 import { MoveSlashCommand } from './move-slash-command';
 
+@injectable()
 export class RegisterCommands {
-  constructor(private logger: Logger, private client: Client) {}
+  constructor(@inject(Symbols.Logger) private logger: Logger, @inject(Symbols.Client) private client: Client) {}
 
   public register(): Promise<unknown> {
     if (process.env.COMMAND_GUILD_ID) {
