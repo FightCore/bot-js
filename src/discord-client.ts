@@ -64,7 +64,7 @@ export class DiscordClient {
       }
 
       if (interaction.isButton() || interaction.isStringSelectMenu()) {
-        componentInteractionHandler.handle(interaction);
+        await componentInteractionHandler.handle(interaction);
       }
     } catch (error) {
       if (interaction.isButton() || interaction.isStringSelectMenu()) {
