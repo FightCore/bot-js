@@ -3,6 +3,7 @@ import { Client, Message } from 'discord.js';
 export class MessageSearchResult {
   public shouldRespond?: boolean;
   public id?: string;
+  public isRoleMessage?: boolean;
 }
 
 export class MessageCleaner {
@@ -41,7 +42,7 @@ export class MessageCleaner {
         botRole != null &&
         message.mentions.roles?.first()?.id === botRole.id
       ) {
-        return { shouldRespond: true, id: message.mentions.roles?.first()?.id };
+        return { shouldRespond: true, id: message.mentions.roles?.first()?.id, isRoleMessage: true };
       }
     }
 

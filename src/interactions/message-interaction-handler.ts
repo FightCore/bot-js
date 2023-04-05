@@ -3,7 +3,6 @@ import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
 import { Symbols } from '../config/symbols';
 import { FailureStore } from '../data/failure-store';
-import { Loader } from '../data/loader';
 import { Search } from '../data/search';
 import { CharacterEmbedCreator } from '../embeds/character-embed-creator';
 import { HelpEmbedCreator } from '../embeds/help-embed-creator';
@@ -15,6 +14,7 @@ import { SearchResultType } from '../models/search/search-result-type';
 import { Indexer } from '../utils/indexer';
 import { MessageCleaner } from '../utils/message-cleaner';
 import { BaseInteractionHandler } from './base-interaction-handler';
+import { RoleEmbedCreator } from '../embeds/role-embed-creator';
 
 @injectable()
 export class MessageInteractionHandler extends BaseInteractionHandler {
@@ -44,6 +44,11 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
         return;
       }
       await message.channel.sendTyping();
+
+      if (messageSearchResult.isRoleMessage) {
+        await message.reply({ embeds: RoleEmbedCreator.createErrorEmbed() });
+        return;
+      }
 
       // Replace the content of the message with just the search query and no user tag.
       const modifiedMessage = MessageCleaner.removeMention(message, messageSearchResult);
