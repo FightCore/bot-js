@@ -59,7 +59,7 @@ export class Search {
     // Character was found and the first word in the query was the name of the character.
     // We can shift out the first word and continue with just the move name.
     // For example, "marth fsmash" would be reduced to "fsmash".
-    const foundMoves: DistanceResult[] = [];
+    let foundMoves: DistanceResult[] = [];
     let moveQuery = foundAlias.remainder;
     const aliasQuery = MovesParser.search(moveQuery);
 
@@ -107,10 +107,12 @@ export class Search {
       foundMoves.push({ move: move, distance: distance });
     }
 
-    foundMoves.sort(this.sortDistanceResults);
-
     if (foundMoves.length === 0) {
       return new SearchResult(SearchResultType.MoveNotFound, foundAlias.record.character);
+    }
+
+    if (foundMoves.length == 2 && foundMoves[0].move.normalizedName === 'upb') {
+      foundMoves = [foundMoves[0]];
     }
 
     return new SearchResult(
@@ -171,19 +173,34 @@ export class Search {
   }
 
   private compareToMove(move: Move, query: string, doNormalizedName = true): number | undefined {
-    let distance = 0;
+    const splitMove = move.name.split(' ');
+    let normalizedNameDistance = 0;
+
     if (doNormalizedName) {
-      distance = jaroWinkler(move.normalizedName, query, this.distanceConfiguration);
+      normalizedNameDistance = jaroWinkler(move.normalizedName, query, this.distanceConfiguration);
     }
 
-    const nameDistance = jaroWinkler(move.name, query, {
-      caseSensitive: false,
-    });
+    let highestDistance = normalizedNameDistance;
 
-    if (distance > nameDistance && this.threshold < distance) {
-      return distance;
-    } else if (this.threshold < nameDistance) {
-      return nameDistance;
+    const nameDistance = jaroWinkler(move.name, query, this.distanceConfiguration);
+
+    if (nameDistance > highestDistance) {
+      highestDistance = nameDistance;
+    }
+
+    for (const section of splitMove) {
+      const distance = jaroWinkler(section, query, this.distanceConfiguration);
+      if (distance > highestDistance) {
+        highestDistance = distance;
+      }
+    }
+
+    if (move.normalizedName === 'upb') {
+      console.log(nameDistance);
+    }
+
+    if (highestDistance > this.threshold) {
+      return highestDistance;
     }
 
     return undefined;

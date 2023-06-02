@@ -15,6 +15,7 @@ export class MoveSlashCommand {
             { name: 'Bowser', value: 'bowser' },
             { name: 'Captain Falcon', value: 'falcon' },
             { name: 'Dr Mario', value: 'drmario' },
+            { name: 'Donkey Kong', value: 'donkeykong' },
             { name: 'Falco', value: 'falco' },
             { name: 'Fox', value: 'fox' },
             { name: 'Ganondorf', value: 'ganondorf' },
