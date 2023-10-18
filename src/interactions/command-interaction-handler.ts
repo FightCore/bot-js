@@ -38,7 +38,7 @@ export class CommandInteractionHandler extends BaseInteractionHandler {
       });
     }
 
-    this.logger.warn(`Command not recognized ${interaction.commandName}`);
+    this.logger.warn(`Command not recognized {commandName}`, interaction.commandName);
   }
 
   private sendNoMoveFoundErrorToInteraction(
@@ -52,7 +52,7 @@ export class CommandInteractionHandler extends BaseInteractionHandler {
 
     content = MessageCleaner.removeIllegalCharacters(content);
 
-    this.logger.warn(`No character or move found for "${content}"`);
+    this.logger.warn(`No character or move found for "{content}"`, content);
     const embeds =
       searchResult.type === SearchResultType.MoveNotFound
         ? NotFoundEmbedCreator.createMoveNotFoundEmbed(searchResult.character, content)

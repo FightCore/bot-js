@@ -109,7 +109,10 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
       throw new Error('Move was not found with existing message');
     }
 
-    this.logger.info(`Updating existing to ${searchResult.character.name} and ${searchResult.move.name}`);
+    this.logger.info(`Updating existing to {character} and {move}`, {
+      character: searchResult.character.name,
+      move: searchResult.move.name,
+    });
 
     const botMessageId = this.failureStore.get(message.id);
     if (botMessageId) {
@@ -141,7 +144,10 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
       throw new Error('Move was not found with existing message');
     }
 
-    this.logger.info(`Replying with ${searchResult.character.name} and ${searchResult.move.name}`);
+    this.logger.info(`Replying with {character} and {move}`, {
+      character: searchResult.character.name,
+      move: searchResult.move.name,
+    });
     new Indexer().indexMove(searchResult.character, searchResult.move);
     const replyMessage = await message.reply({
       embeds: embedCreator.createEmbed(),
@@ -178,7 +184,7 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
 
     content = MessageCleaner.removeIllegalCharacters(content);
 
-    this.logger.warn(`No character or move found for "${content}"`);
+    this.logger.warn(`No character or move found for "{content}"`, { content: content, character: searchResult.character });
     const embeds =
       searchResult.type === SearchResultType.MoveNotFound
         ? NotFoundEmbedCreator.createMoveNotFoundEmbed(searchResult.character, content)

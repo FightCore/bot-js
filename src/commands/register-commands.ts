@@ -10,7 +10,7 @@ export class RegisterCommands {
 
   public register(): Promise<unknown> {
     if (process.env.COMMAND_GUILD_ID) {
-      this.logger.info(`Registering commands to Guild ${process.env.COMMAND_GUILD_ID}`);
+      this.logger.info(`Registering commands to Guild {guildId}`, { guildId: process.env.COMMAND_GUILD_ID });
       return this.registerToGuild();
     } else {
       this.logger.info('No COMMAND_GUILD_ID specified, registering commands globally');
@@ -41,5 +41,6 @@ export class RegisterCommands {
 
   private static getCommandsToRegister(): SlashCommandBuilder[] {
     return [MoveSlashCommand.create()];
+    //TournamentSlashCommand.create()
   }
 }
