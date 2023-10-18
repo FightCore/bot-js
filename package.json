@@ -25,22 +25,22 @@
   },
   "homepage": "https://github.com/FightCore/bot-js#readme",
   "dependencies": {
-    "@apollo/client": "^3.8.5",
+    "@apollo/client": "^3.8.6",
     "@datalust/winston-seq": "^2.0.0",
-    "@elastic/elasticsearch": "^8.7.0",
-    "axios": "^1.4.0",
-    "discord.js": "^14.11.0",
-    "dotenv": "^16.0.3",
+    "@elastic/elasticsearch": "^8.10.0",
+    "axios": "^1.5.1",
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1",
     "inversify": "^6.0.1",
     "jaro-winkler-typescript": "^1.0.1",
     "reflect-metadata": "^0.1.13",
     "winston": "^3.11.0"
   },
   "devDependencies": {
-    "@types/node": "^16.18.27",
-    "@typescript-eslint/eslint-plugin": "^5.59.5",
-    "@typescript-eslint/parser": "^5.59.5",
-    "eslint": "^8.40.0",
-    "typescript": "^4.9.5"
+    "@types/node": "^16.18.59",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^ 6.8.0",
+    "eslint": "^8.51.0",
+    "typescript": "^5.2.2"
   }
 }

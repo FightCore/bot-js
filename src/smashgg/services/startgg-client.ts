@@ -51,7 +51,7 @@ export class StartggClient {
       return {
         headers: {
           ...headers,
-          authorization: `Bearer 6bb6a7c19f83101622574da6ad4ed57d`,
+          authorization: `Bearer woops, that token was invalid anyways`,
         },
       };
     });
