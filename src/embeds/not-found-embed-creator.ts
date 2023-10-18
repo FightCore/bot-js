@@ -1,4 +1,4 @@
-import { Colors, Embed, EmbedBuilder } from 'discord.js';
+import { Colors, EmbedBuilder } from 'discord.js';
 import { Character } from '../models/character';
 import { BaseEmbedCreator } from './base-embed-creator';
 

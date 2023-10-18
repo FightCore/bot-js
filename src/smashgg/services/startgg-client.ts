@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache, createHttpLink, gql } from '@apollo/client/core';
 import { setContext } from '@apollo/client/link/context';
 import { Tournament } from '../models/tournament';
-import { Data, RootList } from '../models/result';
+import { Data } from '../models/result';
 
 export class StartggClient {
   async request(name: string): Promise<Tournament> {

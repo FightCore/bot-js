@@ -8,7 +8,6 @@ import {
   StringSelectMenuBuilder,
 } from 'discord.js';
 import { YoshiArmorBreakCalculator } from '../calculation/yoshi-armor-break-calculator';
-import { MovesParser } from '../data/moves-parser';
 import { Character } from '../models/character';
 import { Hitbox } from '../models/hitbox';
 import { Move } from '../models/move';
@@ -47,7 +46,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     if (this.move.hitboxes && this.move.hitboxes.length > 0) {
       moveEmbedFields.push({
         name: 'Hitbox summary',
-        value: this.getHitboxes(this.move.hitboxes, this.move),
+        value: this.getHitboxes(this.move.hitboxes),
         inline: true,
       });
 
@@ -116,7 +115,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     // Does not start with a (aerial moves always start with 'a' like 'aupb', 'asideb', etc)
     if (
       this.move.type === MoveType.special &&
-      this.move.normalizedName[0] !== 'a' &&
+      this.move.normalizedName.startsWith('a') &&
       // Find the aerial move that corresponds with the provided grounded move.
       this.character.moves.findIndex((groundedMove) => groundedMove.normalizedName === 'a' + this.move.normalizedName) !== -1
     ) {
@@ -224,7 +223,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     return BodyFormatter.create(properties) as string;
   }
 
-  private getHitboxes(hitboxes: Hitbox[], move: Move): string {
+  private getHitboxes(hitboxes: Hitbox[]): string {
     const properties: LineProperty[] = [
       {
         title: 'Name',
