@@ -18,4 +18,5 @@ export interface Move {
   notes?: string;
   percent?: string;
   source: string;
+  landingFallSpecialLag: number;
 }

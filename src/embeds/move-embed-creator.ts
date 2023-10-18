@@ -204,6 +204,10 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
         value: move.lCanceledLandLag,
       },
       {
+        title: 'Landing Fall Special Lag',
+        value: move.landingFallSpecialLag,
+      },
+      {
         title: 'Auto cancel before',
         value: move.autoCancelBefore,
       },
