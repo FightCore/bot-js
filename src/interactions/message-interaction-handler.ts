@@ -184,7 +184,7 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
 
     content = MessageCleaner.removeIllegalCharacters(content);
 
-    this.logger.warn(`No character or move found for "{content}"`, { content: content, character: searchResult.character });
+    this.logger.warn(`No character or move found for "{content}"`, { content: content });
     const embeds =
       searchResult.type === SearchResultType.MoveNotFound
         ? NotFoundEmbedCreator.createMoveNotFoundEmbed(searchResult.character, content)

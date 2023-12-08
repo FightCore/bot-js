@@ -1,5 +1,6 @@
 import moves from '../assets/moves.json';
 import { MoveAlias } from './moves/move-alias';
+import { Normalizer } from './normalizer';
 
 export class MovesParser {
   private static readonly moveAliases: MoveAlias[] = moves as MoveAlias[];
@@ -8,7 +9,7 @@ export class MovesParser {
     // Filter out any non-alphanumeric characters from the query.
     // The moves.json is built based on the old FightCore Bot and uses
     // the normalized format.
-    const filteredQuery = query.replace(/[^a-z0-9]/gi, '').toLowerCase();
+    const filteredQuery = Normalizer.normalize(query);
 
     for (const move of this.moveAliases) {
       for (const alias of move.alias) {

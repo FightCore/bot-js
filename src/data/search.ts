@@ -9,6 +9,7 @@ import { AliasParser } from './alias-parser';
 import { SearchResultType } from '../models/search/search-result-type';
 import { MovesParser } from './moves-parser';
 import { inject, injectable } from 'inversify';
+import { Normalizer } from './normalizer';
 
 @injectable()
 export class Search {
@@ -174,13 +175,17 @@ export class Search {
 
   private compareToMove(move: Move, query: string, doNormalizedName = true): number | undefined {
     const splitMove = move.name.split(' ');
-    let normalizedNameDistance = 0;
+    let highestDistance = 0;
 
     if (doNormalizedName) {
-      normalizedNameDistance = jaroWinkler(move.normalizedName, query, this.distanceConfiguration);
-    }
+      highestDistance = jaroWinkler(move.normalizedName, query, this.distanceConfiguration);
 
-    let highestDistance = normalizedNameDistance;
+      const normalizedQueryDistance = jaroWinkler(move.normalizedName, Normalizer.normalize(query), this.distanceConfiguration);
+
+      if (normalizedQueryDistance > highestDistance) {
+        highestDistance = normalizedQueryDistance;
+      }
+    }
 
     const nameDistance = jaroWinkler(move.name, query, this.distanceConfiguration);
 
@@ -195,8 +200,13 @@ export class Search {
       }
     }
 
-    if (move.normalizedName === 'upb') {
-      console.log(nameDistance);
+    let comparison = '';
+    for (const section of splitMove) {
+      comparison += section;
+      const distance = jaroWinkler(comparison, query, this.distanceConfiguration);
+      if (distance > highestDistance) {
+        highestDistance = distance;
+      }
     }
 
     if (highestDistance > this.threshold) {
