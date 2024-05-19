@@ -26,11 +26,11 @@
   },
   "homepage": "https://github.com/FightCore/bot-js#readme",
   "dependencies": {
-    "@apollo/client": "^3.10.1",
+    "@apollo/client": "^3.10.4",
     "@datalust/winston-seq": "^2.0.0",
     "@elastic/elasticsearch": "^8.13.1",
     "axios": "^1.6.8",
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.15.2",
     "dotenv": "^16.4.5",
     "inversify": "^6.0.2",
     "jaro-winkler-typescript": "^1.0.1",
@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
-    "@types/node": "^16.18.96",
+    "@types/node": "^16.18.97",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.0",
