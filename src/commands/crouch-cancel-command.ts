@@ -1,6 +1,6 @@
 import { APIApplicationCommandOptionChoice, SlashCommandBuilder } from 'discord.js';
 
-export class MoveSlashCommand {
+export class CrouchCancelCommand {
   private static charactersChoices: APIApplicationCommandOptionChoice<string>[] = [
     { name: 'Bowser', value: 'bowser' },
     { name: 'Captain Falcon', value: 'falcon' },
@@ -32,16 +32,23 @@ export class MoveSlashCommand {
   static create(): SlashCommandBuilder {
     const builder = new SlashCommandBuilder();
     builder
-      .setName('framedata')
-      .setDescription('Get the frame data from the specified character and move')
+      .setName('crouchcancel')
+      .setDescription('Get the crouch cancel info for a move')
       .addStringOption((option) =>
         option
           .setName('character')
-          .setDescription('The character to get the move for')
+          .setDescription('The character executing the move')
           .setRequired(true)
           .addChoices(...this.charactersChoices)
       )
-      .addStringOption((option) => option.setName('move').setDescription('The move to look for').setRequired(true));
+      .addStringOption((option) => option.setName('move').setDescription('The move to look for').setRequired(true))
+      .addStringOption((option) =>
+        option
+          .setName('target')
+          .setDescription('The character being attacked')
+          .addChoices(...this.charactersChoices)
+      );
+
     return builder;
   }
 }

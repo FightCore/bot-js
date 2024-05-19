@@ -16,18 +16,18 @@ export class DiscordClient {
 
   constructor(
     @inject(Loader) private dataLoader: Loader,
-    private failureStore: FailureStore,
     @inject(Symbols.Logger) private logger: Logger,
+    private failureStore: FailureStore,
     private container: Container
   ) {
     const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMessages];
 
     if (process.env.PREFIX) {
-      this.logger.info('Prefix is used, enabling Message Content');
+      this.logger.info('Prefix is used, enabling Message Content intent');
       intents.push(GatewayIntentBits.MessageContent);
     }
 
-    this.dataLoader.load();
+    this.dataLoader.ensureLoaded();
     this.client = new Client({
       intents: intents,
       partials: [Partials.Channel],
@@ -37,7 +37,6 @@ export class DiscordClient {
     this.client.on('interactionCreate', this.handleInteraction.bind(this));
     this.client.on('messageUpdate', this.handleMessageUpdate.bind(this));
 
-    // When the client is ready, run this code (only once)
     this.client.once('ready', async () => {
       this.logger.info('Client ready!');
       this.container.bind<Client>(Symbols.Client).toConstantValue(this.client);
@@ -49,7 +48,7 @@ export class DiscordClient {
     this.client.login(process.env.TOKEN);
   }
 
-  private async handleInteraction(interaction: Interaction) {
+  private async handleInteraction(interaction: Interaction): Promise<void> {
     const commandInteractionHandler = this.container.resolve<CommandInteractionHandler>(CommandInteractionHandler);
     const componentInteractionHandler = this.container.resolve<ComponentInteractionHandler>(ComponentInteractionHandler);
     try {

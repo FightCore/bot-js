@@ -4,7 +4,7 @@
       "lib": ["es6"],
       "types": ["reflect-metadata"],
       "module": "CommonJS",
-      "rootDir": "./src",
+      "rootDir": "./",
       "outDir": "./build",
       "sourceMap": true,
       "strict": true,
@@ -14,5 +14,10 @@
       "resolveJsonModule": true,
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true
-    }
+    },
+    "include": [
+      "tests/**/*.test.ts",
+      "tests/**.ts",
+      "src/**/*.ts"
+    ],
   }

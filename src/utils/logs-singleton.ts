@@ -9,6 +9,27 @@ export class LogSingleton {
       return LogSingleton.logger;
     }
 
+    const configuredTransports: winston.transport[] = [
+      new winston.transports.Console({
+        format: winston.format.simple(),
+      }),
+      new transports.File({ filename: 'error.log', level: 'error' }),
+      new transports.File({ filename: 'combined.log' }),
+    ];
+
+    // Only add Seq when it is configured
+    if (process.env.SEQ_URI) {
+      configuredTransports.push(
+        new SeqTransport({
+          serverUrl: process.env.SEQ_URI,
+          apiKey: process.env.SEQ_API_KEY,
+          onError: (e) => {
+            console.error(e);
+          },
+        })
+      );
+    }
+
     LogSingleton.logger = createLogger({
       level: 'info',
       format: winston.format.combine(
@@ -17,20 +38,7 @@ export class LogSingleton {
         winston.format.json()
       ),
       defaultMeta: { application: process.env.APP_NAME },
-      transports: [
-        new winston.transports.Console({
-          format: winston.format.simple(),
-        }),
-        new transports.File({ filename: 'error.log', level: 'error' }),
-        new transports.File({ filename: 'combined.log' }),
-        new SeqTransport({
-          serverUrl: process.env.SEQ_URI,
-          apiKey: process.env.SEQ_API_KEY,
-          onError: (e) => {
-            console.error(e);
-          },
-        }),
-      ],
+      transports: configuredTransports,
     });
 
     return LogSingleton.logger;

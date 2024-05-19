@@ -84,7 +84,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
         });
 
         if (shieldAdvantageInfo) {
-          const explanation = `Please note that the shield advantage calculation s done assuming the frame 1 hit case and WILL be inaccurate.
+          const explanation = `Please note that the shield advantage calculation is done assuming the frame 1 hit case and WILL be inaccurate.
           For more information check out this [RadarSSBM Video on Shield Advantage](https://www.youtube.com/watch?v=obxZu6lADi4)`;
 
           moveEmbedFields.push({

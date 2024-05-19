@@ -10,6 +10,7 @@ import { SearchResult } from '../models/search/search-result';
 import { SearchResultType } from '../models/search/search-result-type';
 import { MessageCleaner } from '../utils/message-cleaner';
 import { BaseInteractionHandler } from './base-interaction-handler';
+import { CrouchCancelEmbedCreator } from '../embeds/crouch-cancel-embed-creator';
 
 @injectable()
 export class CommandInteractionHandler extends BaseInteractionHandler {
@@ -18,27 +19,39 @@ export class CommandInteractionHandler extends BaseInteractionHandler {
   }
   async handle(interaction: CommandInteraction): Promise<void> {
     if (interaction.commandName == 'framedata') {
-      const character = interaction.options.get('character', true).value;
-      const move = interaction.options.get('move', true).value;
+      const searchResult = await this.getSearchResultOrNull(interaction);
 
-      const characterMove = this.search.search(`${character} ${move}`);
-
-      if (
-        !characterMove ||
-        characterMove.type == SearchResultType.MoveNotFound ||
-        characterMove.type == SearchResultType.NotFound
-      ) {
-        await this.sendNoMoveFoundErrorToInteraction(interaction, `${character} ${move}`, characterMove);
+      if (!searchResult) {
+        return;
       }
 
-      const embedCreator = new MoveEmbedCreator(characterMove.move, characterMove.character);
+      const embedCreator = new MoveEmbedCreator(searchResult.move, searchResult.character);
       await interaction.reply({
         embeds: embedCreator.createEmbed(),
         components: embedCreator.createButtons(),
       });
-    }
+    } else if (interaction.commandName === 'crouchcancel') {
+      const searchResult = await this.getSearchResultOrNull(interaction);
 
-    this.logger.warn(`Command not recognized {commandName}`, interaction.commandName);
+      if (!searchResult) {
+        return;
+      }
+
+      const target = interaction.options.get('target', true).value;
+      const targetCharacter = this.search.searchCharacter([target as string]);
+
+      if (target && !targetCharacter) {
+        await this.sendNoMoveFoundErrorToInteraction(interaction, `${target} `, new SearchResult(SearchResultType.NotFound));
+        return;
+      }
+
+      const embeds = CrouchCancelEmbedCreator.create(searchResult.character, searchResult.move, targetCharacter);
+      await interaction.reply({
+        embeds: embeds,
+      });
+    } else {
+      this.logger.warn(`Command not recognized {commandName}`, { commandName: interaction.commandName });
+    }
   }
 
   private sendNoMoveFoundErrorToInteraction(
@@ -52,12 +65,30 @@ export class CommandInteractionHandler extends BaseInteractionHandler {
 
     content = MessageCleaner.removeIllegalCharacters(content);
 
-    this.logger.warn(`No character or move found for "{content}"`, content);
+    this.logger.warn(`No character or move found for "{content}"`, { content });
     const embeds =
       searchResult.type === SearchResultType.MoveNotFound
         ? NotFoundEmbedCreator.createMoveNotFoundEmbed(searchResult.character, content)
         : NotFoundEmbedCreator.createNotFoundEmbed(content);
 
     return interaction.reply({ embeds });
+  }
+
+  private async getSearchResultOrNull(interaction: CommandInteraction): Promise<SearchResult | null> {
+    const character = interaction.options.get('character', true).value;
+    const move = interaction.options.get('move', true).value;
+
+    const characterMove = this.search.search(`${character} ${move}`);
+
+    if (
+      !characterMove ||
+      characterMove.type == SearchResultType.MoveNotFound ||
+      characterMove.type == SearchResultType.NotFound
+    ) {
+      await this.sendNoMoveFoundErrorToInteraction(interaction, `${character} ${move}`, characterMove);
+      return null;
+    }
+
+    return characterMove;
   }
 }
