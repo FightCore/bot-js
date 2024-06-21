@@ -6,6 +6,7 @@ import { BaseEmbedCreator } from './base-embed-creator';
 import { InfoLine } from './formatting/info-line';
 import { CharacterEmoji } from '../utils/character-emoji';
 import { Loader } from '../data/loader';
+import { Hitbox } from '../models/hitbox';
 
 export class CrouchCancelEmbedCreator extends BaseEmbedCreator {
   public static create(character: Character, move: Move, target: Character | undefined, dataLoader: Loader): EmbedBuilder[] {
@@ -46,7 +47,7 @@ export class CrouchCancelEmbedCreator extends BaseEmbedCreator {
       } else if (hitbox.angle === 0) {
         hitboxMap.set(hitbox.name, `Can not be CCed due to angle being 0`);
       } else {
-        const crouchCancelPercentage = CrouchCancelCalculator.calculateCrouchCancel(hitbox, target).toFixed(2);
+        const crouchCancelPercentage = this.getCrouchCancelPercentageOrImpossible(hitbox, target);
         hitboxMap.set(hitbox.name, crouchCancelPercentage);
       }
     }
@@ -76,7 +77,7 @@ export class CrouchCancelEmbedCreator extends BaseEmbedCreator {
 
       const hitboxMap = new Map<Character, string>();
       for (const target of dataLoader.data) {
-        const crouchCancelPercentage = CrouchCancelCalculator.calculateCrouchCancel(hitbox, target).toFixed(2);
+        const crouchCancelPercentage = this.getCrouchCancelPercentageOrImpossible(hitbox, target);
         hitboxMap.set(target, crouchCancelPercentage);
       }
 
@@ -107,5 +108,14 @@ export class CrouchCancelEmbedCreator extends BaseEmbedCreator {
       return [errorEmbed];
     }
     return [embedBuilder];
+  }
+
+  private static getCrouchCancelPercentageOrImpossible(hitbox: Hitbox, target: Character): string {
+    const crouchCancelPercentage = CrouchCancelCalculator.calculateCrouchCancel(hitbox, target);
+    if (crouchCancelPercentage > 0) {
+      return crouchCancelPercentage.toFixed(2);
+    }
+
+    return 'Impossible';
   }
 }

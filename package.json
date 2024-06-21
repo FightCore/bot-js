@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig-build.json",
     "start": "node -r dotenv/config ./build/index.js",
-    "debug": "tsc -p tsconfig-build.json && node -r dotenv/config ./build/index.js",
+    "dev": "tsc -p tsconfig-build.json && node -r dotenv/config ./build/index.js",
     "lint": "eslint src/**/*.ts --ext .ts",
     "test": "jest"
   },
