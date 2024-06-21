@@ -19,4 +19,5 @@ export interface Move {
   percent?: string;
   source: string;
   landingFallSpecialLag: number;
+  gifUrl: string;
 }

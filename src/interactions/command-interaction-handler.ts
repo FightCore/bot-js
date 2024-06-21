@@ -11,10 +11,16 @@ import { SearchResultType } from '../models/search/search-result-type';
 import { MessageCleaner } from '../utils/message-cleaner';
 import { BaseInteractionHandler } from './base-interaction-handler';
 import { CrouchCancelEmbedCreator } from '../embeds/crouch-cancel-embed-creator';
+import { Loader } from '../data/loader';
 
 @injectable()
 export class CommandInteractionHandler extends BaseInteractionHandler {
-  constructor(search: Search, @inject(Symbols.Logger) logger: Logger, failureStore: FailureStore) {
+  constructor(
+    search: Search,
+    @inject(Symbols.Logger) logger: Logger,
+    failureStore: FailureStore,
+    @inject(Loader) private loader: Loader
+  ) {
     super(search, logger, failureStore);
   }
   async handle(interaction: CommandInteraction): Promise<void> {
@@ -37,7 +43,7 @@ export class CommandInteractionHandler extends BaseInteractionHandler {
         return;
       }
 
-      const target = interaction.options.get('target', true).value;
+      const target = interaction.options.get('target', false)?.value;
       const targetCharacter = this.search.searchCharacter([target as string]);
 
       if (target && !targetCharacter) {
@@ -45,7 +51,7 @@ export class CommandInteractionHandler extends BaseInteractionHandler {
         return;
       }
 
-      const embeds = CrouchCancelEmbedCreator.create(searchResult.character, searchResult.move, targetCharacter);
+      const embeds = CrouchCancelEmbedCreator.create(searchResult.character, searchResult.move, targetCharacter, this.loader);
       await interaction.reply({
         embeds: embeds,
       });

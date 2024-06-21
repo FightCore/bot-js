@@ -98,10 +98,20 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
 
     const moveEmbed = this.baseEmbed()
       .setTitle(`${this.character.name} - ${this.move.name}`)
-      .setURL(this.move.source)
+      .setURL(
+        `https://fightcore.gg/characters/${this.character.normalizedName}/moves/${this.move.normalizedName}?referer=fightcore_bot`
+      )
       .setColor(this.embedColor)
-      .setImage(`https://i.fightcore.gg/melee/moves/${this.character.normalizedName}/${this.move.normalizedName}.gif`)
       .addFields(moveEmbedFields);
+
+    if (this.move.gifUrl) {
+      moveEmbed.setImage(this.move.gifUrl);
+    } else {
+      moveEmbed.addFields({
+        name: 'No GIF available',
+        value: 'There is no GIF available for this move. Visit https://www.fightcore.gg to help us out.',
+      });
+    }
 
     // Return the embed inside of an array.
     // Multiple embeds could be created and returned but this is not needed for this use case.
