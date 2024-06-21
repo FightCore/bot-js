@@ -85,7 +85,7 @@ export class CrouchCancelEmbedCreator extends BaseEmbedCreator {
       let iterator = 0;
       for (const keyValuePair of hitboxMap) {
         const emote = CharacterEmoji.getEmoteId(keyValuePair[0].normalizedName);
-        fieldText += `${emote} ${keyValuePair[1]}% `;
+        fieldText += `${emote} ${keyValuePair[1]} `;
         iterator++;
         if (iterator === 4) {
           iterator = 0;
@@ -95,6 +95,8 @@ export class CrouchCancelEmbedCreator extends BaseEmbedCreator {
 
       embedBuilder.addFields({ name: hitbox.name, value: fieldText });
     }
+    // Discord has a max length size to the embed.
+    // With a large amount of hitboxes (like G&W)
     if (embedBuilder.length >= 6000) {
       const errorEmbed = this.baseEmbed();
       errorEmbed.setColor(Colors.DarkRed);
@@ -113,7 +115,7 @@ export class CrouchCancelEmbedCreator extends BaseEmbedCreator {
   private static getCrouchCancelPercentageOrImpossible(hitbox: Hitbox, target: Character): string {
     const crouchCancelPercentage = CrouchCancelCalculator.calculateCrouchCancel(hitbox, target);
     if (crouchCancelPercentage > 0) {
-      return crouchCancelPercentage.toFixed(2);
+      return crouchCancelPercentage.toFixed(2) + '%';
     }
 
     return 'Impossible';

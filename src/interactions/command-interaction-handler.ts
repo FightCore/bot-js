@@ -12,6 +12,7 @@ import { MessageCleaner } from '../utils/message-cleaner';
 import { BaseInteractionHandler } from './base-interaction-handler';
 import { CrouchCancelEmbedCreator } from '../embeds/crouch-cancel-embed-creator';
 import { Loader } from '../data/loader';
+import { ReportModal } from '../modals/report-embed';
 
 @injectable()
 export class CommandInteractionHandler extends BaseInteractionHandler {
@@ -55,6 +56,8 @@ export class CommandInteractionHandler extends BaseInteractionHandler {
       await interaction.reply({
         embeds: embeds,
       });
+    } else if (interaction.commandName === 'report') {
+      await interaction.showModal(new ReportModal().create());
     } else {
       this.logger.warn(`Command not recognized {commandName}`, { commandName: interaction.commandName });
     }

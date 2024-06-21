@@ -12,6 +12,7 @@ import { CommandInteractionHandler } from './interactions/command-interaction-ha
 import { MessageInteractionHandler } from './interactions/message-interaction-handler';
 import { ComponentInteractionHandler } from './interactions/component-interaction-handler';
 import { RegisterCommands } from './commands/register-commands';
+import { ModalInteractionHandler } from './interactions/modal-interaction-handler';
 
 // Skip base classes doesn't check for the @injectable() annotation.
 // Needed to load third party libraries like winston's logger.
@@ -27,6 +28,7 @@ container.bind<RegisterCommands>(RegisterCommands).toSelf();
 container.bind<CommandInteractionHandler>(CommandInteractionHandler).toSelf().inTransientScope();
 container.bind<MessageInteractionHandler>(MessageInteractionHandler).toSelf().inTransientScope();
 container.bind<ComponentInteractionHandler>(ComponentInteractionHandler).toSelf().inTransientScope();
+container.bind<ModalInteractionHandler>(ModalInteractionHandler).toSelf().inTransientScope();
 
 try {
   const client = container.resolve<DiscordClient>(DiscordClient);

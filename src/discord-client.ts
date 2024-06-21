@@ -9,6 +9,7 @@ import { Loader } from './data/loader';
 import { CommandInteractionHandler } from './interactions/command-interaction-handler';
 import { ComponentInteractionHandler } from './interactions/component-interaction-handler';
 import { MessageInteractionHandler } from './interactions/message-interaction-handler';
+import { ModalInteractionHandler } from './interactions/modal-interaction-handler';
 
 @injectable()
 export class DiscordClient {
@@ -51,8 +52,14 @@ export class DiscordClient {
   private async handleInteraction(interaction: Interaction): Promise<void> {
     const commandInteractionHandler = this.container.resolve<CommandInteractionHandler>(CommandInteractionHandler);
     const componentInteractionHandler = this.container.resolve<ComponentInteractionHandler>(ComponentInteractionHandler);
+    const modalInteractionHandler = this.container.resolve<ModalInteractionHandler>(ModalInteractionHandler);
     try {
-      if (!interaction.isButton() && !interaction.isStringSelectMenu() && !interaction.isCommand()) {
+      if (
+        !interaction.isButton() &&
+        !interaction.isStringSelectMenu() &&
+        !interaction.isCommand() &&
+        !interaction.isModalSubmit()
+      ) {
         this.logger.warn('Interaction not supported');
         return;
       }
@@ -64,6 +71,10 @@ export class DiscordClient {
 
       if (interaction.isButton() || interaction.isStringSelectMenu()) {
         await componentInteractionHandler.handle(interaction);
+      }
+
+      if (interaction.isModalSubmit()) {
+        await modalInteractionHandler.handle(interaction);
       }
     } catch (error) {
       if (interaction.isButton() || interaction.isStringSelectMenu()) {

@@ -4,6 +4,7 @@ import { Logger } from 'winston';
 import { Symbols } from '../config/symbols';
 import { MoveSlashCommand } from './move-slash-command';
 import { CrouchCancelCommand } from './crouch-cancel-command';
+import { ReportSlashCommand } from './report-command';
 
 @injectable()
 export class RegisterCommands {
@@ -41,7 +42,7 @@ export class RegisterCommands {
   }
 
   private static getCommandsToRegister(): SlashCommandBuilder[] {
-    return [MoveSlashCommand.create(), CrouchCancelCommand.create()];
+    return [MoveSlashCommand.create(), CrouchCancelCommand.create(), ReportSlashCommand.create()];
     //TournamentSlashCommand.create()
   }
 }
