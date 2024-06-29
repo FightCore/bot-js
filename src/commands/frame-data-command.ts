@@ -7,48 +7,38 @@ import { Symbols } from '../config/symbols';
 import { FailureStore } from '../data/failure-store';
 import { Loader } from '../data/loader';
 import { Search } from '../data/search';
-import { CrouchCancelEmbedCreator } from '../embeds/crouch-cancel-embed-creator';
+import { MoveEmbedCreator } from '../embeds/move-embed-creator';
 import { NotFoundEmbedCreator } from '../embeds/not-found-embed-creator';
 import { SearchResult } from '../models/search/search-result';
 import { SearchResultType } from '../models/search/search-result-type';
 import { MessageCleaner } from '../utils/message-cleaner';
 
 @injectable()
-export class CrouchCancelCommand implements Command {
+export class FrameDataCommand implements Command {
   constructor(
     private search: Search,
     @inject(Symbols.Logger) private logger: Logger,
     private failureStore: FailureStore,
     @inject(Loader) private loader: Loader
   ) {}
-
   get commandNames(): string[] {
-    return ['cc', 'crouchcancel'];
+    return ['framedata'];
   }
   get builders(): SlashCommandBuilder[] {
-    return this.commandNames.map<SlashCommandBuilder>((name) => {
-      const builder = new SlashCommandBuilder();
-      builder
-        .setName(name)
-        .setDescription('Get the crouch cancel info for a move')
-        .addStringOption((option) =>
-          option
-            .setName('character')
-            .setDescription('The character executing the move')
-            .setRequired(true)
-            .addChoices(...charactersChoices)
-        )
-        .addStringOption((option) => option.setName('move').setDescription('The move to look for').setRequired(true))
-        .addStringOption((option) =>
-          option
-            .setName('target')
-            .setDescription('The character being attacked')
-            .addChoices(...charactersChoices)
-        );
-      return builder;
-    });
+    const builder = new SlashCommandBuilder();
+    builder
+      .setName('framedata')
+      .setDescription('Get the frame data from the specified character and move')
+      .addStringOption((option) =>
+        option
+          .setName('character')
+          .setDescription('The character to get the move for')
+          .setRequired(true)
+          .addChoices(...charactersChoices)
+      )
+      .addStringOption((option) => option.setName('move').setDescription('The move to look for').setRequired(true));
+    return [builder];
   }
-
   async handleCommand(interaction: CommandInteraction<CacheType>): Promise<void> {
     const searchResult = await this.getSearchResultOrNull(interaction);
 
@@ -56,29 +46,14 @@ export class CrouchCancelCommand implements Command {
       return;
     }
 
-    const target = interaction.options.get('target', false)?.value;
-    const targetCharacter = this.search.searchCharacter([target as string]);
-
-    if (target && !targetCharacter) {
-      await this.sendNoMoveFoundErrorToInteraction(interaction, `${target} `, new SearchResult(SearchResultType.NotFound));
-      return;
-    }
-
-    if (target && targetCharacter) {
-      this.logger.info(`Replying with crouch cancel information for {character} and {move} with target {target}`, {
-        character: searchResult.character.name,
-        move: searchResult.move.name,
-        target: targetCharacter?.name,
-      });
-    } else {
-      this.logger.info(`Replying with crouch cancel information for {character} and {move}`, {
-        character: searchResult.character.name,
-        move: searchResult.move.name,
-      });
-    }
-    const embeds = CrouchCancelEmbedCreator.create(searchResult.character, searchResult.move, targetCharacter, this.loader);
+    const embedCreator = new MoveEmbedCreator(searchResult.move, searchResult.character);
+    this.logger.info(`Replying with {character} and {move}`, {
+      character: searchResult.character.name,
+      move: searchResult.move.name,
+    });
     await interaction.reply({
-      embeds: embeds,
+      embeds: embedCreator.createEmbed(),
+      components: embedCreator.createButtons(),
     });
   }
 

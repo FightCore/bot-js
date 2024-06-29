@@ -76,7 +76,9 @@ export class CrouchCancelEmbedCreator extends BaseEmbedCreator {
       }
 
       const hitboxMap = new Map<Character, string>();
-      for (const target of dataLoader.data) {
+      for (const target of dataLoader.data
+        .filter((character) => character.characterStatistics.weight > 0)
+        .sort(this.orderCharacters)) {
         const crouchCancelPercentage = this.getCrouchCancelPercentageOrImpossible(hitbox, target);
         hitboxMap.set(target, crouchCancelPercentage);
       }
@@ -118,6 +120,10 @@ export class CrouchCancelEmbedCreator extends BaseEmbedCreator {
       return crouchCancelPercentage.toFixed(2) + '%';
     }
 
-    return 'Impossible';
+    return '0%';
+  }
+
+  private static orderCharacters(characterOne: Character, characterTwo: Character): number {
+    return characterOne.name.localeCompare(characterTwo.name);
   }
 }

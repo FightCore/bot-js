@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:20.15.0-alpine
 
 # Expose the environment variable that is needed to provide the TOKEN.
 ENV TOKEN="Replace me"
@@ -9,6 +9,7 @@ WORKDIR /app
 # Copy configs to /app folder
 COPY package*.json ./
 COPY tsconfig.json ./
+COPY tsconfig-build.json ./
 
 # copy source code to /app/src folder
 COPY src /app/src

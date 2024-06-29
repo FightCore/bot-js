@@ -13,6 +13,10 @@ import { MessageInteractionHandler } from './interactions/message-interaction-ha
 import { ComponentInteractionHandler } from './interactions/component-interaction-handler';
 import { RegisterCommands } from './commands/register-commands';
 import { ModalInteractionHandler } from './interactions/modal-interaction-handler';
+import { Command } from './commands/command';
+import { FrameDataCommand } from './commands/frame-data-command';
+import { CrouchCancelCommand } from './commands/crouch-cancel-command';
+import { ReportCommand } from './commands/report-command';
 
 // Skip base classes doesn't check for the @injectable() annotation.
 // Needed to load third party libraries like winston's logger.
@@ -24,6 +28,9 @@ container.bind<AliasParser>(AliasParser).toSelf().inSingletonScope();
 container.bind<Search>(Search).toSelf().inSingletonScope();
 container.bind<Container>(Container).toConstantValue(container);
 container.bind<DiscordClient>(DiscordClient).toSelf();
+container.bind<Command>('Command').to(FrameDataCommand);
+container.bind<Command>('Command').to(CrouchCancelCommand);
+container.bind<Command>('Command').to(ReportCommand);
 container.bind<RegisterCommands>(RegisterCommands).toSelf();
 container.bind<CommandInteractionHandler>(CommandInteractionHandler).toSelf().inTransientScope();
 container.bind<MessageInteractionHandler>(MessageInteractionHandler).toSelf().inTransientScope();

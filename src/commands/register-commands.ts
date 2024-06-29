@@ -1,14 +1,16 @@
-import { Client, REST, Routes, SlashCommandBuilder } from 'discord.js';
-import { inject, injectable } from 'inversify';
+import { Client, REST, Routes } from 'discord.js';
+import { inject, injectable, multiInject } from 'inversify';
 import { Logger } from 'winston';
 import { Symbols } from '../config/symbols';
-import { MoveSlashCommand } from './move-slash-command';
-import { CrouchCancelCommand } from './crouch-cancel-command';
-import { ReportSlashCommand } from './report-command';
+import { Command } from './command';
 
 @injectable()
 export class RegisterCommands {
-  constructor(@inject(Symbols.Logger) private logger: Logger, @inject(Symbols.Client) private client: Client) {}
+  constructor(
+    @inject(Symbols.Logger) private logger: Logger,
+    @inject(Symbols.Client) private client: Client,
+    @multiInject('Command') private commands: Command[]
+  ) {}
 
   public register(): Promise<unknown> {
     if (process.env.COMMAND_GUILD_ID) {
@@ -32,17 +34,11 @@ export class RegisterCommands {
 
   private registerCommand(fullRoute: `/${string}`): Promise<unknown> {
     const rest = new REST({ version: '10' }).setToken(process.env.TOKEN ?? 'INVALID');
-    const commands = RegisterCommands.getCommandsToRegister();
 
-    this.logger.info('Registering commands: ' + commands.map((command) => command.name));
+    this.logger.info('Registering commands: ' + this.commands.flatMap((command) => command.commandNames));
 
     return rest.put(fullRoute, {
-      body: commands,
+      body: this.commands.flatMap((command) => command.builders),
     });
-  }
-
-  private static getCommandsToRegister(): SlashCommandBuilder[] {
-    return [MoveSlashCommand.create(), CrouchCancelCommand.create(), ReportSlashCommand.create()];
-    //TournamentSlashCommand.create()
   }
 }
