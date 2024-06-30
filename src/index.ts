@@ -17,6 +17,7 @@ import { Command } from './commands/command';
 import { FrameDataCommand } from './commands/frame-data-command';
 import { CrouchCancelCommand } from './commands/crouch-cancel-command';
 import { ReportCommand } from './commands/report-command';
+import { ASDIDownCommand } from './commands/asdi-down-command';
 
 // Skip base classes doesn't check for the @injectable() annotation.
 // Needed to load third party libraries like winston's logger.
@@ -31,6 +32,7 @@ container.bind<DiscordClient>(DiscordClient).toSelf();
 container.bind<Command>('Command').to(FrameDataCommand);
 container.bind<Command>('Command').to(CrouchCancelCommand);
 container.bind<Command>('Command').to(ReportCommand);
+container.bind<Command>('Command').to(ASDIDownCommand);
 container.bind<RegisterCommands>(RegisterCommands).toSelf();
 container.bind<CommandInteractionHandler>(CommandInteractionHandler).toSelf().inTransientScope();
 container.bind<MessageInteractionHandler>(MessageInteractionHandler).toSelf().inTransientScope();

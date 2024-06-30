@@ -9,7 +9,7 @@ export class CrouchCancelCalculator {
     return this.calculate(hitbox, character, 80);
   }
 
-  private static calculate(hitbox: Hitbox, character: Character, knockbackTarget: number): number {
+  static calculate(hitbox: Hitbox, character: Character, knockbackTarget: number): number {
     return (
       ((100 + character.characterStatistics.weight) / 14) *
         (((100 / hitbox.knockbackGrowth) * (knockbackTarget - hitbox.baseKnockback) - 18) / (hitbox.damage + 2)) -
