@@ -31,7 +31,9 @@ export class FrameDataCommand implements Command {
       .addStringOption((option) =>
         option.setName('character').setDescription('The character to get the move for').setRequired(true).setAutocomplete(true)
       )
-      .addStringOption((option) => option.setName('move').setDescription('The move to look for').setRequired(true));
+      .addStringOption((option) =>
+        option.setName('move').setDescription('The move to look for').setRequired(true).setAutocomplete(true)
+      );
     return [builder];
   }
   async handleCommand(interaction: CommandInteraction<CacheType>): Promise<void> {

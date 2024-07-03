@@ -108,6 +108,10 @@ export class Search {
       foundMoves.push({ move: move, distance: distance });
     }
 
+    console.log(foundMoves);
+
+    foundMoves.sort(this.sortDistanceResults);
+
     if (foundMoves.length === 0) {
       return new SearchResult(SearchResultType.MoveNotFound, foundAlias.record.character);
     }

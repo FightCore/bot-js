@@ -1,7 +1,6 @@
 import { injectable } from 'inversify';
 import { Command } from './command';
 import { SlashCommandBuilder, CommandInteraction, CacheType } from 'discord.js';
-import { charactersChoices } from './utils/character-options';
 import { Search } from '../data/search';
 import { CharacterEmbedCreator } from '../embeds/character-embed-creator';
 
@@ -17,11 +16,7 @@ export class CharacterCommand implements Command {
       .setName('character')
       .setDescription('Get the information about a specific character.')
       .addStringOption((option) =>
-        option
-          .setName('character')
-          .setDescription('The character to look for')
-          .setRequired(true)
-          .addChoices(...charactersChoices)
+        option.setName('character').setDescription('The character to look for').setRequired(true).setAutocomplete(true)
       );
     return [builder];
   }

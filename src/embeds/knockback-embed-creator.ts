@@ -41,7 +41,7 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
     const characterEmote = CharacterEmoji.getEmoteId(character.normalizedName);
     const targetEmote = CharacterEmoji.getEmoteId(target.normalizedName);
     embedBuilder.setTitle(`${characterEmote} ${character.name} - ${move.name} vs ${target.name} ${targetEmote} `);
-    for (const hitbox of move.hitboxes) {
+    for (const hitbox of move.hitboxes.sort(this.orderHitboxes)) {
       if (hitbox.angle > 179 && hitbox.angle != 361) {
         hitboxMap.set(hitbox.name, `Can not be ${this.shortTerm} due to angle being higher than 179 (${hitbox.angle})`);
       } else if (hitbox.angle === 0) {
@@ -65,8 +65,7 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
   private createForAll(character: Character, move: Move, embedBuilder: EmbedBuilder, dataLoader: Loader): EmbedBuilder[] {
     const characterEmote = CharacterEmoji.getEmoteId(character.normalizedName);
     embedBuilder.setTitle(`${characterEmote} ${character.name} - ${move.name}`);
-
-    for (const hitbox of move.hitboxes) {
+    for (const hitbox of move.hitboxes.sort(this.orderHitboxes)) {
       if (hitbox.angle > 179 && hitbox.angle != 361) {
         embedBuilder.addFields({
           name: hitbox.name,
@@ -76,17 +75,8 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
       } else if (hitbox.angle === 0) {
         embedBuilder.addFields({ name: hitbox.name, value: `Can not be ${this.shortTerm} due to angle being 0` });
         continue;
-      } else if (hitbox.setKnockback && hitbox.setKnockback < this.knockbackTarget) {
-        embedBuilder.addFields({
-          name: hitbox.name,
-          value: `Can not break ${this.longTerm} due to the hitbox having low set knockback`,
-        });
-        continue;
       } else if (hitbox.setKnockback) {
-        embedBuilder.addFields({
-          name: hitbox.name,
-          value: `Can not be ${this.shortTerm} due to the hitbox having high set knockback`,
-        });
+        this.addSetKnockbackField(embedBuilder, hitbox, dataLoader);
         continue;
       }
 
@@ -140,5 +130,48 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
 
   private orderCharacters(characterOne: Character, characterTwo: Character): number {
     return characterOne.name.localeCompare(characterTwo.name);
+  }
+
+  private orderHitboxes(hitboxOne: Hitbox, hitboxTwo: Hitbox): number {
+    return hitboxOne.name.localeCompare(hitboxTwo.name, undefined, { numeric: true, sensitivity: 'base' });
+  }
+
+  private addSetKnockbackField(embedBuilder: EmbedBuilder, hitbox: Hitbox, dataLoader: Loader): void {
+    const succeedsArray: Character[][] = [[], []];
+    for (const character of dataLoader.data
+      .filter((character) => character.characterStatistics.weight > 0)
+      .sort(this.orderCharacters)) {
+      if (!CrouchCancelCalculator.meetsKnockbackTarget(hitbox, character, this.knockbackTarget)) {
+        succeedsArray[0].push(character);
+      } else {
+        succeedsArray[1].push(character);
+      }
+    }
+
+    if (succeedsArray[0].length == 0) {
+      embedBuilder.addFields({
+        name: hitbox.name,
+        value: `Can never be ${this.shortTerm} by all characters.`,
+      });
+      return;
+    } else if (succeedsArray[1].length == 0) {
+      embedBuilder.addFields({
+        name: hitbox.name,
+        value: `Can always be ${this.shortTerm} by all characters.`,
+      });
+      return;
+    }
+
+    const canText =
+      `**Can always be ${this.shortTerm} by:**\n` +
+      succeedsArray[0].map((character) => CharacterEmoji.getEmoteId(character.normalizedName)).join(' ');
+    const canNotText =
+      `**Can never be ${this.shortTerm} by:**\n` +
+      succeedsArray[1].map((character) => CharacterEmoji.getEmoteId(character.normalizedName)).join(' ');
+
+    embedBuilder.addFields({
+      name: hitbox.name,
+      value: canText + '\n' + canNotText,
+    });
   }
 }

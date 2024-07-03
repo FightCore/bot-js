@@ -1,6 +1,5 @@
 import { SlashCommandBuilder, CommandInteraction, CacheType, InteractionResponse } from 'discord.js';
 import { Command } from './command';
-import { charactersChoices } from './utils/character-options';
 import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
 import { Symbols } from '../config/symbols';
@@ -26,18 +25,13 @@ export abstract class KnockbackCommand implements Command {
         .setName(name)
         .setDescription('Get the crouch cancel info for a move')
         .addStringOption((option) =>
-          option
-            .setName('character')
-            .setDescription('The character executing the move')
-            .setRequired(true)
-            .addChoices(...charactersChoices)
+          option.setName('character').setDescription('The character executing the move').setRequired(true).setAutocomplete(true)
         )
-        .addStringOption((option) => option.setName('move').setDescription('The move to look for').setRequired(true))
         .addStringOption((option) =>
-          option
-            .setName('target')
-            .setDescription('The character being attacked')
-            .addChoices(...charactersChoices)
+          option.setName('move').setDescription('The move to look for').setRequired(true).setAutocomplete(true)
+        )
+        .addStringOption((option) =>
+          option.setName('target').setDescription('The character being attacked').setAutocomplete(true)
         );
       return builder;
     });
