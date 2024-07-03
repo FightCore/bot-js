@@ -8,7 +8,6 @@ import { Search } from '../data/search';
 import { Loader } from '../data/loader';
 import { SearchResultType } from '../models/search/search-result-type';
 import { Move } from '../models/move';
-import { ReadableStreamDefaultController } from 'stream/web';
 
 @injectable()
 export class AutoCompleteInteractionHandler extends BaseInteractionHandler {
