@@ -12,7 +12,7 @@ export class BodyFormatter {
       return undefined;
     }
 
-    properties = properties.filter((property) => property.value !== undefined && property.value !== null);
+    properties = properties.filter((property) => !!property.value);
     return properties.map(InfoLine.createLine).join('\n');
   }
 }

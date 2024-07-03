@@ -7,6 +7,7 @@ import { InfoLine } from './formatting/info-line';
 import { CharacterEmoji } from '../utils/character-emoji';
 import { Loader } from '../data/loader';
 import { Hitbox } from '../models/hitbox';
+import { versionNumber } from '../meta-data';
 
 export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
   constructor(private knockbackTarget: number, private longTerm: string, private shortTerm: string) {
@@ -17,7 +18,7 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
     const embedCreator = this.baseEmbed();
 
     if (move.gifUrl) {
-      embedCreator.setImage(move.gifUrl);
+      embedCreator.setImage(move.gifUrl + `?version=${versionNumber}`);
     } else {
       embedCreator.addFields({
         name: 'No GIF available',
@@ -45,6 +46,9 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
         hitboxMap.set(hitbox.name, `Can not be ${this.shortTerm} due to angle being higher than 179 (${hitbox.angle})`);
       } else if (hitbox.angle === 0) {
         hitboxMap.set(hitbox.name, `Can not be ${this.shortTerm} due to angle being 0`);
+      } else if (hitbox.setKnockback) {
+        const canBeCanceled = !CrouchCancelCalculator.meetsKnockbackTarget(hitbox, target, this.knockbackTarget);
+        hitboxMap.set(hitbox.name, `Can ${canBeCanceled ? 'always' : 'not'} be ${this.shortTerm}`);
       } else {
         const crouchCancelPercentage = this.getCrouchCancelPercentageOrImpossible(hitbox, target);
         hitboxMap.set(hitbox.name, crouchCancelPercentage);
@@ -71,6 +75,18 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
         continue;
       } else if (hitbox.angle === 0) {
         embedBuilder.addFields({ name: hitbox.name, value: `Can not be ${this.shortTerm} due to angle being 0` });
+        continue;
+      } else if (hitbox.setKnockback && hitbox.setKnockback < this.knockbackTarget) {
+        embedBuilder.addFields({
+          name: hitbox.name,
+          value: `Can not break ${this.longTerm} due to the hitbox having low set knockback`,
+        });
+        continue;
+      } else if (hitbox.setKnockback) {
+        embedBuilder.addFields({
+          name: hitbox.name,
+          value: `Can not be ${this.shortTerm} due to the hitbox having high set knockback`,
+        });
         continue;
       }
 

@@ -10,6 +10,7 @@ import { CommandInteractionHandler } from './interactions/command-interaction-ha
 import { ComponentInteractionHandler } from './interactions/component-interaction-handler';
 import { MessageInteractionHandler } from './interactions/message-interaction-handler';
 import { ModalInteractionHandler } from './interactions/modal-interaction-handler';
+import { AutoCompleteInteractionHandler } from './interactions/auto-complete-interaction-handler';
 
 @injectable()
 export class DiscordClient {
@@ -53,12 +54,14 @@ export class DiscordClient {
     const commandInteractionHandler = this.container.resolve<CommandInteractionHandler>(CommandInteractionHandler);
     const componentInteractionHandler = this.container.resolve<ComponentInteractionHandler>(ComponentInteractionHandler);
     const modalInteractionHandler = this.container.resolve<ModalInteractionHandler>(ModalInteractionHandler);
+    const autoCompleteInteractionHandler = this.container.resolve<AutoCompleteInteractionHandler>(AutoCompleteInteractionHandler);
     try {
       if (
         !interaction.isButton() &&
         !interaction.isStringSelectMenu() &&
         !interaction.isCommand() &&
-        !interaction.isModalSubmit()
+        !interaction.isModalSubmit() &&
+        !interaction.isAutocomplete()
       ) {
         this.logger.warn('Interaction not supported');
         return;
@@ -75,6 +78,9 @@ export class DiscordClient {
 
       if (interaction.isModalSubmit()) {
         await modalInteractionHandler.handle(interaction);
+      }
+      if (interaction.isAutocomplete()) {
+        await autoCompleteInteractionHandler.handle(interaction);
       }
     } catch (error) {
       if (interaction.isButton() || interaction.isStringSelectMenu()) {

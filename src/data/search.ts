@@ -135,6 +135,10 @@ export class Search {
     return alias?.record?.character;
   }
 
+  public searchForCharacter(keyWords: string[]): Character[] {
+    return this.searchTopAliases(keyWords).map((alias) => alias.character!);
+  }
+
   private searchAlias(keyWords: string[]): { record: AliasRecord; remainder: string } | undefined {
     let characterName = '';
     let foundAlias: AliasRecord | undefined = undefined;
@@ -171,6 +175,35 @@ export class Search {
     }
 
     return undefined;
+  }
+
+  private searchTopAliases(keyWords: string[]): AliasRecord[] {
+    let characterName = '';
+    const characters: { alias: AliasRecord; distance: number }[] = [];
+    for (const word of keyWords) {
+      characterName += word;
+      for (const alias of this.aliases) {
+        const distance = this.compareToCharacter(alias, characterName);
+
+        // If the distance is undefined, nothing has been found and it can be skipped over.
+        if (distance == undefined) {
+          continue;
+          // If the distance is greater than the top distance
+          // save it as the new top distance.
+        }
+
+        characters.push({ alias, distance });
+      }
+    }
+
+    if (characters.length > 0) {
+      return characters
+        .sort((a, b) => b.distance - a.distance)
+        .slice(0, 5)
+        .map((result) => result.alias);
+    }
+
+    return this.aliases.slice(0, 25);
   }
 
   private compareToMove(move: Move, query: string, doNormalizedName = true): number | undefined {

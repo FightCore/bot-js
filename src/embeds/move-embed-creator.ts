@@ -18,6 +18,7 @@ import { ShieldAdvantageFieldCreator } from './field-creator/shield-advantage-fi
 import { BodyFormatter } from './formatting/body-formatter';
 import { InfoLine } from './formatting/info-line';
 import { LineProperty } from './formatting/line-property';
+import { versionNumber } from '../meta-data';
 
 export class MoveEmbedCreator extends BaseEmbedCreator {
   private readonly move: Move;
@@ -39,11 +40,11 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       moveEmbedFields.push({
         name: 'Frame data',
         value: moveData,
-        inline: true,
+        //inline: true,
       });
     }
 
-    if (this.move.hitboxes && this.move.hitboxes.length > 0) {
+    if (this.move.hitboxes && this.move.hitboxes.length > 0 && this.move.hitboxes.length > 3) {
       moveEmbedFields.push({
         name: 'Hitbox summary',
         value: this.getHitboxes(this.move.hitboxes),
@@ -94,6 +95,54 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
           });
         }
       }
+    } else if (this.move.hitboxes && this.move.hitboxes.length > 0) {
+      for (const hitbox of this.move.hitboxes) {
+        const properties: LineProperty[] = [
+          {
+            title: 'Damage',
+            value: hitbox.damage,
+          },
+          {
+            title: 'Angle',
+            value: hitbox.angle,
+          },
+          {
+            title: 'Effect',
+            value: hitbox.effect,
+          },
+          {
+            title: 'Base knockback',
+            value: hitbox.baseKnockback,
+          },
+          {
+            title: 'Knockback growth',
+            value: hitbox.knockbackGrowth,
+          },
+          {
+            title: 'Set knockback',
+            value: hitbox.setKnockback,
+          },
+          {
+            title: 'Shieldstun',
+            value: hitbox.shieldstun,
+          },
+          {
+            title: 'Hitbox color',
+            value: this.getColorForId(hitbox.name),
+          },
+        ];
+
+        moveEmbedFields.push({
+          name: hitbox.name,
+          value: BodyFormatter.create(properties) as string,
+          inline: true,
+        });
+      }
+
+      moveEmbedFields.push({
+        name: 'Hitbox Colors',
+        value: 'id0=Red, id1=Green, id2=Purple, id3=Orange',
+      });
     }
 
     const moveEmbed = this.baseEmbed()
@@ -105,7 +154,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       .addFields(moveEmbedFields);
 
     if (this.move.gifUrl) {
-      moveEmbed.setImage(this.move.gifUrl);
+      moveEmbed.setImage(this.move.gifUrl + `?version=${versionNumber}`);
     } else {
       moveEmbed.addFields({
         name: 'No GIF available',
@@ -274,5 +323,20 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     ];
 
     return BodyFormatter.create(properties) as string;
+  }
+
+  private getColorForId(hitboxId: string): string {
+    switch (hitboxId) {
+      case 'id0':
+        return ':red_circle:';
+      case 'id1':
+        return ':green_circle:';
+      case 'id2':
+        return ':purple_circle:';
+      case 'id3':
+        return ':orange_circle:';
+      default:
+        return 'Unknown';
+    }
   }
 }

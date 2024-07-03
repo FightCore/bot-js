@@ -82,7 +82,8 @@
         "name": "Ganondorf",
         "names": [
             "ganondorf",
-            "ganon"
+            "ganon",
+            "dorf"
         ],
         "moves": {
             "stomp": "dair"

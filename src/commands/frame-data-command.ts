@@ -1,6 +1,5 @@
 import { SlashCommandBuilder, CommandInteraction, CacheType, InteractionResponse } from 'discord.js';
 import { Command } from './command';
-import { charactersChoices } from './utils/character-options';
 import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
 import { Symbols } from '../config/symbols';
@@ -30,11 +29,7 @@ export class FrameDataCommand implements Command {
       .setName('framedata')
       .setDescription('Get the frame data from the specified character and move')
       .addStringOption((option) =>
-        option
-          .setName('character')
-          .setDescription('The character to get the move for')
-          .setRequired(true)
-          .addChoices(...charactersChoices)
+        option.setName('character').setDescription('The character to get the move for').setRequired(true).setAutocomplete(true)
       )
       .addStringOption((option) => option.setName('move').setDescription('The move to look for').setRequired(true));
     return [builder];

@@ -11,7 +11,8 @@ export const charactersChoices: APIApplicationCommandOptionChoice<string>[] = [
   { name: 'Ice Climbers', value: 'iceclimbers' },
   { name: 'Jigglypuff', value: 'jigglypuff' },
   { name: 'Kirby', value: 'kirby' },
-  { name: 'Link', value: 'luigi' },
+  { name: 'Link', value: 'link' },
+  { name: 'Luigi', value: 'luigi' },
   { name: 'Mario', value: 'mario' },
   { name: 'Marth', value: 'marth' },
   { name: 'Mewtwo', value: 'mewtwo' },
@@ -25,5 +26,6 @@ export const charactersChoices: APIApplicationCommandOptionChoice<string>[] = [
   { name: 'Sheik', value: 'sheik' },
   { name: 'Yoshi', value: 'yoshi' },
   { name: 'Young Link', value: 'ylink' },
-  { name: 'Zelda', value: 'zelda' },
+  // Taking out zelda for now, discord allows only 25 options, thanks discord.
+  //  { name: 'Zelda', value: 'zelda' },
 ];
