@@ -19,6 +19,7 @@ import { BodyFormatter } from './formatting/body-formatter';
 import { InfoLine } from './formatting/info-line';
 import { LineProperty } from './formatting/line-property';
 import { versionNumber } from '../meta-data';
+import { getMoveLink } from '../utils/fightcore-link';
 
 export class MoveEmbedCreator extends BaseEmbedCreator {
   private readonly move: Move;
@@ -147,9 +148,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
 
     const moveEmbed = this.baseEmbed()
       .setTitle(`${this.character.name} - ${this.move.name}`)
-      .setURL(
-        `https://fightcore.gg/characters/${this.character.normalizedName}/moves/${this.move.normalizedName}?referer=fightcore_bot`
-      )
+      .setURL(getMoveLink(this.character, this.move))
       .setColor(this.embedColor)
       .addFields(moveEmbedFields);
 
@@ -158,7 +157,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     } else {
       moveEmbed.addFields({
         name: 'No GIF available',
-        value: 'There is no GIF available for this move. Visit https://www.fightcore.gg to help us out.',
+        value: 'There is no GIF available for this move.',
       });
     }
 

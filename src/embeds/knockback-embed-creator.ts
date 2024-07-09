@@ -8,6 +8,7 @@ import { CharacterEmoji } from '../utils/character-emoji';
 import { Loader } from '../data/loader';
 import { Hitbox } from '../models/hitbox';
 import { versionNumber } from '../meta-data';
+import { getMoveLink } from '../utils/fightcore-link';
 
 export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
   constructor(private knockbackTarget: number, private longTerm: string, private shortTerm: string) {
@@ -22,12 +23,10 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
     } else {
       embedCreator.addFields({
         name: 'No GIF available',
-        value: 'There is no GIF available for this move. Visit https://www.fightcore.gg to help us out.',
+        value: 'There is no GIF available for this move.',
       });
     }
-    embedCreator.setURL(
-      `https://fightcore.gg/characters/${character.fightCoreId}/${character.normalizedName}/moves/${move.id}/${move.normalizedName}/?utm_source=fightcore_bot`
-    );
+    embedCreator.setURL(getMoveLink(character, move));
 
     if (target) {
       return this.createForTarget(character, move, target, embedCreator);
