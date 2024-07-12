@@ -30,7 +30,7 @@ test('Ensure data is locally loaded', async () => {
       }),
     ],
   });
-  process.env.DATA_URL = 'https://data.fightcore.gg/framedata-invalid.json';
+  process.env.DATA_URL = 'https://data.fightcore.gg/framedata.json2';
   // Load function gets called within constructor.
   const loader = new Loader(logger);
   await loader.ensureLoaded();
