@@ -173,7 +173,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     // Does not start with a (aerial moves always start with 'a' like 'aupb', 'asideb', etc)
     if (
       this.move.type === MoveType.special &&
-      this.move.normalizedName.startsWith('a') &&
+      !this.move.normalizedName.startsWith('a') &&
       // Find the aerial move that corresponds with the provided grounded move.
       this.character.moves.findIndex((groundedMove) => groundedMove.normalizedName === 'a' + this.move.normalizedName) !== -1
     ) {
