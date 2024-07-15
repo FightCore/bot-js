@@ -42,6 +42,27 @@
         ]
     },
     {
+        "move": "aneuralb",
+        "alias": [
+            "aerialneutralspecial",
+            "aerialnetrualb"
+        ]
+    },
+    {
+        "move": "asideb",
+        "alias": [
+            "aerialsidespecial",
+            "aerialsideb"
+        ]
+    },
+    {
+        "move": "aupb",
+        "alias": [
+            "aerialupspecial",
+            "aerialupb"
+        ]
+    },
+    {
         "move": "grab",
         "alias": [
             "shieldgrab"

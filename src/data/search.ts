@@ -114,7 +114,9 @@ export class Search {
       return new SearchResult(SearchResultType.MoveNotFound, foundAlias.record.character);
     }
 
+    console.log(foundMoves);
     if (foundMoves.length == 2 && foundMoves[0].move.normalizedName === 'upb') {
+      console.log(foundMoves);
       foundMoves = [foundMoves[0]];
     }
 
