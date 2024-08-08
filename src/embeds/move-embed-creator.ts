@@ -19,9 +19,10 @@ import { getMoveLink } from '../utils/fightcore-link';
 import { processDuplicateHitboxes, processDuplicateHits } from '../utils/hitbox-utils';
 import { HitlagFieldCreator } from './field-creator/hitlag-field-creator';
 import { ShieldAdvantageFieldCreator } from './field-creator/shield-advantage-field-creator';
+import { fixUniqueMoves } from '../data/unique-move-fixes';
 
 export class MoveEmbedCreator extends BaseEmbedCreator {
-  private readonly move: Move;
+  private move: Move;
   private readonly character: Character;
   private readonly embedColor: ColorResolvable;
 
@@ -34,37 +35,18 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
 
   public createEmbed(): EmbedBuilder[] {
     const moveEmbedFields: APIEmbedField[] = [];
+    this.move = fixUniqueMoves(this.move, this.character);
     const moveData = this.getMove(this.move);
 
     if (this.move.hits && this.move.hits.length > 0) {
-      const hits = processDuplicateHits(processDuplicateHitboxes(this.move.hits));
-      for (const hit of hits) {
-        let name = hit.name ? hit.name : `Frames ${hit.aggregatedStart} - ${hit.aggregatedEnd}`;
-        if (name === 'unknown') {
-          name = 'All hits';
-        }
-        let hitsInfo = '';
-        if (hit.timings.length > 1) {
-          hitsInfo = '**Hits**: ' + hit.timings.join(', ') + '\n';
-        }
-
-        const hitboxInfo = this.getHitboxes(hit.hitboxes);
-        const hitlagInfo = HitlagFieldCreator.createHitlagFields(hit.hitboxes);
-        const shieldAdvantageInfo = ShieldAdvantageFieldCreator.createShieldAdvantageField(hit.hitboxes, this.move);
-
-        const text = hitsInfo + hitboxInfo + '\n' + hitlagInfo + '\n' + shieldAdvantageInfo;
-
-        moveEmbedFields.push({
-          name: name,
-          value: text,
-          inline: true,
-        });
-      }
+      moveEmbedFields.push(...this.createHitboxEmbedFields());
     }
-    moveEmbedFields.push({
-      name: 'Hitbox Colors',
-      value: 'id0=Red, id1=Green, id2=Purple, id3=Orange',
-    });
+    if (this.move.gifUrl) {
+      moveEmbedFields.push({
+        name: 'Hitbox Colors',
+        value: 'id0=Red, id1=Green, id2=Purple, id3=Orange',
+      });
+    }
 
     const moveEmbed = this.baseEmbed()
       .setTitle(`${this.character.name} - ${this.move.name}`)
@@ -137,6 +119,41 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     }
 
     return result;
+  }
+
+  private createHitboxEmbedFields(): APIEmbedField[] {
+    const fields: APIEmbedField[] = [];
+    const hits = processDuplicateHits(processDuplicateHitboxes(this.move.hits));
+    for (const hit of hits) {
+      let name = hit.name ? hit.name : `Frames ${hit.aggregatedStart} - ${hit.aggregatedEnd}`;
+      if (name === 'unknown') {
+        name = 'All hits';
+      }
+      let hitsInfo = '';
+      if (hit.timings.length > 1) {
+        hitsInfo = '**Hits**: ' + hit.timings.join(', ') + '\n';
+      }
+
+      const hitboxInfo = this.getHitboxes(hit.hitboxes);
+      const hitlagInfo = HitlagFieldCreator.createHitlagFields(hit.hitboxes);
+      const shieldAdvantageInfo = ShieldAdvantageFieldCreator.createShieldAdvantageField(hit.hitboxes, this.move);
+
+      let text = hitsInfo + hitboxInfo;
+      if (hitlagInfo) {
+        text += '\n' + hitlagInfo;
+      }
+      if (shieldAdvantageInfo) {
+        text += '\n' + shieldAdvantageInfo;
+      }
+
+      fields.push({
+        name: name,
+        value: text,
+        inline: true,
+      });
+    }
+
+    return fields;
   }
 
   private getMove(move: Move): string {

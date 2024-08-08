@@ -9,6 +9,7 @@ import { Loader } from '../data/loader';
 import { Hitbox } from '../models/hitbox';
 import { versionNumber } from '../meta-data';
 import { getMoveLink } from '../utils/fightcore-link';
+import { processDuplicateHits, processDuplicateHitboxesForCrouchCancel } from '../utils/hitbox-utils';
 
 export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
   constructor(private knockbackTarget: number, private longTerm: string, private shortTerm: string) {
@@ -40,84 +41,94 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
     const characterEmote = CharacterEmoji.getEmoteId(character.normalizedName);
     const targetEmote = CharacterEmoji.getEmoteId(target.normalizedName);
     embedBuilder.setTitle(`${characterEmote} ${character.name} - ${move.name} vs ${target.name} ${targetEmote} `);
-    // TODO Fix
-    // for (const hitbox of move.hitboxes.sort(this.orderHitboxes)) {
-    //   if (hitbox.angle > 179 && hitbox.angle != 361) {
-    //     hitboxMap.set(hitbox.name, `Can not be ${this.shortTerm} due to angle being higher than 179 (${hitbox.angle})`);
-    //   } else if (hitbox.angle === 0) {
-    //     hitboxMap.set(hitbox.name, `Can not be ${this.shortTerm} due to angle being 0`);
-    //   } else if (hitbox.setKnockback) {
-    //     const canBeCanceled = !CrouchCancelCalculator.meetsKnockbackTarget(hitbox, target, this.knockbackTarget);
-    //     hitboxMap.set(hitbox.name, `Can ${canBeCanceled ? 'always' : 'not'} be ${this.shortTerm}`);
-    //   } else {
-    //     const crouchCancelPercentage = this.getCrouchCancelPercentageOrImpossible(hitbox, target);
-    //     hitboxMap.set(hitbox.name, crouchCancelPercentage);
-    //   }
-    // }
-    let result = `${this.longTerm} breaks at the following percentages for each hitbox.\n`;
-    for (const keyValuePair of hitboxMap) {
-      result += InfoLine.createLineWithTitle(keyValuePair[0], keyValuePair[1]) + '\n';
+
+    const hits = processDuplicateHits(processDuplicateHitboxesForCrouchCancel(move.hits));
+    if (hits.length > 20) {
+      return this.createErrorEmbed(embedBuilder);
     }
+
+    let result = `${this.longTerm} breaks at the following percentages for each hitbox.\n`;
+    for (const hit of hits) {
+      const name = hit.name ? hit.name : `Frames ${hit.aggregatedStart} - ${hit.aggregatedEnd}`;
+
+      for (const hitbox of hit.hitboxes.sort(this.orderHitboxes)) {
+        if (hitbox.angle > 179 && hitbox.angle != 361) {
+          hitboxMap.set(
+            name + ' - ' + hitbox.name,
+            `Can not be ${this.shortTerm} due to angle being higher than 179 (${hitbox.angle})`
+          );
+        } else if (hitbox.angle === 0) {
+          hitboxMap.set(name + ' - ' + hitbox.name, `Can not be ${this.shortTerm} due to angle being 0`);
+        } else if (hitbox.setKnockback) {
+          const canBeCanceled = !CrouchCancelCalculator.meetsKnockbackTarget(hitbox, target, this.knockbackTarget);
+          hitboxMap.set(name + ' - ' + hitbox.name, `Can ${canBeCanceled ? 'always' : 'not'} be ${this.shortTerm}`);
+        } else {
+          const crouchCancelPercentage = this.getCrouchCancelPercentageOrImpossible(hitbox, target);
+          hitboxMap.set(name + ' - ' + hitbox.name, crouchCancelPercentage);
+        }
+      }
+
+      for (const keyValuePair of hitboxMap) {
+        result += InfoLine.createLineWithTitle(keyValuePair[0], keyValuePair[1]) + '\n';
+      }
+    }
+
     embedBuilder.addFields({ name: `${this.longTerm} percentage`, value: result });
     return [embedBuilder];
   }
 
-  // TODO Remove
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private createForAll(character: Character, move: Move, embedBuilder: EmbedBuilder, dataLoader: Loader): EmbedBuilder[] {
     const characterEmote = CharacterEmoji.getEmoteId(character.normalizedName);
     embedBuilder.setTitle(`${characterEmote} ${character.name} - ${move.name}`);
-    // TODO Fix
-    // for (const hitbox of move.hitboxes.sort(this.orderHitboxes)) {
-    //   if (hitbox.angle > 179 && hitbox.angle != 361) {
-    //     embedBuilder.addFields({
-    //       name: hitbox.name,
-    //       value: `Can not be ${this.shortTerm} due to angle being higher than 179 (${hitbox.angle})`,
-    //     });
-    //     continue;
-    //   } else if (hitbox.angle === 0) {
-    //     embedBuilder.addFields({ name: hitbox.name, value: `Can not be ${this.shortTerm} due to angle being 0` });
-    //     continue;
-    //   } else if (hitbox.setKnockback) {
-    //     this.addSetKnockbackField(embedBuilder, hitbox, dataLoader);
-    //     continue;
-    //   }
 
-    //   const hitboxMap = new Map<Character, string>();
-    //   for (const target of dataLoader.data
-    //     .filter((character) => character.characterStatistics.weight > 0)
-    //     .sort(this.orderCharacters)) {
-    //     const crouchCancelPercentage = this.getCrouchCancelPercentageOrImpossible(hitbox, target);
-    //     hitboxMap.set(target, crouchCancelPercentage);
-    //   }
+    const hits = processDuplicateHits(processDuplicateHitboxesForCrouchCancel(move.hits));
+    if (hits.length > 20) {
+      return this.createErrorEmbed(embedBuilder);
+    }
+    for (const hit of hits) {
+      const hitboxes = hit.hitboxes;
+      const characters = dataLoader.data
+        .filter((character) => character.characterStatistics.weight > 0)
+        .sort(this.orderCharacters);
+      for (const hitbox of hitboxes) {
+        const name = hit.name ? hit.name : `Frames ${hit.aggregatedStart} - ${hit.aggregatedEnd}`;
 
-    //   let fieldText = '';
-    //   let iterator = 0;
-    //   for (const keyValuePair of hitboxMap) {
-    //     const emote = CharacterEmoji.getEmoteId(keyValuePair[0].normalizedName);
-    //     fieldText += `${emote} ${keyValuePair[1]} `;
-    //     iterator++;
-    //     if (iterator === 4) {
-    //       iterator = 0;
-    //       fieldText += '\n';
-    //     }
-    //   }
+        if (hitbox.angle > 179 && hitbox.angle != 361) {
+          embedBuilder.addFields({
+            name: name + ' - ' + hitbox.name,
+            value: `Can not be ${this.shortTerm} due to angle being higher than 179 (${hitbox.angle})`,
+          });
+          continue;
+        } else if (hitbox.angle === 0) {
+          embedBuilder.addFields({
+            name: name + ' - ' + hitbox.name,
+            value: `Can not be ${this.shortTerm} due to angle being 0`,
+          });
+          continue;
+        } else if (hitbox.setKnockback) {
+          this.addSetKnockbackField(embedBuilder, hitbox, dataLoader, name);
+          continue;
+        }
 
-    //   embedBuilder.addFields({ name: hitbox.name, value: fieldText });
-    // }
+        let fieldText = '';
+        let iterator = 0;
+        for (const character of characters) {
+          const emote = CharacterEmoji.getEmoteId(character.normalizedName);
+          fieldText += `${emote} ${this.getCrouchCancelPercentageOrImpossible(hitbox, character)} `;
+          iterator++;
+          if (iterator === 4) {
+            iterator = 0;
+            fieldText += '\n';
+          }
+        }
+        embedBuilder.addFields({ name: name + ' - ' + hitbox.name, value: fieldText, inline: false });
+      }
+    }
+
     // Discord has a max length size to the embed.
     // With a large amount of hitboxes (like G&W)
     if (embedBuilder.length >= 6000) {
-      const errorEmbed = this.baseEmbed();
-      errorEmbed.setColor(Colors.DarkRed);
-      errorEmbed.setTitle(embedBuilder.data.title!);
-      errorEmbed.addFields({
-        name: 'Too many hitboxes',
-        value: `This move has too many hitboxes to be displayed on Discord, either supply a target character or visit our [website](${embedBuilder
-          .data.url!})`,
-      });
-
-      return [errorEmbed];
+      return this.createErrorEmbed(embedBuilder);
     }
     return [embedBuilder];
   }
@@ -139,7 +150,7 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
     return hitboxOne.name.localeCompare(hitboxTwo.name, undefined, { numeric: true, sensitivity: 'base' });
   }
 
-  private addSetKnockbackField(embedBuilder: EmbedBuilder, hitbox: Hitbox, dataLoader: Loader): void {
+  private addSetKnockbackField(embedBuilder: EmbedBuilder, hitbox: Hitbox, dataLoader: Loader, hitName: string): void {
     const succeedsArray: Character[][] = [[], []];
     for (const character of dataLoader.data
       .filter((character) => character.characterStatistics.weight > 0)
@@ -153,13 +164,13 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
 
     if (succeedsArray[0].length == 0) {
       embedBuilder.addFields({
-        name: hitbox.name,
+        name: hitName + ' - ' + hitbox.name,
         value: `Can never be ${this.shortTerm} by all characters.`,
       });
       return;
     } else if (succeedsArray[1].length == 0) {
       embedBuilder.addFields({
-        name: hitbox.name,
+        name: hitName + ' - ' + hitbox.name,
         value: `Can always be ${this.shortTerm} by all characters.`,
       });
       return;
@@ -173,8 +184,21 @@ export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
       succeedsArray[1].map((character) => CharacterEmoji.getEmoteId(character.normalizedName)).join(' ');
 
     embedBuilder.addFields({
-      name: hitbox.name,
+      name: hitName + ' - ' + hitbox.name,
       value: canText + '\n' + canNotText,
     });
+  }
+
+  private createErrorEmbed(embedBuilder: EmbedBuilder): EmbedBuilder[] {
+    const errorEmbed = this.baseEmbed();
+    errorEmbed.setColor(Colors.DarkRed);
+    errorEmbed.setTitle(embedBuilder.data.title!);
+    errorEmbed.addFields({
+      name: 'Too many hitboxes',
+      value: `This move has too many hitboxes to be displayed on Discord, either supply a target character or visit our [website](${embedBuilder
+        .data.url!})`,
+    });
+
+    return [errorEmbed];
   }
 }

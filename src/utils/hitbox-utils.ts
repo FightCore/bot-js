@@ -27,10 +27,58 @@ export function areHitboxesEqual(hitboxOne: Hitbox, hitboxTwo: Hitbox): boolean 
   return true;
 }
 
+export function areHitboxesEqualForCrouchCancel(hitboxOne: Hitbox, hitboxTwo: Hitbox): boolean {
+  const attributes: (keyof Hitbox)[] = ['damage', 'baseKnockback', 'knockbackGrowth', 'setKnockback'];
+
+  for (const attribute of attributes) {
+    if (hitboxOne[attribute] != hitboxTwo[attribute]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export function processDuplicateHitboxes(hits: Hit[]): Hit[] {
   const newData = [];
   for (const hit of hits) {
     if (areAllHitboxesEqual(hit.hitboxes)) {
+      const newHitbox = hit.hitboxes[0];
+      newHitbox.name = 'All Hitboxes';
+      const newHit = hit;
+      newHit.hitboxes = [newHitbox];
+      newData.push(newHit);
+    } else {
+      newData.push(hit);
+    }
+  }
+  return newData;
+}
+
+export function processDuplicateHitboxesForCrouchCancel(hits: Hit[]): Hit[] {
+  const newData = [];
+  for (const hit of hits) {
+    if (hit.hitboxes.length === 0) {
+      newData.push(hit);
+      continue;
+    }
+    // Quick fix to ensure that the same hitboxes are next to each other
+    // TODO: Fix the algorithm to work regardless of position
+    hit.hitboxes.sort((hitboxA, hitboxB) => hitboxA.damage - hitboxB.damage);
+
+    for (let i = hit.hitboxes.length - 1; i > 0; i--) {
+      if (areHitboxesEqualForCrouchCancel(hit.hitboxes[i], hit.hitboxes[i - 1])) {
+        hit.hitboxes[i - 1].name = hit.hitboxes[i - 1].name + ' & ' + hit.hitboxes[i].name;
+        hit.hitboxes.splice(i, 1);
+      }
+    }
+
+    const firstHitbox = hit.hitboxes[0];
+
+    if (
+      hit.hitboxes.length === 1 ||
+      hit.hitboxes.slice(1).every((hitbox) => areHitboxesEqualForCrouchCancel(hitbox, firstHitbox))
+    ) {
       const newHitbox = hit.hitboxes[0];
       newHitbox.name = 'All Hitboxes';
       const newHit = hit;
