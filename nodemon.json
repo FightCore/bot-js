@@ -3,5 +3,5 @@
         "src"
     ],
     "ext": "ts",
-    "exec": "tsc && node -r dotenv/config ./build/index.js"
+    "exec": "tsc -p tsconfig-build.json && node -r dotenv/config ./build/index.js"
 }

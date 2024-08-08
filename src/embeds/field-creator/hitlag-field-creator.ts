@@ -26,7 +26,7 @@ export class HitlagFieldCreator {
           value: hitlagValues.map((hitlag) => hitlag.hitlagAttacker).join('/'),
         },
         {
-          title: 'Hitlag for victim',
+          title: 'Hitlag for defender',
           value: hitlagValues.map((hitlag) => hitlag.hitlagDefender).join('/'),
         },
         {
@@ -34,7 +34,7 @@ export class HitlagFieldCreator {
           value: hitlagValues.map((hitlag) => hitlag.hitlagAttackerCrouch).join('/'),
         },
         {
-          title: 'Hitlag for victim (crouch canceled)',
+          title: 'Hitlag for defender (crouch canceled)',
           value: hitlagValues.map((hitlag) => hitlag.hitlagDefenderCrouch).join('/'),
         },
       ]);
@@ -42,16 +42,12 @@ export class HitlagFieldCreator {
 
     return BodyFormatter.create([
       {
-        title: 'Hitlag',
+        title: 'Hitlag attacker & defender',
         value: hitlagValues.map((hitlag) => hitlag.hitlagAttacker).join('/'),
       },
       {
-        title: 'Hitlag (crouch canceled)',
+        title: 'Hitlag attacker & defender (crouch canceled)',
         value: hitlagValues.map((hitlag) => hitlag.hitlagAttackerCrouch).join('/'),
-      },
-      {
-        title: 'Note',
-        value: 'Hitlag is the same for attacker and defender',
       },
     ]);
   }

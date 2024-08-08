@@ -7,22 +7,22 @@ import {
   EmbedBuilder,
   StringSelectMenuBuilder,
 } from 'discord.js';
-import { YoshiArmorBreakCalculator } from '../calculation/yoshi-armor-break-calculator';
 import { Character } from '../models/character';
 import { Hitbox } from '../models/hitbox';
 import { Move } from '../models/move';
 import { MoveType } from '../models/move-type';
 import { BaseEmbedCreator } from './base-embed-creator';
-import { HitlagFieldCreator } from './field-creator/hitlag-field-creator';
-import { ShieldAdvantageFieldCreator } from './field-creator/shield-advantage-field-creator';
 import { BodyFormatter } from './formatting/body-formatter';
-import { InfoLine } from './formatting/info-line';
 import { LineProperty } from './formatting/line-property';
 import { versionNumber } from '../meta-data';
 import { getMoveLink } from '../utils/fightcore-link';
+import { processDuplicateHitboxes, processDuplicateHits } from '../utils/hitbox-utils';
+import { HitlagFieldCreator } from './field-creator/hitlag-field-creator';
+import { ShieldAdvantageFieldCreator } from './field-creator/shield-advantage-field-creator';
+import { fixUniqueMoves } from '../data/unique-move-fixes';
 
 export class MoveEmbedCreator extends BaseEmbedCreator {
-  private readonly move: Move;
+  private move: Move;
   private readonly character: Character;
   private readonly embedColor: ColorResolvable;
 
@@ -35,111 +35,13 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
 
   public createEmbed(): EmbedBuilder[] {
     const moveEmbedFields: APIEmbedField[] = [];
+    this.move = fixUniqueMoves(this.move, this.character);
     const moveData = this.getMove(this.move);
 
-    if (moveData) {
-      moveEmbedFields.push({
-        name: 'Frame data',
-        value: moveData,
-        //inline: true,
-      });
+    if (this.move.hits && this.move.hits.length > 0) {
+      moveEmbedFields.push(...this.createHitboxEmbedFields());
     }
-
-    if (this.move.hitboxes && this.move.hitboxes.length > 0 && this.move.hitboxes.length > 3) {
-      moveEmbedFields.push({
-        name: 'Hitbox summary',
-        value: this.getHitboxes(this.move.hitboxes),
-        inline: true,
-      });
-
-      const hitlagInfo = HitlagFieldCreator.createHitlagFields(this.move.hitboxes);
-      const shieldAdvantageInfo = ShieldAdvantageFieldCreator.createShieldAdvantageField(this.move.hitboxes, this.move);
-      if (hitlagInfo || shieldAdvantageInfo) {
-        let text = InfoLine.createLine({
-          title: 'Name',
-          value: this.move.hitboxes.map((hitbox) => hitbox.name).join('/'),
-        }) as string;
-
-        if (hitlagInfo) {
-          text += '\n' + hitlagInfo;
-        }
-        if (shieldAdvantageInfo) {
-          text += '\n' + shieldAdvantageInfo;
-        }
-
-        if (YoshiArmorBreakCalculator.shouldCalculate(this.move)) {
-          const armorBreaks = this.move.hitboxes.map((hitbox) => YoshiArmorBreakCalculator.calculate(hitbox));
-          if (!armorBreaks.every((armorBreak) => armorBreak === null)) {
-            text +=
-              '\n' +
-              InfoLine.createLine({
-                title: 'Yoshi DJ Armor Break',
-                value: armorBreaks.map((armorBreak) => armorBreak ?? ' N/A ').join('/'),
-              });
-          }
-        }
-
-        moveEmbedFields.push({
-          name: 'Other info',
-          value: text,
-          inline: true,
-        });
-
-        if (shieldAdvantageInfo) {
-          const explanation = `Please note that the shield advantage calculation is done assuming the frame 1 hit case and WILL be inaccurate.
-          For more information check out this [RadarSSBM Video on Shield Advantage](https://www.youtube.com/watch?v=obxZu6lADi4)`;
-
-          moveEmbedFields.push({
-            name: 'Shield advantage',
-            value: explanation,
-            inline: true,
-          });
-        }
-      }
-    } else if (this.move.hitboxes && this.move.hitboxes.length > 0) {
-      for (const hitbox of this.move.hitboxes) {
-        const properties: LineProperty[] = [
-          {
-            title: 'Damage',
-            value: hitbox.damage,
-          },
-          {
-            title: 'Angle',
-            value: hitbox.angle,
-          },
-          {
-            title: 'Effect',
-            value: hitbox.effect,
-          },
-          {
-            title: 'Base knockback',
-            value: hitbox.baseKnockback,
-          },
-          {
-            title: 'Knockback growth',
-            value: hitbox.knockbackGrowth,
-          },
-          {
-            title: 'Set knockback',
-            value: hitbox.setKnockback,
-          },
-          {
-            title: 'Shieldstun',
-            value: hitbox.shieldstun,
-          },
-          {
-            title: 'Hitbox color',
-            value: this.getColorForId(hitbox.name),
-          },
-        ];
-
-        moveEmbedFields.push({
-          name: hitbox.name,
-          value: BodyFormatter.create(properties) as string,
-          inline: true,
-        });
-      }
-
+    if (this.move.gifUrl) {
       moveEmbedFields.push({
         name: 'Hitbox Colors',
         value: 'id0=Red, id1=Green, id2=Purple, id3=Orange',
@@ -151,6 +53,10 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       .setURL(getMoveLink(this.character, this.move))
       .setColor(this.embedColor)
       .addFields(moveEmbedFields);
+
+    if (moveData) {
+      moveEmbed.setDescription(moveData);
+    }
 
     if (this.move.gifUrl) {
       moveEmbed.setImage(this.move.gifUrl + `?version=${versionNumber}`);
@@ -213,6 +119,41 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     }
 
     return result;
+  }
+
+  private createHitboxEmbedFields(): APIEmbedField[] {
+    const fields: APIEmbedField[] = [];
+    const hits = processDuplicateHits(processDuplicateHitboxes(this.move.hits));
+    for (const hit of hits) {
+      let name = hit.name ? hit.name : `Frames ${hit.aggregatedStart} - ${hit.aggregatedEnd}`;
+      if (name === 'unknown') {
+        name = 'All hits';
+      }
+      let hitsInfo = '';
+      if (hit.timings.length > 1) {
+        hitsInfo = '**Hits**: ' + hit.timings.join(', ') + '\n';
+      }
+
+      const hitboxInfo = this.getHitboxes(hit.hitboxes);
+      const hitlagInfo = HitlagFieldCreator.createHitlagFields(hit.hitboxes);
+      const shieldAdvantageInfo = ShieldAdvantageFieldCreator.createShieldAdvantageField(hit.hitboxes, this.move);
+
+      let text = hitsInfo + hitboxInfo;
+      if (hitlagInfo) {
+        text += '\n' + hitlagInfo;
+      }
+      if (shieldAdvantageInfo) {
+        text += '\n' + shieldAdvantageInfo;
+      }
+
+      fields.push({
+        name: name,
+        value: text,
+        inline: true,
+      });
+    }
+
+    return fields;
   }
 
   private getMove(move: Move): string {
@@ -282,14 +223,11 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
   }
 
   private getHitboxes(hitboxes: Hitbox[]): string {
+    hitboxes = hitboxes.sort((a, b) => a.name.localeCompare(b.name));
     const properties: LineProperty[] = [
       {
         title: 'Name',
         value: hitboxes.map((hitbox) => hitbox.name).join('/'),
-      },
-      {
-        title: 'GIF Colors',
-        value: 'id0=Red, id1=Green, id2=Purple, id3=Orange',
       },
       {
         title: 'Damage',
@@ -301,7 +239,8 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       },
       {
         title: 'Effect',
-        value: hitboxes.map((hitbox) => hitbox.effect).join('/'),
+        // Filter out the "Normal" effects cause they don't say anything.
+        value: hitboxes.map((hitbox) => (hitbox.effect === 'Normal' ? null : hitbox.effect)).join('/'),
       },
       {
         title: 'Base knockback',
@@ -322,20 +261,5 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
     ];
 
     return BodyFormatter.create(properties) as string;
-  }
-
-  private getColorForId(hitboxId: string): string {
-    switch (hitboxId) {
-      case 'id0':
-        return ':red_circle:';
-      case 'id1':
-        return ':green_circle:';
-      case 'id2':
-        return ':purple_circle:';
-      case 'id3':
-        return ':orange_circle:';
-      default:
-        return 'Unknown';
-    }
   }
 }

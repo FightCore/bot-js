@@ -1,11 +1,11 @@
-import { Hitbox } from './hitbox';
+import { Hit } from './hit';
 import { MoveType } from './move-type';
 
 export interface Move {
   id: number;
   name: string;
   normalizedName: string;
-  hitboxes: Hitbox[];
+  hits: Hit[];
   landLag?: number;
   lCanceledLandLag?: number;
   totalFrames: number;
