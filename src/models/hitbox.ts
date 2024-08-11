@@ -9,5 +9,8 @@ export interface Hitbox {
   effect: string;
   hitlagAttacker: number;
   hitlagDefender: number;
+  hitlagAttackerCrouched: number;
+  hitlagDefenderCrouched: number;
   shieldstun: number;
+  isWeightIndependent: boolean;
 }

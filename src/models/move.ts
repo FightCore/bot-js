@@ -1,5 +1,6 @@
 import { Hit } from './hit';
 import { MoveType } from './move-type';
+import { Source } from './source';
 
 export interface Move {
   id: number;
@@ -18,6 +19,8 @@ export interface Move {
   notes?: string;
   percent?: string;
   source: string;
-  landingFallSpecialLag: number;
+  landingFallSpecialLag?: number;
   gifUrl: string;
+  isInterpolated: boolean;
+  sources?: Source[];
 }
