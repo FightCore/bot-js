@@ -42,7 +42,7 @@ export class CharacterEmbedCreator extends BaseEmbedCreator {
       { title: 'Weight', value: characterStatistics.weight },
       { title: 'Gravity', value: characterStatistics.gravity },
       { title: 'Can wall jump', value: characterStatistics.canWallJump },
-      { title: 'Jump squad frames', value: characterStatistics.jumpSquat },
+      { title: 'Jump squat frames', value: characterStatistics.jumpSquat },
     ];
     return {
       name: 'Frame data',

@@ -43,7 +43,10 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
       if (!messageSearchResult.shouldRespond) {
         return;
       }
-      await message.channel.sendTyping();
+
+      if (message.channel.isSendable()) {
+        await message.channel.sendTyping();
+      }
 
       if (messageSearchResult.isRoleMessage) {
         await message.reply({ embeds: RoleEmbedCreator.createErrorEmbed() });

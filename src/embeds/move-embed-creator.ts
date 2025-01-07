@@ -240,7 +240,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       {
         title: 'Effect',
         // Filter out the "Normal" effects cause they don't say anything.
-        value: hitboxes.map((hitbox) => (hitbox.effect === 'Normal' ? null : hitbox.effect)).join('/'),
+        value: hitboxes.map((hitbox) => (hitbox.effect === 'Normal' || hitbox.effect == '' ? null : hitbox.effect)).join('/'),
       },
       {
         title: 'Base knockback',

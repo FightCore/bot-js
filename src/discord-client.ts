@@ -1,6 +1,5 @@
 import { Message, Client, Interaction, PartialMessage, Partials, GatewayIntentBits } from 'discord.js';
-import { Container, inject } from 'inversify';
-import { injectable } from 'inversify/lib/annotation/injectable';
+import { Container, inject, injectable } from 'inversify';
 import { Logger } from 'winston';
 import { RegisterCommands } from './commands/register-commands';
 import { Symbols } from './config/symbols';

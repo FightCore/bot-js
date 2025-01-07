@@ -13,6 +13,9 @@ export class BodyFormatter {
     }
 
     properties = properties.filter((property) => !!property.value);
-    return properties.map(InfoLine.createLine).join('\n');
+    return properties
+      .map(InfoLine.createLine)
+      .filter((value) => !!value)
+      .join('\n');
   }
 }

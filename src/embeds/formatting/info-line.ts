@@ -14,6 +14,10 @@ export class InfoLine {
       return undefined;
     }
 
+    if (typeof value === 'string' && value.indexOf('/') === 0) {
+      return undefined;
+    }
+
     return `**${title}**: ${value}`;
   }
 
