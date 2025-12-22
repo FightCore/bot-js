@@ -31,6 +31,9 @@ export class Loader {
         throw new Error('Request has failed, non 200 status code');
       }
       this.characters = result.data;
+      if (!Array.isArray(this.characters)) {
+        throw new Error('Data is not an array');
+      }
       this.logger.info('Using data.fightcore.gg based data.');
       this.isOnlineData = true;
     } catch {

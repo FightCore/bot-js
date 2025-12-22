@@ -15,6 +15,7 @@ import { Indexer } from '../utils/indexer';
 import { MessageCleaner } from '../utils/message-cleaner';
 import { BaseInteractionHandler } from './base-interaction-handler';
 import { RoleEmbedCreator } from '../embeds/role-embed-creator';
+import { LogSingleton } from '../utils/logs-singleton';
 
 @injectable()
 export class MessageInteractionHandler extends BaseInteractionHandler {
@@ -105,6 +106,8 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
       return;
     }
 
+    const logger = LogSingleton.createContextLogger(message);
+
     // Check if the move and the searchResult are not null.
     // This should be already checked in the previous process so throw an error
     // if this is the case.
@@ -112,7 +115,7 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
       throw new Error('Move was not found with existing message');
     }
 
-    this.logger.info(`Updating existing to {character} and {move}`, {
+    logger.info(`Updating existing to {character} and {move}`, {
       character: searchResult.character.name,
       move: searchResult.move.name,
     });
@@ -140,6 +143,7 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
    * @param searchResult the search result to use for the reply.
    */
   private async sendNewReply(message: Message, embedCreator: MoveEmbedCreator, searchResult: SearchResult) {
+    const logger = LogSingleton.createContextLogger(message);
     // Check if the move and the searchResult are not null.
     // This should be already checked in the previous process so throw an error
     // if this is the case.
@@ -147,7 +151,7 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
       throw new Error('Move was not found with existing message');
     }
 
-    this.logger.info(`Replying with {character} and {move}`, {
+    logger.info(`Replying with {character} and {move}`, {
       character: searchResult.character.name,
       move: searchResult.move.name,
     });
@@ -177,6 +181,7 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
     isUpdate: boolean,
     searchResult: SearchResult
   ): Promise<void> {
+    const logger = LogSingleton.createContextLogger(message);
     if (!message.channel.isTextBased() || message.channel instanceof StageChannel) {
       return;
     }
@@ -187,7 +192,7 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
 
     content = MessageCleaner.removeIllegalCharacters(content);
 
-    this.logger.warn(`No character or move found for "{content}"`, { content: content });
+    logger.warn(`No character or move found for "{content}"`, { content: content });
     const embeds =
       searchResult.type === SearchResultType.MoveNotFound
         ? NotFoundEmbedCreator.createMoveNotFoundEmbed(searchResult.character, content)

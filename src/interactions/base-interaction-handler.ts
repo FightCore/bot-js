@@ -24,8 +24,8 @@ export class BaseInteractionHandler {
       await message.reply({
         embeds: ErrorEmbedCreator.createErrorEmbed(),
       });
-    } catch {
-      this.logger.error(`An internal error occurred when trying to respond with an error.`);
+    } catch (error: unknown) {
+      this.logger.error(`An internal error occurred when trying to respond with an error.`, error);
     }
   }
 }

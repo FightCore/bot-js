@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { Command } from './command';
-import { SlashCommandBuilder, CommandInteraction, CacheType } from 'discord.js';
+import { SlashCommandBuilder, CacheType, ChatInputCommandInteraction } from 'discord.js';
 import { Search } from '../data/search';
 import { CharacterEmbedCreator } from '../embeds/character-embed-creator';
 
@@ -20,7 +20,7 @@ export class CharacterCommand implements Command {
       );
     return [builder];
   }
-  async handleCommand(interaction: CommandInteraction<CacheType>): Promise<void> {
+  async handleCommand(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
     const character = interaction.options.get('character', true).value as string;
 
     const characterSearch = this.search.search(character);

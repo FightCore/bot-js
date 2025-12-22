@@ -38,7 +38,7 @@ export class DiscordClient {
     this.client.on('interactionCreate', this.handleInteraction.bind(this));
     this.client.on('messageUpdate', this.handleMessageUpdate.bind(this));
 
-    this.client.once('ready', async () => {
+    this.client.once('clientReady', async () => {
       this.logger.info('Client ready!');
       this.container.bind<Client>(Symbols.Client).toConstantValue(this.client);
       this.container.get<RegisterCommands>(RegisterCommands).register();
@@ -66,7 +66,7 @@ export class DiscordClient {
         return;
       }
 
-      if (interaction.isCommand()) {
+      if (interaction.isChatInputCommand()) {
         await commandInteractionHandler.handle(interaction);
         return;
       }

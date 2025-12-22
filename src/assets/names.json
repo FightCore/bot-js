@@ -2,7 +2,8 @@
     {
         "name": "Bowser",
         "names": [
-            "bowser"
+            "bowser",
+            "koopa"
         ],
         "fightCoreId": 241
     },
@@ -60,7 +61,8 @@
             "shine": "downb",
             "aerialblaster": "aneutralb",
             "aeriallaser": "aneutralb",
-            "drill": "dair"
+            "drill": "dair",
+            "illusion": "sideb"
         },
         "fightCoreId": 218
     },
@@ -75,7 +77,8 @@
             "laser": "neutralb",
             "aerialblaster": "aneutralb",
             "aeriallaser": "aneutralb",
-            "drill": "dair"
+            "drill": "dair",
+            "phantasm": "sideb"
         }
     },
     {
@@ -110,7 +113,10 @@
             "rondoudou",
             "pummeluff"
         ],
-        "fightCoreId": 214
+        "fightCoreId": 214,
+        "moves": {
+            "drill": "dair"
+        }
     },
     {
         "name": "Kirby",
@@ -134,7 +140,10 @@
             "link"
         ],
         "moves": {
-            "tether": "zair"
+            "tether": "zair",
+            "arrow": "neutralb",
+            "boomerang": "sideb",
+            "bomb": "downb"
         },
         "fightCoreId": 238
     },
@@ -178,6 +187,7 @@
             "gamenwatch",
             "g&w",
             "gnw",
+            "gmw",
             "gw"
         ],
         "moves": {
@@ -198,7 +208,8 @@
             "pichu"
         ],
         "moves": {
-            "jolt": "neutralb"
+            "jolt": "neutralb",
+            "lightning": "downb"
         },
         "fightCoreId": 221
     },
@@ -209,7 +220,8 @@
             "pika"
         ],
         "moves": {
-            "jolt": "neutralb"
+            "jolt": "neutralb",
+            "lightning": "downb"
         },
         "fightCoreId": 237
     },
@@ -237,6 +249,9 @@
         "names": [
             "roy"
         ],
+        "moves": {
+            "parry": "downb"
+        },
         "fightCoreId": 223
     },
     {
@@ -278,7 +293,10 @@
             "young"
         ],
         "moves": {
-            "hookshot": "zair"
+            "hookshot": "zair",
+            "arrow": "neutralb",
+            "boomerang": "sideb",
+            "bomb": "downb"
         },
         "fightCoreId": 220
     },

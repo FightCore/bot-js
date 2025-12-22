@@ -18,6 +18,28 @@
         ]
     },
     {
+        "move": "ftechroll",
+        "alias": [
+            "techin",
+            "techforward",
+            "techforwards",
+            "forwardtech",
+            "forwardstech"
+        ]
+    },
+    {
+        "move": "btechroll",
+        "alias": [
+            "techout",
+            "techbackward",
+            "techbackwards",
+            "backwardtech",
+            "backwardstech",
+            "backtech",
+            "techback"
+        ]
+    },
+    {
         "move": "fsmash",
         "alias": [
             "sidesmash"
@@ -32,13 +54,17 @@
     {
         "move": "dowmb",
         "alias": [
-            "downspecial"
+            "downspecial",
+            "db"
         ]
     },
     {
         "move": "upb",
         "alias": [
-            "upspecial"
+            "upspecial",
+            "uspecial",
+            "ub",
+            "groundedupb"
         ]
     },
     {
@@ -65,7 +91,8 @@
     {
         "move": "grab",
         "alias": [
-            "shieldgrab"
+            "shieldgrab",
+            "standinggrab"
         ]
     },
     {
@@ -110,6 +137,15 @@
             "getup",
             "getupstomach",
             "attackstomach"
+        ]
+    },
+    { 
+        "move": "rjab",
+        "alias": [
+            "jabs",
+            "jabcombo",
+            "combojab",
+            "multijab"
         ]
     }
 ]

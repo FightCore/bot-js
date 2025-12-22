@@ -10,6 +10,7 @@ import { SearchResultType } from '../models/search/search-result-type';
 import { MovesParser } from './moves-parser';
 import { inject, injectable } from 'inversify';
 import { Normalizer } from './normalizer';
+import { match } from 'assert';
 
 @injectable()
 export class Search {
@@ -293,23 +294,54 @@ export class Search {
    * @returns either a search result or undefined.
    */
   private searchForSingleMove(query: string): SearchResult | undefined {
-    return (
-      this.aliases
-        // Filter out the null values and cast to a proper character.
-        .filter((alias) => alias.character != null)
-        .map((alias) => alias.character as Character)
-        // FlatMap all characters and moves to be within the same entry.
-        .flatMap((character) =>
-          character.moves
-            // Apply the filter that only special moves will be searched for.
-            // These are the only moves that contain special names.
-            .filter((move) => move.type === MoveType.special)
-            .map((move) => {
-              return new SearchResult(SearchResultType.Move, character, move);
-            })
-        )
-        // Find the first move that has a distance of 1 (direct reference).
-        .find((move) => this.compareToMove(move.move, query, false) === 1)
-    );
+    const aliasQuery = MovesParser.search(query);
+
+    for (const alias of this.aliases) {
+      // If the alias is not a character, skip it.
+      if (!alias.character) {
+        continue;
+      }
+
+      // Override alias names with the correct move name if there is only one.
+      for (const keyValuePair of alias.moves ?? []) {
+        // Only go for exact matches.
+        if (jaroWinkler(keyValuePair[0], aliasQuery, this.distanceConfiguration) == 1) {
+          // If the alias is a move, we need to find the move and character.
+          const move = alias.character.moves.find((move) => move.normalizedName === keyValuePair[1]);
+          if (move) {
+            return new SearchResult(SearchResultType.Move, alias.character, move);
+          }
+        }
+      }
+    }
+
+    const matchingMoves = this.aliases
+      // Filter out the null values and cast to a proper character.
+      .filter((alias) => alias.character != null)
+      .map((alias) => alias.character as Character)
+      // FlatMap all characters and moves to be within the same entry.
+      .flatMap((character) =>
+        character.moves
+          // Apply the filter that only special moves will be searched for.
+          // These are the only moves that contain special names.
+          .map((move) => {
+            return new SearchResult(SearchResultType.Move, character, move);
+          })
+      )
+      // Find the first move that has a distance of 1 (direct reference).
+      .filter((move) => this.compareToMove(move.move, aliasQuery, false) === 1);
+    if (matchingMoves.length === 1) {
+      return matchingMoves[0];
+    }
+
+    // If there are two moves, we need to check if one of them is a special move
+    // and the other one is a move that starts with 'a'. This indicates that the first move is the move and the other is the aerial version of it.
+    if (matchingMoves.length == 2) {
+      if (matchingMoves[0].move.type === MoveType.special && matchingMoves[1].move.normalizedName.startsWith('a')) {
+        return matchingMoves[0];
+      }
+    }
+
+    return undefined;
   }
 }

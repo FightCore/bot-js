@@ -6,6 +6,7 @@ import { FailureStore } from '../data/failure-store';
 import { Search } from '../data/search';
 import { MoveEmbedCreator } from '../embeds/move-embed-creator';
 import { BaseInteractionHandler } from './base-interaction-handler';
+import { LogSingleton } from '../utils/logs-singleton';
 
 @injectable()
 export class ComponentInteractionHandler extends BaseInteractionHandler {
@@ -14,6 +15,7 @@ export class ComponentInteractionHandler extends BaseInteractionHandler {
   }
 
   public async handle(interaction: ButtonInteraction | StringSelectMenuInteraction): Promise<void> {
+    const logger = LogSingleton.createContextLogger(interaction);
     let isFromOriginalUser = false;
     const messageMentions = interaction.message.mentions;
     if (messageMentions === null || messageMentions.repliedUser?.id === interaction.user.id) {
@@ -26,7 +28,7 @@ export class ComponentInteractionHandler extends BaseInteractionHandler {
 
     const characterMove = this.search.search(interaction.isStringSelectMenu() ? interaction.values[0] : interaction.customId);
     if (!characterMove || !characterMove.move) {
-      this.logger.error('Move not found for interaction');
+      logger.error('Move not found for interaction');
       return;
     }
 

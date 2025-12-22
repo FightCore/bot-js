@@ -1,10 +1,11 @@
 import { SeqTransport } from '@datalust/winston-seq';
 import winston, { Logger, createLogger, transports } from 'winston';
+import { CommandInteraction, Interaction, Message } from 'discord.js';
 
 export class LogSingleton {
   private static logger: Logger;
 
-  public static create(): Logger {
+  public static getLogger(): Logger {
     if (LogSingleton.logger) {
       return LogSingleton.logger;
     }
@@ -42,5 +43,22 @@ export class LogSingleton {
     });
 
     return LogSingleton.logger;
+  }
+
+  /**
+   * Creates a child logger with Discord interaction context metadata
+   */
+  public static createContextLogger(interaction: CommandInteraction | Interaction | Message): Logger {
+    const baseLogger = LogSingleton.getLogger();
+
+    const metadata: Record<string, string | null | undefined> = {
+      guildName: interaction.guild?.name,
+    };
+
+    if ('commandName' in interaction) {
+      metadata.commandName = interaction.commandName;
+    }
+
+    return baseLogger.child(metadata);
   }
 }

@@ -25,7 +25,7 @@ import { AutoCompleteInteractionHandler } from './interactions/auto-complete-int
 // Needed to load third party libraries like winston's logger.
 const container = new Container({ skipBaseClassChecks: true });
 container.bind<FailureStore>(FailureStore).toSelf().inSingletonScope();
-container.bind<Logger>(Symbols.Logger).toConstantValue(LogSingleton.create());
+container.bind<Logger>(Symbols.Logger).toConstantValue(LogSingleton.getLogger());
 container.bind<Loader>(Loader).toSelf().inSingletonScope();
 container.bind<AliasParser>(AliasParser).toSelf().inSingletonScope();
 container.bind<Search>(Search).toSelf().inSingletonScope();

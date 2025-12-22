@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, CommandInteraction, CacheType, InteractionResponse } from 'discord.js';
+import { SlashCommandBuilder, CacheType, InteractionResponse, ChatInputCommandInteraction } from 'discord.js';
 import { Command } from './command';
 import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
@@ -37,7 +37,7 @@ export abstract class KnockbackCommand implements Command {
     });
   }
 
-  async handleCommand(interaction: CommandInteraction<CacheType>): Promise<void> {
+  async handleCommand(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
     const searchResult = await this.getSearchResultOrNull(interaction);
 
     if (!searchResult) {
@@ -71,7 +71,7 @@ export abstract class KnockbackCommand implements Command {
   }
 
   private sendNoMoveFoundErrorToInteraction(
-    interaction: CommandInteraction,
+    interaction: ChatInputCommandInteraction,
     content: string,
     searchResult: SearchResult
   ): Promise<InteractionResponse> {
@@ -90,7 +90,7 @@ export abstract class KnockbackCommand implements Command {
     return interaction.reply({ embeds });
   }
 
-  private async getSearchResultOrNull(interaction: CommandInteraction): Promise<SearchResult | null> {
+  private async getSearchResultOrNull(interaction: ChatInputCommandInteraction): Promise<SearchResult | null> {
     const character = interaction.options.get('character', true).value;
     const move = interaction.options.get('move', true).value;
 
