@@ -155,7 +155,7 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
       character: searchResult.character.name,
       move: searchResult.move.name,
     });
-    new Indexer().indexMove(searchResult.character, searchResult.move);
+
     const replyMessage = await message.reply({
       embeds: embedCreator.createEmbed(),
       components: embedCreator.createButtons(searchResult.possibleMoves),

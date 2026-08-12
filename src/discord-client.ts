@@ -1,4 +1,4 @@
-import { Message, Client, Interaction, PartialMessage, Partials, GatewayIntentBits } from 'discord.js';
+import { Message, Client, Interaction, PartialMessage, Partials, GatewayIntentBits, Events } from 'discord.js';
 import { Container, inject, injectable } from 'inversify';
 import { Logger } from 'winston';
 import { RegisterCommands } from './commands/register-commands';
@@ -21,7 +21,12 @@ export class DiscordClient {
     private failureStore: FailureStore,
     private container: Container
   ) {
-    const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMessages];
+    const intents = [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.DirectMessages,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.MessageContent,
+    ];
 
     if (process.env.PREFIX) {
       this.logger.info('Prefix is used, enabling Message Content intent');
@@ -34,9 +39,9 @@ export class DiscordClient {
       partials: [Partials.Channel],
     });
 
-    this.client.on('messageCreate', this.handleMessage.bind(this));
-    this.client.on('interactionCreate', this.handleInteraction.bind(this));
-    this.client.on('messageUpdate', this.handleMessageUpdate.bind(this));
+    this.client.on(Events.MessageCreate, this.handleMessage.bind(this));
+    this.client.on(Events.InteractionCreate, this.handleInteraction.bind(this));
+    this.client.on(Events.MessageUpdate, this.handleMessageUpdate.bind(this));
 
     this.client.once('clientReady', async () => {
       this.logger.info('Client ready!');
