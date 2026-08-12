@@ -3,9 +3,8 @@ import winston from 'winston';
 import { Loader } from '../src/data/loader.js';
 import { Search } from '../src/data/search.js';
 import { AliasParser } from '../src/data/alias-parser.js';
-import { expect, test } from '@jest/globals';
+import { describe, expect, test } from 'vitest';
 import { SearchResultType } from '../src/models/search/search-result-type.js';
-import { describe } from 'node:test';
 
 test('Ensure search works with characters', async () => {
   const search = await setupSearch();

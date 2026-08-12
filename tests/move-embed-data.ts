@@ -1,5 +1,6 @@
 import { Move } from '../src/models/move.js';
 import { Character } from '../src/models/character.js';
+import { versionNumber } from '../src/meta-data.js';
 
 export function getMarth(): Character {
   return {
@@ -220,7 +221,7 @@ export function getMarthFTilt(): Move {
 export function getEmbedJson(): any {
   return {
     footer: {
-      text: 'FightCore Bot Version 2.5.3',
+      text: `FightCore Bot Version ${versionNumber}`,
       icon_url: 'https://i.fightcore.gg/clients/fightcore.png',
     },
     timestamp: '2024-08-11T12:22:23.399Z',
@@ -266,6 +267,6 @@ export function getEmbedJson(): any {
       },
     ],
     description: '**Total frames**: 39\n**Hit**: 6-12\n**IASA**: 32',
-    image: { url: 'https://i.fightcore.gg/beta/marth/utilt.gif?version=2.5.3' },
+    image: { url: `https://i.fightcore.gg/beta/marth/utilt.gif?version=${versionNumber}` },
   };
 }

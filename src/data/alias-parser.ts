@@ -5,7 +5,7 @@ import { inject, injectable } from 'inversify';
 
 @injectable()
 export class AliasParser {
-  private readonly _aliases: AliasRecord[] = moveData as AliasRecord[];
+  private readonly _aliases: AliasRecord[] = structuredClone(moveData) as AliasRecord[];
 
   constructor(@inject(Loader) loader: Loader) {
     for (const alias of this._aliases) {

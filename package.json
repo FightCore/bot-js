@@ -9,7 +9,7 @@
     "start": "node --import dotenv/config ./build/index.js",
     "dev": "tsc -p tsconfig-build.json && node --import dotenv/config ./build/index.js",
     "lint": "eslint src/**/*.ts",
-    "test": "jest"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -41,13 +41,11 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@jest/globals": "^30.4.1",
     "@types/node": "^24.13.3",
     "eslint": "^10.8.1",
     "globals": "^17.11.0",
-    "jest": "^30.4.2",
-    "ts-jest": "^29.4.12",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.67.0"
+    "typescript-eslint": "^8.67.0",
+    "vitest": "^4.1.10"
   }
 }
