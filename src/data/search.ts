@@ -10,7 +10,6 @@ import { SearchResultType } from '../models/search/search-result-type';
 import { MovesParser } from './moves-parser';
 import { inject, injectable } from 'inversify';
 import { Normalizer } from './normalizer';
-import { match } from 'assert';
 
 @injectable()
 export class Search {
