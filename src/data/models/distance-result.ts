@@ -1,4 +1,4 @@
-import { Move } from '../../models/move';
+import { Move } from '../../models/move.js';
 
 export interface DistanceResult {
   distance: number;

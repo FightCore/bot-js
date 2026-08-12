@@ -1,5 +1,5 @@
 import { APIEmbedField, EmbedBuilder } from 'discord.js';
-import { BaseEmbedCreator } from './base-embed-creator';
+import { BaseEmbedCreator } from './base-embed-creator.js';
 
 export class HelpEmbedCreator extends BaseEmbedCreator {
   private readonly botName: string;

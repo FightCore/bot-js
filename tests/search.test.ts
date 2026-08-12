@@ -1,10 +1,10 @@
 import 'reflect-metadata';
 import winston from 'winston';
-import { Loader } from '../src/data/loader';
-import { Search } from '../src/data/search';
-import { AliasParser } from '../src/data/alias-parser';
+import { Loader } from '../src/data/loader.js';
+import { Search } from '../src/data/search.js';
+import { AliasParser } from '../src/data/alias-parser.js';
 import { expect, test } from '@jest/globals';
-import { SearchResultType } from '../src/models/search/search-result-type';
+import { SearchResultType } from '../src/models/search/search-result-type.js';
 import { describe } from 'node:test';
 
 test('Ensure search works with characters', async () => {

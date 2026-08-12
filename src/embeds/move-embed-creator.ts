@@ -7,19 +7,19 @@ import {
   EmbedBuilder,
   StringSelectMenuBuilder,
 } from 'discord.js';
-import { Character } from '../models/character';
-import { Hitbox } from '../models/hitbox';
-import { Move } from '../models/move';
-import { MoveType } from '../models/move-type';
-import { BaseEmbedCreator } from './base-embed-creator';
-import { BodyFormatter } from './formatting/body-formatter';
-import { LineProperty } from './formatting/line-property';
-import { versionNumber } from '../meta-data';
-import { getMoveLink } from '../utils/fightcore-link';
-import { processDuplicateHitboxes, processDuplicateHits } from '../utils/hitbox-utils';
-import { HitlagFieldCreator } from './field-creator/hitlag-field-creator';
-import { ShieldAdvantageFieldCreator } from './field-creator/shield-advantage-field-creator';
-import { fixUniqueMoves } from '../data/unique-move-fixes';
+import { Character } from '../models/character.js';
+import { Hitbox } from '../models/hitbox.js';
+import { Move } from '../models/move.js';
+import { MoveType } from '../models/move-type.js';
+import { BaseEmbedCreator } from './base-embed-creator.js';
+import { BodyFormatter } from './formatting/body-formatter.js';
+import { LineProperty } from './formatting/line-property.js';
+import { versionNumber } from '../meta-data.js';
+import { getMoveLink } from '../utils/fightcore-link.js';
+import { processDuplicateHitboxes, processDuplicateHits } from '../utils/hitbox-utils.js';
+import { HitlagFieldCreator } from './field-creator/hitlag-field-creator.js';
+import { ShieldAdvantageFieldCreator } from './field-creator/shield-advantage-field-creator.js';
+import { fixUniqueMoves } from '../data/unique-move-fixes.js';
 
 export class MoveEmbedCreator extends BaseEmbedCreator {
   private move: Move;

@@ -1,4 +1,4 @@
-import { PropertyType } from './property-type';
+import { PropertyType } from './property-type.js';
 
 export interface LineProperty {
   title: string;

@@ -1,6 +1,6 @@
 import { Colors, EmbedBuilder } from 'discord.js';
-import { Character } from '../models/character';
-import { BaseEmbedCreator } from './base-embed-creator';
+import { Character } from '../models/character.js';
+import { BaseEmbedCreator } from './base-embed-creator.js';
 
 export class NotFoundEmbedCreator extends BaseEmbedCreator {
   public static createMoveNotFoundEmbed(character: Character, message: string): EmbedBuilder[] {

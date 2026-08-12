@@ -1,10 +1,10 @@
 import { CommandInteraction, Message } from 'discord.js';
 import { inject } from 'inversify';
 import { Logger } from 'winston';
-import { Symbols } from '../config/symbols';
-import { FailureStore } from '../data/failure-store';
-import { Search } from '../data/search';
-import { ErrorEmbedCreator } from '../embeds/error-embed-creator';
+import { Symbols } from '../config/symbols.js';
+import { FailureStore } from '../data/failure-store.js';
+import { Search } from '../data/search.js';
+import { ErrorEmbedCreator } from '../embeds/error-embed-creator.js';
 
 export class BaseInteractionHandler {
   constructor(

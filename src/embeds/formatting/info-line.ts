@@ -1,5 +1,5 @@
-import { LineProperty } from './line-property';
-import { PropertyType } from './property-type';
+import { LineProperty } from './line-property.js';
+import { PropertyType } from './property-type.js';
 
 export class InfoLine {
   /**

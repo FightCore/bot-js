@@ -1,6 +1,6 @@
-import moves from '../assets/moves.json';
-import { MoveAlias } from './moves/move-alias';
-import { Normalizer } from './normalizer';
+import moves from '../assets/moves.json' with { type: 'json' };
+import { MoveAlias } from './moves/move-alias.js';
+import { Normalizer } from './normalizer.js';
 
 export class MovesParser {
   private static readonly moveAliases: MoveAlias[] = moves as MoveAlias[];

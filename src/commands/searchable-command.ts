@@ -1,12 +1,12 @@
 import { ChatInputCommandInteraction, InteractionResponse, SlashCommandBuilder } from 'discord.js';
 import { injectable } from 'inversify';
-import { Command } from './command';
-import { Search } from '../data/search';
-import { SearchResult } from '../models/search/search-result';
-import { SearchResultType } from '../models/search/search-result-type';
-import { NotFoundEmbedCreator } from '../embeds/not-found-embed-creator';
-import { MessageCleaner } from '../utils/message-cleaner';
-import { LogSingleton } from '../utils/logs-singleton';
+import { Command } from './command.js';
+import { Search } from '../data/search.js';
+import { SearchResult } from '../models/search/search-result.js';
+import { SearchResultType } from '../models/search/search-result-type.js';
+import { NotFoundEmbedCreator } from '../embeds/not-found-embed-creator.js';
+import { MessageCleaner } from '../utils/message-cleaner.js';
+import { LogSingleton } from '../utils/logs-singleton.js';
 
 const MAX_CONTENT_LENGTH = 75;
 

@@ -1,8 +1,8 @@
 import { Client, REST, Routes } from 'discord.js';
 import { inject, injectable, multiInject } from 'inversify';
 import { Logger } from 'winston';
-import { Symbols } from '../config/symbols';
-import { Command } from './command';
+import { Symbols } from '../config/symbols.js';
+import { Command } from './command.js';
 
 @injectable()
 export class RegisterCommands {

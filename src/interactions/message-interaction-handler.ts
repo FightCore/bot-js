@@ -1,20 +1,20 @@
 import { Client, Message, StageChannel } from 'discord.js';
 import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
-import { Symbols } from '../config/symbols';
-import { FailureStore } from '../data/failure-store';
-import { Search } from '../data/search';
-import { CharacterEmbedCreator } from '../embeds/character-embed-creator';
-import { HelpEmbedCreator } from '../embeds/help-embed-creator';
-import { MoveEmbedCreator } from '../embeds/move-embed-creator';
-import { MoveListEmbedCreator } from '../embeds/move-list-embed-creator';
-import { NotFoundEmbedCreator } from '../embeds/not-found-embed-creator';
-import { SearchResult } from '../models/search/search-result';
-import { SearchResultType } from '../models/search/search-result-type';
-import { MessageCleaner } from '../utils/message-cleaner';
-import { BaseInteractionHandler } from './base-interaction-handler';
-import { RoleEmbedCreator } from '../embeds/role-embed-creator';
-import { LogSingleton } from '../utils/logs-singleton';
+import { Symbols } from '../config/symbols.js';
+import { FailureStore } from '../data/failure-store.js';
+import { Search } from '../data/search.js';
+import { CharacterEmbedCreator } from '../embeds/character-embed-creator.js';
+import { HelpEmbedCreator } from '../embeds/help-embed-creator.js';
+import { MoveEmbedCreator } from '../embeds/move-embed-creator.js';
+import { MoveListEmbedCreator } from '../embeds/move-list-embed-creator.js';
+import { NotFoundEmbedCreator } from '../embeds/not-found-embed-creator.js';
+import { SearchResult } from '../models/search/search-result.js';
+import { SearchResultType } from '../models/search/search-result-type.js';
+import { MessageCleaner } from '../utils/message-cleaner.js';
+import { BaseInteractionHandler } from './base-interaction-handler.js';
+import { RoleEmbedCreator } from '../embeds/role-embed-creator.js';
+import { LogSingleton } from '../utils/logs-singleton.js';
 
 @injectable()
 export class MessageInteractionHandler extends BaseInteractionHandler {

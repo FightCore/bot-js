@@ -1,8 +1,8 @@
 import { expect, test } from '@jest/globals';
-import { MoveEmbedCreator } from '../src/embeds/move-embed-creator';
-import { createCharacter, createMove } from './create-data.test';
-import { versionNumber } from '../src/meta-data';
-import { getEmbedJson, getMarth, getMarthFTilt } from './move-embed-data.test';
+import { MoveEmbedCreator } from '../src/embeds/move-embed-creator.js';
+import { createCharacter, createMove } from './create-data.test.js';
+import { versionNumber } from '../src/meta-data.js';
+import { getEmbedJson, getMarth, getMarthFTilt } from './move-embed-data.test.js';
 
 test('Ensure correct gif is added to embed', async () => {
   const baseUrl = 'https://i.fightcore.gg/moves/1.gif';

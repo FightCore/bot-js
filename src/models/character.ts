@@ -1,6 +1,6 @@
-import { CharacterInfo } from './character-info';
-import { CharacterStatistics } from './character-statistics';
-import { Move } from './move';
+import { CharacterInfo } from './character-info.js';
+import { CharacterStatistics } from './character-statistics.js';
+import { Move } from './move.js';
 
 export interface Character {
   id: number;

@@ -1,11 +1,13 @@
 import { ModalSubmitInteraction } from 'discord.js';
 import { injectable, inject } from 'inversify';
 import { Logger } from 'winston';
-import { Symbols } from '../config/symbols';
-import { FailureStore } from '../data/failure-store';
-import { Search } from '../data/search';
-import { BaseInteractionHandler } from './base-interaction-handler';
-import { Database } from 'sqlite3';
+import { Symbols } from '../config/symbols.js';
+import { FailureStore } from '../data/failure-store.js';
+import { Search } from '../data/search.js';
+import { BaseInteractionHandler } from './base-interaction-handler.js';
+import sqlite3 from 'sqlite3';
+
+const { Database } = sqlite3;
 
 @injectable()
 export class ModalInteractionHandler extends BaseInteractionHandler {

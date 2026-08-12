@@ -1,6 +1,6 @@
-import { Character } from '../character';
-import { Move } from '../move';
-import { SearchResultType } from './search-result-type';
+import { Character } from '../character.js';
+import { Move } from '../move.js';
+import { SearchResultType } from './search-result-type.js';
 
 export class SearchResult {
   public type: SearchResultType;

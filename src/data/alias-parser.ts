@@ -1,6 +1,6 @@
-import { Loader } from './loader';
-import { AliasRecord } from './models/alias-record';
-import moveData from '../assets/names.json';
+import { Loader } from './loader.js';
+import { AliasRecord } from './models/alias-record.js';
+import moveData from '../assets/names.json' with { type: 'json' };
 import { inject, injectable } from 'inversify';
 
 @injectable()

@@ -1,7 +1,7 @@
 import { APIEmbedField, EmbedBuilder } from 'discord.js';
-import { Character } from '../models/character';
-import { MoveType } from '../models/move-type';
-import { BaseEmbedCreator } from './base-embed-creator';
+import { Character } from '../models/character.js';
+import { MoveType } from '../models/move-type.js';
+import { BaseEmbedCreator } from './base-embed-creator.js';
 
 export class MoveListEmbedCreator extends BaseEmbedCreator {
   private botName: string;

@@ -1,8 +1,8 @@
 import { APIEmbedField, ColorResolvable, EmbedBuilder } from 'discord.js';
-import { Character } from '../models/character';
-import { CharacterStatistics } from '../models/character-statistics';
-import { BaseEmbedCreator } from './base-embed-creator';
-import { BodyFormatter } from './formatting/body-formatter';
+import { Character } from '../models/character.js';
+import { CharacterStatistics } from '../models/character-statistics.js';
+import { BaseEmbedCreator } from './base-embed-creator.js';
+import { BodyFormatter } from './formatting/body-formatter.js';
 
 export class CharacterEmbedCreator extends BaseEmbedCreator {
   public static createCharacterEmbed(character: Character): EmbedBuilder[] {

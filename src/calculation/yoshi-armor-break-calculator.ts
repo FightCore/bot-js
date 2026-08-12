@@ -1,6 +1,6 @@
-import { Hitbox } from '../models/hitbox';
-import { Move } from '../models/move';
-import { MoveType } from '../models/move-type';
+import { Hitbox } from '../models/hitbox.js';
+import { Move } from '../models/move.js';
+import { MoveType } from '../models/move-type.js';
 
 export class YoshiArmorBreakCalculator {
   static shouldCalculate(move: Move): boolean {

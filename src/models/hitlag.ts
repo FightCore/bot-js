@@ -1,4 +1,4 @@
-import { Hitbox } from './hitbox';
+import { Hitbox } from './hitbox.js';
 
 export class Hitlag {
   name: string;

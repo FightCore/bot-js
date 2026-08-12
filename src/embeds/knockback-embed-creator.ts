@@ -1,15 +1,15 @@
 import { Colors, EmbedBuilder } from 'discord.js';
-import { CrouchCancelCalculator } from '../calculation/crouch-cancel-calculator';
-import { Character } from '../models/character';
-import { Move } from '../models/move';
-import { BaseEmbedCreator } from './base-embed-creator';
-import { InfoLine } from './formatting/info-line';
-import { CharacterEmoji } from '../utils/character-emoji';
-import { Loader } from '../data/loader';
-import { Hitbox } from '../models/hitbox';
-import { versionNumber } from '../meta-data';
-import { getMoveLink } from '../utils/fightcore-link';
-import { processDuplicateHits, processDuplicateHitboxesForCrouchCancel } from '../utils/hitbox-utils';
+import { CrouchCancelCalculator } from '../calculation/crouch-cancel-calculator.js';
+import { Character } from '../models/character.js';
+import { Move } from '../models/move.js';
+import { BaseEmbedCreator } from './base-embed-creator.js';
+import { InfoLine } from './formatting/info-line.js';
+import { CharacterEmoji } from '../utils/character-emoji.js';
+import { Loader } from '../data/loader.js';
+import { Hitbox } from '../models/hitbox.js';
+import { versionNumber } from '../meta-data.js';
+import { getMoveLink } from '../utils/fightcore-link.js';
+import { processDuplicateHits, processDuplicateHitboxesForCrouchCancel } from '../utils/hitbox-utils.js';
 
 export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
   constructor(private knockbackTarget: number, private longTerm: string, private shortTerm: string) {

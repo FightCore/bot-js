@@ -1,6 +1,6 @@
-import { Hit } from './hit';
-import { MoveType } from './move-type';
-import { Source } from './source';
+import { Hit } from './hit.js';
+import { MoveType } from './move-type.js';
+import { Source } from './source.js';
 
 export interface Move {
   id: number;

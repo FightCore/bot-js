@@ -1,5 +1,5 @@
 import { Colors, EmbedBuilder } from 'discord.js';
-import { BaseEmbedCreator } from './base-embed-creator';
+import { BaseEmbedCreator } from './base-embed-creator.js';
 
 export class ErrorEmbedCreator extends BaseEmbedCreator {
   public static createErrorEmbed(): EmbedBuilder[] {

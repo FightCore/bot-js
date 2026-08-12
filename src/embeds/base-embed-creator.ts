@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { versionNumber } from '../meta-data';
+import { versionNumber } from '../meta-data.js';
 
 export abstract class BaseEmbedCreator {
   protected baseEmbed(): EmbedBuilder {

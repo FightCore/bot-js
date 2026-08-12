@@ -1,12 +1,12 @@
 import { ButtonInteraction, StringSelectMenuInteraction } from 'discord.js';
 import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
-import { Symbols } from '../config/symbols';
-import { FailureStore } from '../data/failure-store';
-import { Search } from '../data/search';
-import { MoveEmbedCreator } from '../embeds/move-embed-creator';
-import { BaseInteractionHandler } from './base-interaction-handler';
-import { LogSingleton } from '../utils/logs-singleton';
+import { Symbols } from '../config/symbols.js';
+import { FailureStore } from '../data/failure-store.js';
+import { Search } from '../data/search.js';
+import { MoveEmbedCreator } from '../embeds/move-embed-creator.js';
+import { BaseInteractionHandler } from './base-interaction-handler.js';
+import { LogSingleton } from '../utils/logs-singleton.js';
 
 @injectable()
 export class ComponentInteractionHandler extends BaseInteractionHandler {

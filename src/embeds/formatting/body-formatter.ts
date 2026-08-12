@@ -1,5 +1,5 @@
-import { InfoLine } from './info-line';
-import { LineProperty } from './line-property';
+import { InfoLine } from './info-line.js';
+import { LineProperty } from './line-property.js';
 
 export class BodyFormatter {
   /**

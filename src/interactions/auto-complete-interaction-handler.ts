@@ -1,13 +1,13 @@
 import { inject, injectable } from 'inversify';
-import { BaseInteractionHandler } from './base-interaction-handler';
+import { BaseInteractionHandler } from './base-interaction-handler.js';
 import { ApplicationCommandOptionChoiceData, AutocompleteInteraction, Client } from 'discord.js';
 import { Logger } from 'winston';
-import { Symbols } from '../config/symbols';
-import { FailureStore } from '../data/failure-store';
-import { Search } from '../data/search';
-import { Loader } from '../data/loader';
-import { SearchResultType } from '../models/search/search-result-type';
-import { Move } from '../models/move';
+import { Symbols } from '../config/symbols.js';
+import { FailureStore } from '../data/failure-store.js';
+import { Search } from '../data/search.js';
+import { Loader } from '../data/loader.js';
+import { SearchResultType } from '../models/search/search-result-type.js';
+import { Move } from '../models/move.js';
 
 @injectable()
 export class AutoCompleteInteractionHandler extends BaseInteractionHandler {

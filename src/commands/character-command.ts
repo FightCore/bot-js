@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
-import { Command } from './command';
+import { Command } from './command.js';
 import { SlashCommandBuilder, CacheType, ChatInputCommandInteraction } from 'discord.js';
-import { Search } from '../data/search';
-import { CharacterEmbedCreator } from '../embeds/character-embed-creator';
+import { Search } from '../data/search.js';
+import { CharacterEmbedCreator } from '../embeds/character-embed-creator.js';
 
 @injectable()
 export class CharacterCommand implements Command {

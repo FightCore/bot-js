@@ -1,15 +1,15 @@
 import { jaroWinkler } from 'jaro-winkler-typescript';
-import { SearchResult } from '../models/search/search-result';
-import { Character } from '../models/character';
-import { Move } from '../models/move';
-import { DistanceResult } from './models/distance-result';
-import { MoveType } from '../models/move-type';
-import { AliasRecord } from './models/alias-record';
-import { AliasParser } from './alias-parser';
-import { SearchResultType } from '../models/search/search-result-type';
-import { MovesParser } from './moves-parser';
+import { SearchResult } from '../models/search/search-result.js';
+import { Character } from '../models/character.js';
+import { Move } from '../models/move.js';
+import { DistanceResult } from './models/distance-result.js';
+import { MoveType } from '../models/move-type.js';
+import { AliasRecord } from './models/alias-record.js';
+import { AliasParser } from './alias-parser.js';
+import { SearchResultType } from '../models/search/search-result-type.js';
+import { MovesParser } from './moves-parser.js';
 import { inject, injectable } from 'inversify';
-import { Normalizer } from './normalizer';
+import { Normalizer } from './normalizer.js';
 
 @injectable()
 export class Search {

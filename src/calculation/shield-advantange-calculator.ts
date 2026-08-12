@@ -4,9 +4,9 @@
 // shield advantage and everything surrounding it, our goal is just to provide a
 // approximation.
 
-import { Hitbox } from '../models/hitbox';
-import { Move } from '../models/move';
-import { MoveType } from '../models/move-type';
+import { Hitbox } from '../models/hitbox.js';
+import { Move } from '../models/move.js';
+import { MoveType } from '../models/move-type.js';
 
 export class ShieldAdvantageCalculator {
   static calculate(move: Move, hitbox: Hitbox): number | null {

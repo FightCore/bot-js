@@ -1,12 +1,12 @@
 import { CommandInteraction } from 'discord.js';
 import { inject, injectable, multiInject } from 'inversify';
 import { Logger } from 'winston';
-import { Symbols } from '../config/symbols';
-import { Command } from '../commands/command';
-import { BaseInteractionHandler } from './base-interaction-handler';
-import { Search } from '../data/search';
-import { FailureStore } from '../data/failure-store';
-import { LogSingleton } from '../utils/logs-singleton';
+import { Symbols } from '../config/symbols.js';
+import { Command } from '../commands/command.js';
+import { BaseInteractionHandler } from './base-interaction-handler.js';
+import { Search } from '../data/search.js';
+import { FailureStore } from '../data/failure-store.js';
+import { LogSingleton } from '../utils/logs-singleton.js';
 
 @injectable()
 export class CommandInteractionHandler extends BaseInteractionHandler {

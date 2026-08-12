@@ -1,5 +1,5 @@
-import { Hit } from '../models/hit';
-import { Hitbox } from '../models/hitbox';
+import { Hit } from '../models/hit.js';
+import { Hitbox } from '../models/hitbox.js';
 
 export function areHitboxesOfHitEqual(hit: Hit): boolean {
   return areAllHitboxesEqual(hit.hitboxes);

@@ -1,5 +1,5 @@
-import { Move } from '../src/models/move';
-import { Character } from '../src/models/character';
+import { Move } from '../src/models/move.js';
+import { Character } from '../src/models/character.js';
 
 export function getMarth(): Character {
   return {

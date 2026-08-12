@@ -1,4 +1,4 @@
-import { KnockbackEmbedCreator } from './knockback-embed-creator';
+import { KnockbackEmbedCreator } from './knockback-embed-creator.js';
 
 export class ASDIDownEmbedCreator extends KnockbackEmbedCreator {
   constructor() {

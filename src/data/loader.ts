@@ -1,8 +1,8 @@
 import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
-import { Symbols } from '../config/symbols';
-import { Character } from '../models/character';
-import frameData from '../assets/framedata.json';
+import { Symbols } from '../config/symbols.js';
+import { Character } from '../models/character.js';
+import frameData from '../assets/framedata.json' with { type: 'json' };
 
 @injectable()
 export class Loader {

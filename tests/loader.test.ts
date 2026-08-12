@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { expect, test } from '@jest/globals';
 import winston from 'winston';
-import { Loader } from '../src/data/loader';
+import { Loader } from '../src/data/loader.js';
 
 test('Ensure data is loaded', async () => {
   // Create a silent unit test logger.

@@ -1,10 +1,10 @@
 import { SlashCommandBuilder, CacheType, ChatInputCommandInteraction } from 'discord.js';
 import { inject, injectable } from 'inversify';
-import { Loader } from '../data/loader';
-import { Search } from '../data/search';
-import { MoveEmbedCreator } from '../embeds/move-embed-creator';
-import { LogSingleton } from '../utils/logs-singleton';
-import { SearchableCommand } from './searchable-command';
+import { Loader } from '../data/loader.js';
+import { Search } from '../data/search.js';
+import { MoveEmbedCreator } from '../embeds/move-embed-creator.js';
+import { LogSingleton } from '../utils/logs-singleton.js';
+import { SearchableCommand } from './searchable-command.js';
 
 @injectable()
 export class FrameDataCommand extends SearchableCommand {
