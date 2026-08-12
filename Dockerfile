@@ -1,4 +1,4 @@
-FROM node:20.15.0-alpine
+FROM node:24-alpine
 
 # Expose the environment variable that is needed to provide the TOKEN.
 ENV TOKEN="Replace me"

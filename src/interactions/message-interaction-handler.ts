@@ -11,7 +11,6 @@ import { MoveListEmbedCreator } from '../embeds/move-list-embed-creator';
 import { NotFoundEmbedCreator } from '../embeds/not-found-embed-creator';
 import { SearchResult } from '../models/search/search-result';
 import { SearchResultType } from '../models/search/search-result-type';
-import { Indexer } from '../utils/indexer';
 import { MessageCleaner } from '../utils/message-cleaner';
 import { BaseInteractionHandler } from './base-interaction-handler';
 import { RoleEmbedCreator } from '../embeds/role-embed-creator';
