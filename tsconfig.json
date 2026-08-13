@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-      "target": "ES6",
-      "lib": ["es6"],
+      "target": "ES2022",
+      "lib": ["ES2022"],
       "types": ["reflect-metadata"],
       "module": "NodeNext",
       "moduleResolution": "NodeNext",

@@ -26,6 +26,6 @@ export class ModalInteractionHandler extends BaseInteractionHandler {
     statement.finalize();
     db.close();
 
-    modalSubmit.reply({ content: 'Your report has been processed, thank you for the feedback!', ephemeral: true });
+    await modalSubmit.reply({ content: 'Your report has been processed, thank you for the feedback!', ephemeral: true });
   }
 }

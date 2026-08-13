@@ -21,9 +21,7 @@ import { ASDIDownCommand } from './commands/asdi-down-command.js';
 import { CharacterCommand } from './commands/character-command.js';
 import { AutoCompleteInteractionHandler } from './interactions/auto-complete-interaction-handler.js';
 
-// Skip base classes doesn't check for the @injectable() annotation.
-// Needed to load third party libraries like winston's logger.
-const container = new Container({ skipBaseClassChecks: true });
+const container = new Container();
 container.bind<FailureStore>(FailureStore).toSelf().inSingletonScope();
 container.bind<Logger>(Symbols.Logger).toConstantValue(LogSingleton.getLogger());
 container.bind<Loader>(Loader).toSelf().inSingletonScope();
@@ -44,7 +42,7 @@ container.bind<ComponentInteractionHandler>(ComponentInteractionHandler).toSelf(
 container.bind<ModalInteractionHandler>(ModalInteractionHandler).toSelf().inTransientScope();
 
 try {
-  const client = container.resolve<DiscordClient>(DiscordClient);
+  const client = container.get<DiscordClient>(DiscordClient);
   client.login();
 } catch {
   // Don't do anything and continue.

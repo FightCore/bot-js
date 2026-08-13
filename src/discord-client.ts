@@ -55,10 +55,10 @@ export class DiscordClient {
   }
 
   private async handleInteraction(interaction: Interaction): Promise<void> {
-    const commandInteractionHandler = this.container.resolve<CommandInteractionHandler>(CommandInteractionHandler);
-    const componentInteractionHandler = this.container.resolve<ComponentInteractionHandler>(ComponentInteractionHandler);
-    const modalInteractionHandler = this.container.resolve<ModalInteractionHandler>(ModalInteractionHandler);
-    const autoCompleteInteractionHandler = this.container.resolve<AutoCompleteInteractionHandler>(AutoCompleteInteractionHandler);
+    const commandInteractionHandler = this.container.get<CommandInteractionHandler>(CommandInteractionHandler);
+    const componentInteractionHandler = this.container.get<ComponentInteractionHandler>(ComponentInteractionHandler);
+    const modalInteractionHandler = this.container.get<ModalInteractionHandler>(ModalInteractionHandler);
+    const autoCompleteInteractionHandler = this.container.get<AutoCompleteInteractionHandler>(AutoCompleteInteractionHandler);
     try {
       if (
         !interaction.isButton() &&
@@ -96,7 +96,7 @@ export class DiscordClient {
   }
 
   private async handleMessage(message: Message<boolean> | PartialMessage): Promise<void> {
-    const handler = this.container.resolve<MessageInteractionHandler>(MessageInteractionHandler);
+    const handler = this.container.get<MessageInteractionHandler>(MessageInteractionHandler);
     await handler.handleMessage(message as Message<boolean>, false);
   }
 
@@ -107,7 +107,7 @@ export class DiscordClient {
     if (!this.failureStore.contains(newMessage.id)) {
       return;
     }
-    const handler = this.container.resolve<MessageInteractionHandler>(MessageInteractionHandler);
+    const handler = this.container.get<MessageInteractionHandler>(MessageInteractionHandler);
     await handler.handleMessage(newMessage as Message<boolean>, true);
   }
 }
