@@ -4,7 +4,7 @@ import { Logger } from 'winston';
 import { Symbols } from '../config/symbols.js';
 import { FailureStore } from '../data/failure-store.js';
 import { Search } from '../data/search.js';
-import { MoveEmbedCreator } from '../embeds/move-embed-creator.js';
+import { MoveEmbedCreator } from '../../features/frame-data/move-embed-creator.js';
 import { BaseInteractionHandler } from './base-interaction-handler.js';
 import { LogSingleton } from '../utils/logs-singleton.js';
 

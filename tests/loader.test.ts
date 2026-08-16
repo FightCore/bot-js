@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { expect, test } from 'vitest';
 import winston from 'winston';
-import { Loader } from '../src/data/loader.js';
+import { Loader } from '../src/shared/data/loader.js';
 
 test('Ensure data is locally loaded', async () => {
   // Create a silent unit test logger.

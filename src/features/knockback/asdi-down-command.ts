@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify';
-import { KnockbackEmbedCreator } from '../embeds/knockback-embed-creator.js';
+import { KnockbackEmbedCreator } from './knockback-embed-creator.js';
 import { KnockbackCommand } from './knockback-command.js';
-import { ASDIDownEmbedCreator } from '../embeds/asdi-down-embed-creator.js';
-import { Loader } from '../data/loader.js';
-import { Search } from '../data/search.js';
+import { ASDIDownEmbedCreator } from './asdi-down-embed-creator.js';
+import { Loader } from '../../shared/data/loader.js';
+import { Search } from '../../shared/data/search.js';
 
 @injectable()
 export class ASDIDownCommand extends KnockbackCommand {

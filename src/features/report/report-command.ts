@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, CommandInteraction, CacheType } from 'discord.js';
-import { Command } from './command.js';
-import { ReportModal } from '../modals/report-embed.js';
+import { Command } from '../../shared/commands/command.js';
+import { ReportModal } from './report-embed.js';
 import { injectable } from 'inversify';
 
 @injectable()

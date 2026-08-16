@@ -1,7 +1,7 @@
-import { ShieldAdvantageCalculator } from '../../calculation/shield-advantange-calculator.js';
-import { Hitbox } from '../../models/hitbox.js';
-import { Move } from '../../models/move.js';
-import { InfoLine } from '../formatting/info-line.js';
+import { ShieldAdvantageCalculator } from '../calculation/shield-advantange-calculator.js';
+import { Hitbox } from '../../../shared/models/hitbox.js';
+import { Move } from '../../../shared/models/move.js';
+import { InfoLine } from '../../../shared/embeds/formatting/info-line.js';
 
 export class ShieldAdvantageFieldCreator {
   /**

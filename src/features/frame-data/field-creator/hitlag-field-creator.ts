@@ -1,6 +1,6 @@
-import { Hitbox } from '../../models/hitbox.js';
-import { Hitlag } from '../../models/hitlag.js';
-import { BodyFormatter } from '../formatting/body-formatter.js';
+import { Hitbox } from '../../../shared/models/hitbox.js';
+import { Hitlag } from '../../../shared/models/hitlag.js';
+import { BodyFormatter } from '../../../shared/embeds/formatting/body-formatter.js';
 
 export class HitlagFieldCreator {
   static createHitlagFields(hitboxes: Hitbox[]): string | undefined {

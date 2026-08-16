@@ -1,5 +1,5 @@
-import { Character } from '../models/character.js';
-import { Hitbox } from '../models/hitbox.js';
+import { Character } from '../../shared/models/character.js';
+import { Hitbox } from '../../shared/models/hitbox.js';
 
 export class CrouchCancelCalculator {
   static calculateCrouchCancel(hitbox: Hitbox, character: Character): number {

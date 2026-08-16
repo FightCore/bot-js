@@ -1,15 +1,15 @@
 import { Message, Client, Interaction, PartialMessage, Partials, GatewayIntentBits, Events } from 'discord.js';
 import { Container, inject, injectable } from 'inversify';
 import { Logger } from 'winston';
-import { RegisterCommands } from './commands/register-commands.js';
-import { Symbols } from './config/symbols.js';
-import { FailureStore } from './data/failure-store.js';
-import { Loader } from './data/loader.js';
-import { CommandInteractionHandler } from './interactions/command-interaction-handler.js';
-import { ComponentInteractionHandler } from './interactions/component-interaction-handler.js';
-import { MessageInteractionHandler } from './interactions/message-interaction-handler.js';
-import { ModalInteractionHandler } from './interactions/modal-interaction-handler.js';
-import { AutoCompleteInteractionHandler } from './interactions/auto-complete-interaction-handler.js';
+import { RegisterCommands } from './shared/commands/register-commands.js';
+import { Symbols } from './shared/config/symbols.js';
+import { FailureStore } from './shared/data/failure-store.js';
+import { Loader } from './shared/data/loader.js';
+import { CommandInteractionHandler } from './shared/interactions/command-interaction-handler.js';
+import { ComponentInteractionHandler } from './shared/interactions/component-interaction-handler.js';
+import { MessageInteractionHandler } from './shared/interactions/message-interaction-handler.js';
+import { ModalInteractionHandler } from './shared/interactions/modal-interaction-handler.js';
+import { AutoCompleteInteractionHandler } from './shared/interactions/auto-complete-interaction-handler.js';
 
 @injectable()
 export class DiscordClient {

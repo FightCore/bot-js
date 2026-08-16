@@ -1,4 +1,4 @@
-import moves from '../assets/moves.json' with { type: 'json' };
+import moves from '../../assets/moves.json' with { type: 'json' };
 import { MoveAlias } from './moves/move-alias.js';
 import { Normalizer } from './normalizer.js';
 

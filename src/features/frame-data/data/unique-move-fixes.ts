@@ -1,5 +1,5 @@
-import { Character } from '../models/character.js';
-import { Move } from '../models/move.js';
+import { Character } from '../../../shared/models/character.js';
+import { Move } from '../../../shared/models/move.js';
 
 /**
  * Fixes unique moves by modifying the provided move object.

@@ -1,15 +1,15 @@
 import { Colors, EmbedBuilder } from 'discord.js';
-import { CrouchCancelCalculator } from '../calculation/crouch-cancel-calculator.js';
-import { Character } from '../models/character.js';
-import { Move } from '../models/move.js';
-import { BaseEmbedCreator } from './base-embed-creator.js';
-import { InfoLine } from './formatting/info-line.js';
-import { CharacterEmoji } from '../utils/character-emoji.js';
-import { Loader } from '../data/loader.js';
-import { Hitbox } from '../models/hitbox.js';
-import { versionNumber } from '../meta-data.js';
-import { getMoveLink } from '../utils/fightcore-link.js';
-import { processDuplicateHits, processDuplicateHitboxesForCrouchCancel } from '../utils/hitbox-utils.js';
+import { CrouchCancelCalculator } from './crouch-cancel-calculator.js';
+import { Character } from '../../shared/models/character.js';
+import { Move } from '../../shared/models/move.js';
+import { BaseEmbedCreator } from '../../shared/embeds/base-embed-creator.js';
+import { InfoLine } from '../../shared/embeds/formatting/info-line.js';
+import { CharacterEmoji } from '../../shared/utils/character-emoji.js';
+import { Loader } from '../../shared/data/loader.js';
+import { Hitbox } from '../../shared/models/hitbox.js';
+import { versionNumber } from '../../shared/meta-data.js';
+import { getMoveLink } from '../../shared/utils/fightcore-link.js';
+import { processDuplicateHits, processDuplicateHitboxesForCrouchCancel } from '../../shared/utils/hitbox-utils.js';
 
 export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
   constructor(private knockbackTarget: number, private longTerm: string, private shortTerm: string) {

@@ -1,12 +1,12 @@
 import { SlashCommandBuilder, CacheType, ChatInputCommandInteraction } from 'discord.js';
 import { inject, injectable } from 'inversify';
-import { Loader } from '../data/loader.js';
-import { Search } from '../data/search.js';
-import { SearchResult } from '../models/search/search-result.js';
-import { SearchResultType } from '../models/search/search-result-type.js';
-import { KnockbackEmbedCreator } from '../embeds/knockback-embed-creator.js';
-import { LogSingleton } from '../utils/logs-singleton.js';
-import { SearchableCommand } from './searchable-command.js';
+import { Loader } from '../../shared/data/loader.js';
+import { Search } from '../../shared/data/search.js';
+import { SearchResult } from '../../shared/models/search/search-result.js';
+import { SearchResultType } from '../../shared/models/search/search-result-type.js';
+import { KnockbackEmbedCreator } from './knockback-embed-creator.js';
+import { LogSingleton } from '../../shared/utils/logs-singleton.js';
+import { SearchableCommand } from '../../shared/commands/searchable-command.js';
 
 @injectable()
 export abstract class KnockbackCommand extends SearchableCommand {
