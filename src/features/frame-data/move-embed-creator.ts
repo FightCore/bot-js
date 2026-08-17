@@ -1,11 +1,11 @@
 import {
   ColorResolvable,
-  ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
   APIEmbedField,
   EmbedBuilder,
   StringSelectMenuBuilder,
+  ActionRowBuilder,
 } from 'discord.js';
 import { Character } from '../../shared/models/character.js';
 import { Hitbox } from '../../shared/models/hitbox.js';
@@ -81,7 +81,7 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
       this.move.type === MoveType.special &&
       !this.move.normalizedName.startsWith('a') &&
       // Find the aerial move that corresponds with the provided grounded move.
-      this.character.moves.findIndex((groundedMove) => groundedMove.normalizedName === 'a' + this.move.normalizedName) !== -1
+      this.character.moves.some((groundedMove) => groundedMove.normalizedName === 'a' + this.move.normalizedName)
     ) {
       result.push(
         new ActionRowBuilder<ButtonBuilder>().addComponents(

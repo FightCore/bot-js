@@ -3,6 +3,7 @@ import { SearchStep } from './search-step.js';
 import { Search } from '../data/search.js';
 import { SearchResult } from './search-result.js';
 import { Character } from '../models/character.js';
+import { CleanMessage } from '../cleaning/clean-message.js';
 
 @injectable()
 export class FullSearch {
@@ -16,6 +17,8 @@ export class FullSearch {
   }
 
   public search(query: string): SearchResult {
+    query = CleanMessage.execute(query);
+
     for (const step of this.searchSteps) {
       const result = step.search(query);
       if (result) {
