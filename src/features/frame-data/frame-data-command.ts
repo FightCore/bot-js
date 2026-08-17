@@ -5,12 +5,13 @@ import { MoveEmbedCreator } from './move-embed-creator.js';
 import { LogSingleton } from '../../shared/utils/logs-singleton.js';
 import { SearchableCommand } from '../../shared/commands/searchable-command.js';
 import { FullSearch } from '../../shared/search/full-search.js';
+import { SearchResultType } from '../../shared/models/search/search-result-type.js';
 
 @injectable()
 export class FrameDataCommand extends SearchableCommand {
   constructor(
     search: FullSearch,
-    @inject(Loader) private loader: Loader
+    @inject(Loader) private readonly loader: Loader
   ) {
     super(search);
   }
@@ -34,11 +35,11 @@ export class FrameDataCommand extends SearchableCommand {
     const logger = LogSingleton.createContextLogger(interaction);
     const searchResult = await this.getSearchResultOrNull(interaction);
 
-    if (!searchResult) {
+    if (searchResult?.type !== SearchResultType.Move) {
       return;
     }
 
-    const embedCreator = new MoveEmbedCreator(searchResult.move!, searchResult.character!);
+    const embedCreator = new MoveEmbedCreator(searchResult.move, searchResult.character);
     logger.info(`Replying with {character} and {move}`, {
       character: searchResult.character!.name,
       move: searchResult.move!.name,

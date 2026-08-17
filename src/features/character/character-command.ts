@@ -3,10 +3,11 @@ import { Command } from '../../shared/commands/command.js';
 import { SlashCommandBuilder, CacheType, ChatInputCommandInteraction } from 'discord.js';
 import { Search } from '../../shared/data/search.js';
 import { CharacterEmbedCreator } from './character-embed-creator.js';
+import { SearchResultType } from '../../shared/models/search/search-result-type.js';
 
 @injectable()
 export class CharacterCommand implements Command {
-  constructor(private search: Search) {}
+  constructor(private readonly search: Search) {}
   get commandNames(): string[] {
     return ['character'];
   }
@@ -24,7 +25,9 @@ export class CharacterCommand implements Command {
     const character = interaction.options.get('character', true).value as string;
 
     const characterSearch = this.search.search(character);
-    const embed = CharacterEmbedCreator.createCharacterEmbed(characterSearch.character);
-    await interaction.reply({ embeds: embed });
+    if (characterSearch.type === SearchResultType.Character) {
+      const embed = CharacterEmbedCreator.createCharacterEmbed(characterSearch.character);
+      await interaction.reply({ embeds: embed });
+    }
   }
 }

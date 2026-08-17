@@ -42,7 +42,7 @@ export abstract class KnockbackCommand extends SearchableCommand {
     const logger = LogSingleton.createContextLogger(interaction);
     const searchResult = await this.getSearchResultOrNull(interaction);
 
-    if (!searchResult) {
+    if (searchResult?.type !== SearchResultType.Move) {
       return;
     }
 
@@ -52,9 +52,6 @@ export abstract class KnockbackCommand extends SearchableCommand {
     if (target && !targetCharacter) {
       await this.sendNoMoveFoundErrorToInteraction(interaction, `${target} `, {
         type: SearchResultType.NotFound,
-        character: null!,
-        move: null!,
-        possibleMoves: [],
       });
       return;
     }

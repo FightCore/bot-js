@@ -29,12 +29,12 @@ export class Search {
     const keyWords = query.split(' ');
 
     if (keyWords.length === 0) {
-      return { type: SearchResultType.NotFound, character: null!, move: null!, possibleMoves: [] };
+      return { type: SearchResultType.NotFound };
     }
 
     const firstKeyWord = keyWords[0];
     if (jaroWinkler('help', firstKeyWord, this.distanceConfiguration) > this.threshold) {
-      return { type: SearchResultType.Help, character: null!, move: null!, possibleMoves: [] };
+      return { type: SearchResultType.Help };
     }
 
     const foundAlias = this.searchAlias(keyWords);
@@ -43,13 +43,11 @@ export class Search {
     // Going to look for the exact match in terms of name of the move.
     // Like Rest or Counter.
     if (!foundAlias || !foundAlias.record.character) {
-      return (
-        this.searchForSingleMove(query) ?? { type: SearchResultType.NotFound, character: null!, move: null!, possibleMoves: [] }
-      );
+      return this.searchForSingleMove(query) ?? { type: SearchResultType.NotFound };
     }
 
     if (foundAlias.remainder.length === 0) {
-      return { type: SearchResultType.Character, character: foundAlias.record.character, move: null!, possibleMoves: [] };
+      return { type: SearchResultType.Character, character: foundAlias.record.character };
     }
 
     // Edge case:
@@ -71,7 +69,7 @@ export class Search {
     }
 
     if (jaroWinkler('moves', moveQuery, this.distanceConfiguration) > this.threshold) {
-      return { type: SearchResultType.MoveList, character: foundAlias.record.character, move: null!, possibleMoves: [] };
+      return { type: SearchResultType.MoveList, character: foundAlias.record.character, possibleMoves: [] };
     }
 
     // If there are any moves within the alias, we should loop over them to check
@@ -113,7 +111,7 @@ export class Search {
     foundMoves.sort(this.sortDistanceResults);
 
     if (foundMoves.length === 0) {
-      return { type: SearchResultType.MoveNotFound, character: foundAlias.record.character, move: null!, possibleMoves: [] };
+      return { type: SearchResultType.MoveNotFound, character: foundAlias.record.character };
     }
 
     if (foundMoves.length == 2 && foundMoves[0].move.normalizedName === 'upb') {

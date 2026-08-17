@@ -7,6 +7,7 @@ import { MoveEmbedCreator } from '../../features/frame-data/move-embed-creator.j
 import { BaseInteractionHandler } from './base-interaction-handler.js';
 import { LogSingleton } from '../utils/logs-singleton.js';
 import { FullSearch } from '../search/full-search.js';
+import { SearchResultType } from '../models/search/search-result-type.js';
 
 @injectable()
 export class ComponentInteractionHandler extends BaseInteractionHandler {
@@ -22,12 +23,12 @@ export class ComponentInteractionHandler extends BaseInteractionHandler {
       isFromOriginalUser = true;
     }
 
-    if (interaction.message.interaction && interaction.message.interaction.user?.id === interaction.user.id) {
+    if (interaction.message.interactionMetadata && interaction.message.interactionMetadata.user?.id === interaction.user.id) {
       isFromOriginalUser = true;
     }
 
     const characterMove = this.search.search(interaction.isStringSelectMenu() ? interaction.values[0] : interaction.customId);
-    if (!characterMove || !characterMove.move) {
+    if (characterMove.type !== SearchResultType.Move) {
       logger.error('Move not found for interaction');
       return;
     }

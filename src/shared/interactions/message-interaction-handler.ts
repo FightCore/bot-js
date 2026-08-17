@@ -20,9 +20,9 @@ import { FullSearch } from '../search/full-search.js';
 export class MessageInteractionHandler extends BaseInteractionHandler {
   constructor(
     search: FullSearch,
-    @inject(Symbols.Logger) logger: Logger,
+    @inject(Symbols.Logger) readonly logger: Logger,
     failureStore: FailureStore,
-    @inject(Symbols.Client) private client: Client
+    @inject(Symbols.Client) private readonly client: Client
   ) {
     super(search, logger, failureStore);
   }
@@ -110,7 +110,7 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
     // Check if the move and the searchResult are not null.
     // This should be already checked in the previous process so throw an error
     // if this is the case.
-    if (!searchResult.move) {
+    if (searchResult.type !== SearchResultType.Move) {
       throw new Error('Move was not found with existing message');
     }
 
@@ -146,7 +146,7 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
     // Check if the move and the searchResult are not null.
     // This should be already checked in the previous process so throw an error
     // if this is the case.
-    if (!searchResult.move) {
+    if (searchResult.type !== SearchResultType.Move) {
       throw new Error('Move was not found with existing message');
     }
 
