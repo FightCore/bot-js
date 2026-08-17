@@ -3,15 +3,15 @@ import { injectable, inject } from 'inversify';
 import { Logger } from 'winston';
 import { Symbols } from '../config/symbols.js';
 import { FailureStore } from '../data/failure-store.js';
-import { Search } from '../data/search.js';
 import { BaseInteractionHandler } from './base-interaction-handler.js';
 import sqlite3 from 'sqlite3';
+import { FullSearch } from '../search/full-search.js';
 
 const { Database } = sqlite3;
 
 @injectable()
 export class ModalInteractionHandler extends BaseInteractionHandler {
-  constructor(search: Search, @inject(Symbols.Logger) logger: Logger, failureStore: FailureStore) {
+  constructor(search: FullSearch, @inject(Symbols.Logger) logger: Logger, failureStore: FailureStore) {
     super(search, logger, failureStore);
   }
 

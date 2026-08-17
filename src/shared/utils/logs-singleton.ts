@@ -31,8 +31,10 @@ export class LogSingleton {
       );
     }
 
+    const logLevel = process.env.DEVELOPMENT === 'true' ? 'debug' : 'info';
+
     LogSingleton.logger = createLogger({
-      level: 'info',
+      level: logLevel,
       format: winston.format.combine(
         /* This is required to get errors to log with stack traces. See https://github.com/winstonjs/winston/issues/1498 */
         winston.format.errors({ stack: true }),

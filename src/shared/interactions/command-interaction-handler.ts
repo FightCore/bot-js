@@ -4,14 +4,14 @@ import { Logger } from 'winston';
 import { Symbols } from '../config/symbols.js';
 import { Command } from '../commands/command.js';
 import { BaseInteractionHandler } from './base-interaction-handler.js';
-import { Search } from '../data/search.js';
 import { FailureStore } from '../data/failure-store.js';
 import { LogSingleton } from '../utils/logs-singleton.js';
+import { FullSearch } from '../search/full-search.js';
 
 @injectable()
 export class CommandInteractionHandler extends BaseInteractionHandler {
   constructor(
-    search: Search,
+    search: FullSearch,
     @inject(Symbols.Logger) logger: Logger,
     failureStore: FailureStore,
     @multiInject('Command') private commands: Command[]

@@ -4,15 +4,15 @@ import { ApplicationCommandOptionChoiceData, AutocompleteInteraction, Client } f
 import { Logger } from 'winston';
 import { Symbols } from '../config/symbols.js';
 import { FailureStore } from '../data/failure-store.js';
-import { Search } from '../data/search.js';
 import { Loader } from '../data/loader.js';
 import { SearchResultType } from '../models/search/search-result-type.js';
 import { Move } from '../models/move.js';
+import { FullSearch } from '../search/full-search.js';
 
 @injectable()
 export class AutoCompleteInteractionHandler extends BaseInteractionHandler {
   constructor(
-    search: Search,
+    search: FullSearch,
     @inject(Symbols.Logger) logger: Logger,
     failureStore: FailureStore,
     @inject(Symbols.Client) private client: Client,

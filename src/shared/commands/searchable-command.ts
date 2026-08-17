@@ -1,18 +1,18 @@
 import { ChatInputCommandInteraction, InteractionResponse, SlashCommandBuilder } from 'discord.js';
 import { injectable } from 'inversify';
 import { Command } from './command.js';
-import { Search } from '../data/search.js';
-import { SearchResult } from '../models/search/search-result.js';
 import { SearchResultType } from '../models/search/search-result-type.js';
 import { NotFoundEmbedCreator } from '../embeds/not-found-embed-creator.js';
 import { MessageCleaner } from '../utils/message-cleaner.js';
 import { LogSingleton } from '../utils/logs-singleton.js';
+import { FullSearch } from '../search/full-search.js';
+import { SearchResult } from '../search/search-result.js';
 
 const MAX_CONTENT_LENGTH = 75;
 
 @injectable()
 export abstract class SearchableCommand implements Command {
-  constructor(protected search: Search) {}
+  constructor(protected search: FullSearch) {}
 
   abstract get commandNames(): string[];
   abstract get builders(): SlashCommandBuilder[];
@@ -53,7 +53,7 @@ export abstract class SearchableCommand implements Command {
 
     const embeds =
       searchResult.type === SearchResultType.MoveNotFound
-        ? NotFoundEmbedCreator.createMoveNotFoundEmbed(searchResult.character, content)
+        ? NotFoundEmbedCreator.createMoveNotFoundEmbed(searchResult.character!, content)
         : NotFoundEmbedCreator.createNotFoundEmbed(content);
 
     return interaction.reply({ embeds });

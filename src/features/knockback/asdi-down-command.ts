@@ -3,11 +3,11 @@ import { KnockbackEmbedCreator } from './knockback-embed-creator.js';
 import { KnockbackCommand } from './knockback-command.js';
 import { ASDIDownEmbedCreator } from './asdi-down-embed-creator.js';
 import { Loader } from '../../shared/data/loader.js';
-import { Search } from '../../shared/data/search.js';
+import { FullSearch } from '../../shared/search/full-search.js';
 
 @injectable()
 export class ASDIDownCommand extends KnockbackCommand {
-  constructor(search: Search, @inject(Loader) loader: Loader) {
+  constructor(search: FullSearch, @inject(Loader) loader: Loader) {
     super(search, loader);
   }
 

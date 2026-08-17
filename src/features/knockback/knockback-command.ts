@@ -1,16 +1,18 @@
 import { SlashCommandBuilder, CacheType, ChatInputCommandInteraction } from 'discord.js';
 import { inject, injectable } from 'inversify';
 import { Loader } from '../../shared/data/loader.js';
-import { Search } from '../../shared/data/search.js';
-import { SearchResult } from '../../shared/models/search/search-result.js';
 import { SearchResultType } from '../../shared/models/search/search-result-type.js';
 import { KnockbackEmbedCreator } from './knockback-embed-creator.js';
 import { LogSingleton } from '../../shared/utils/logs-singleton.js';
 import { SearchableCommand } from '../../shared/commands/searchable-command.js';
+import { FullSearch } from '../../shared/search/full-search.js';
 
 @injectable()
 export abstract class KnockbackCommand extends SearchableCommand {
-  constructor(search: Search, @inject(Loader) protected loader: Loader) {
+  constructor(
+    search: FullSearch,
+    @inject(Loader) protected loader: Loader
+  ) {
     super(search);
   }
 
@@ -48,17 +50,22 @@ export abstract class KnockbackCommand extends SearchableCommand {
     const targetCharacter = this.search.searchCharacter([target as string]);
 
     if (target && !targetCharacter) {
-      await this.sendNoMoveFoundErrorToInteraction(interaction, `${target} `, new SearchResult(SearchResultType.NotFound));
+      await this.sendNoMoveFoundErrorToInteraction(interaction, `${target} `, {
+        type: SearchResultType.NotFound,
+        character: null!,
+        move: null!,
+        possibleMoves: [],
+      });
       return;
     }
 
     logger.info(`Replying with knockback information for {character} and {move}`, {
-      character: searchResult.character.name,
-      move: searchResult.move.name,
+      character: searchResult.character!.name,
+      move: searchResult.move!.name,
       ...(targetCharacter && { target: targetCharacter.name }),
     });
 
-    const embeds = this.embedCreator.create(searchResult.character, searchResult.move, targetCharacter, this.loader);
+    const embeds = this.embedCreator.create(searchResult.character!, searchResult.move!, targetCharacter, this.loader);
     await interaction.reply({
       embeds: embeds,
     });

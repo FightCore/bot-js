@@ -1,14 +1,17 @@
 import { SlashCommandBuilder, CacheType, ChatInputCommandInteraction } from 'discord.js';
 import { inject, injectable } from 'inversify';
 import { Loader } from '../../shared/data/loader.js';
-import { Search } from '../../shared/data/search.js';
 import { MoveEmbedCreator } from './move-embed-creator.js';
 import { LogSingleton } from '../../shared/utils/logs-singleton.js';
 import { SearchableCommand } from '../../shared/commands/searchable-command.js';
+import { FullSearch } from '../../shared/search/full-search.js';
 
 @injectable()
 export class FrameDataCommand extends SearchableCommand {
-  constructor(search: Search, @inject(Loader) private loader: Loader) {
+  constructor(
+    search: FullSearch,
+    @inject(Loader) private loader: Loader
+  ) {
     super(search);
   }
   get commandNames(): string[] {
@@ -35,10 +38,10 @@ export class FrameDataCommand extends SearchableCommand {
       return;
     }
 
-    const embedCreator = new MoveEmbedCreator(searchResult.move, searchResult.character);
+    const embedCreator = new MoveEmbedCreator(searchResult.move!, searchResult.character!);
     logger.info(`Replying with {character} and {move}`, {
-      character: searchResult.character.name,
-      move: searchResult.move.name,
+      character: searchResult.character!.name,
+      move: searchResult.move!.name,
     });
     await interaction.reply({
       embeds: embedCreator.createEmbed(),

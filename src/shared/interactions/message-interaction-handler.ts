@@ -3,23 +3,23 @@ import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
 import { Symbols } from '../config/symbols.js';
 import { FailureStore } from '../data/failure-store.js';
-import { Search } from '../data/search.js';
 import { CharacterEmbedCreator } from '../../features/character/character-embed-creator.js';
 import { HelpEmbedCreator } from '../embeds/help-embed-creator.js';
 import { MoveEmbedCreator } from '../../features/frame-data/move-embed-creator.js';
 import { MoveListEmbedCreator } from '../../features/frame-data/move-list-embed-creator.js';
 import { NotFoundEmbedCreator } from '../embeds/not-found-embed-creator.js';
-import { SearchResult } from '../models/search/search-result.js';
 import { SearchResultType } from '../models/search/search-result-type.js';
 import { MessageCleaner } from '../utils/message-cleaner.js';
 import { BaseInteractionHandler } from './base-interaction-handler.js';
 import { RoleEmbedCreator } from '../embeds/role-embed-creator.js';
 import { LogSingleton } from '../utils/logs-singleton.js';
+import { SearchResult } from '../search/search-result.js';
+import { FullSearch } from '../search/full-search.js';
 
 @injectable()
 export class MessageInteractionHandler extends BaseInteractionHandler {
   constructor(
-    search: Search,
+    search: FullSearch,
     @inject(Symbols.Logger) logger: Logger,
     failureStore: FailureStore,
     @inject(Symbols.Client) private client: Client
