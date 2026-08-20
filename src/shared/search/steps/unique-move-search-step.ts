@@ -6,13 +6,14 @@ import { Symbols } from '../../config/symbols.js';
 import { Logger } from 'winston';
 import { SearchResultType } from '../../models/search/search-result-type.js';
 import assert from 'node:assert';
+import { SearchStepOrder } from '../search-step-order.js';
 
 @injectable()
 export class UniqueMoveSearchStep implements SearchStep {
   private readonly uniqueMoves = [{ query: 'shine', moveId: 1284 }];
 
   public get order(): number {
-    return 1;
+    return SearchStepOrder.UniqueMove;
   }
 
   constructor(

@@ -10,6 +10,7 @@ import { Character } from '../../models/character.js';
 import { MoveType } from '../../models/move-type.js';
 import { Move } from '../../models/move.js';
 import { Normalizer } from '../../data/normalizer.js';
+import { SearchStepOrder } from '../search-step-order.js';
 
 @injectable()
 export class SingleMoveSearchStep implements SearchStep {
@@ -25,7 +26,7 @@ export class SingleMoveSearchStep implements SearchStep {
   }
 
   get order(): number {
-    return 4;
+    return SearchStepOrder.SingleMove;
   }
 
   search(searchResult: IntermediateSearchResult): IntermediateSearchResult | null {

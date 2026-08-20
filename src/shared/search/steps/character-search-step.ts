@@ -5,6 +5,7 @@ import { AliasParser } from '../../data/alias-parser.js';
 import { AliasRecord } from '../../data/models/alias-record.js';
 import { jaroWinkler } from 'jaro-winkler-typescript';
 import { SearchResultType } from '../../models/search/search-result-type.js';
+import { SearchStepOrder } from '../search-step-order.js';
 
 @injectable()
 export class CharacterSearchStep implements SearchStep {
@@ -20,7 +21,7 @@ export class CharacterSearchStep implements SearchStep {
   }
 
   public get order(): number {
-    return 3;
+    return SearchStepOrder.Character;
   }
 
   search(searchResult: IntermediateSearchResult): IntermediateSearchResult | null {

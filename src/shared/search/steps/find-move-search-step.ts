@@ -11,6 +11,7 @@ import { Move } from '../../models/move.js';
 import { Normalizer } from '../../data/normalizer.js';
 import { Character } from '../../models/character.js';
 import { MovesParser } from '../../data/moves-parser.js';
+import { SearchStepOrder } from '../search-step-order.js';
 
 @injectable()
 export class FindMoveSearchStep implements SearchStep {
@@ -26,7 +27,7 @@ export class FindMoveSearchStep implements SearchStep {
   }
 
   get order(): number {
-    return 7;
+    return SearchStepOrder.FindMove;
   }
 
   search(searchResult: IntermediateSearchResult): IntermediateSearchResult | null {
