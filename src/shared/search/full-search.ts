@@ -19,12 +19,13 @@ export class FullSearch {
   }
 
   public search(query: string): SearchResult {
+    query = CleanMessage.execute(query);
+
     let intermediateResult: IntermediateSearchResult = {
-      type: -10 as SearchResultType,
+      type: SearchResultType.None,
       remainder: query,
       isFinal: false,
     };
-    query = CleanMessage.execute(query);
 
     for (const step of this.searchSteps) {
       const result = step.search(intermediateResult);
@@ -35,16 +36,55 @@ export class FullSearch {
       intermediateResult = result;
 
       if (result.isFinal) {
-        return {
-          type: result.type,
-          character: result.character!,
-          move: result.move!,
-          possibleMoves: result.possibleMoves!,
-        };
+        // return {
+        //   type: result.type,
+        //   character: result.character!,
+        //   move: result.move!,
+        //   possibleMoves: result.possibleMoves!,
+        // };
+
+        switch (result.type) {
+          case SearchResultType.Character:
+            return {
+              type: SearchResultType.Character,
+              character: result.character!,
+            };
+          case SearchResultType.Move:
+            return {
+              type: SearchResultType.Move,
+              character: result.character!,
+              move: result.move!,
+              possibleMoves: result.possibleMoves!,
+            };
+          case SearchResultType.MoveList:
+            return {
+              type: SearchResultType.MoveList,
+              character: result.character!,
+              possibleMoves: result.possibleMoves!,
+            };
+          case SearchResultType.MoveNotFound:
+            return {
+              type: SearchResultType.MoveNotFound,
+              character: result.character!,
+            };
+          case SearchResultType.None:
+          case SearchResultType.NotFound:
+            return {
+              type: SearchResultType.NotFound,
+            };
+          case SearchResultType.Help:
+            return {
+              type: SearchResultType.Help,
+            };
+          default:
+            throw new Error(`Unknown search result type: ${result.type}`);
+        }
       }
     }
 
-    return this.oldSearch.search(query);
+    return {
+      type: SearchResultType.NotFound,
+    };
   }
 
   public searchCharacter(keyWords: string[]): Character | undefined {

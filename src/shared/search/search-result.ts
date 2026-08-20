@@ -21,7 +21,7 @@ export interface MoveListSearchResult {
 }
 
 export interface NotFoundSearchResult {
-  type: SearchResultType.NotFound;
+  type: SearchResultType.NotFound | SearchResultType.None;
 }
 
 export interface MoveNotFoundSearchResult {

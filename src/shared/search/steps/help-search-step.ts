@@ -1,9 +1,10 @@
 import { injectable } from 'inversify';
 import { IntermediateSearchResult } from '../intermediate-search-result.js';
 import { SearchResultType } from '../../models/search/search-result-type.js';
+import { SearchStep } from '../search-step.js';
 
 @injectable()
-export class HelpSearchStep {
+export class HelpSearchStep implements SearchStep {
   public get order(): number {
     return 2;
   }

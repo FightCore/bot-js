@@ -39,7 +39,9 @@ export class UniqueMoveSearchStep implements SearchStep {
       return null;
     }
 
-    this.logger.debug(`UniqueMoveSearch found alias for query "${searchResult}": ${alias.character?.name} ${move.name}`);
+    this.logger.debug(
+      `UniqueMoveSearch found alias for query "${searchResult.remainder}": ${alias.character?.name} ${move.name}`
+    );
 
     return {
       type: SearchResultType.Move,

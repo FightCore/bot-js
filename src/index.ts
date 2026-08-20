@@ -24,6 +24,10 @@ import { SearchStep } from './shared/search/search-step.js';
 import { UniqueMoveSearchStep } from './shared/search/steps/unique-move-search-step.js';
 import { FullSearch } from './shared/search/full-search.js';
 import { HelpSearchStep } from './shared/search/steps/help-search-step.js';
+import { CharacterSearchStep } from './shared/search/steps/character-search-step.js';
+import { MoveListSearchStep } from './shared/search/steps/move-list-search-step.js';
+import { SingleMoveSearchStep } from './shared/search/steps/single-move-search-step.js';
+import { FindMoveSearchStep } from './shared/search/steps/find-move-search-step.js';
 
 const container = new Container();
 container.bind<FailureStore>(FailureStore).toSelf().inSingletonScope();
@@ -36,6 +40,11 @@ container.bind<DiscordClient>(DiscordClient).toSelf();
 
 container.bind<SearchStep>('SearchSteps').to(UniqueMoveSearchStep);
 container.bind<SearchStep>('SearchSteps').to(HelpSearchStep);
+container.bind<SearchStep>('SearchSteps').to(CharacterSearchStep);
+container.bind<SearchStep>('SearchSteps').to(MoveListSearchStep);
+container.bind<SearchStep>('SearchSteps').to(SingleMoveSearchStep);
+container.bind<SearchStep>('SearchSteps').to(FindMoveSearchStep);
+
 container.bind<FullSearch>(FullSearch).toSelf().inSingletonScope();
 
 container.bind<Command>('Command').to(FrameDataCommand);
