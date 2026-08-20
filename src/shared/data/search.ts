@@ -32,17 +32,12 @@ export class Search {
       return { type: SearchResultType.NotFound };
     }
 
-    const firstKeyWord = keyWords[0];
-    if (jaroWinkler('help', firstKeyWord, this.distanceConfiguration) > this.threshold) {
-      return { type: SearchResultType.Help };
-    }
-
     const foundAlias = this.searchAlias(keyWords);
 
     // No character was found.
     // Going to look for the exact match in terms of name of the move.
     // Like Rest or Counter.
-    if (!foundAlias || !foundAlias.record.character) {
+    if (!foundAlias?.record.character) {
       return this.searchForSingleMove(query) ?? { type: SearchResultType.NotFound };
     }
 

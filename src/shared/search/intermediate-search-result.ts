@@ -8,4 +8,5 @@ export interface IntermediateSearchResult {
   move?: Move;
   possibleMoves?: Move[];
   remainder: string;
+  isFinal: boolean;
 }

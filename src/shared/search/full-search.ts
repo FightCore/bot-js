@@ -4,6 +4,8 @@ import { Search } from '../data/search.js';
 import { SearchResult } from './search-result.js';
 import { Character } from '../models/character.js';
 import { CleanMessage } from '../cleaning/clean-message.js';
+import { IntermediateSearchResult } from './intermediate-search-result.js';
+import { SearchResultType } from '../models/search/search-result-type.js';
 
 @injectable()
 export class FullSearch {
@@ -17,11 +19,22 @@ export class FullSearch {
   }
 
   public search(query: string): SearchResult {
+    let intermediateResult: IntermediateSearchResult = {
+      type: -10 as SearchResultType,
+      remainder: query,
+      isFinal: false,
+    };
     query = CleanMessage.execute(query);
 
     for (const step of this.searchSteps) {
-      const result = step.search(query);
-      if (result) {
+      const result = step.search(intermediateResult);
+      if (result === null) {
+        continue;
+      }
+
+      intermediateResult = result;
+
+      if (result.isFinal) {
         return {
           type: result.type,
           character: result.character!,

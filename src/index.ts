@@ -21,8 +21,9 @@ import { ASDIDownCommand } from './features/knockback/asdi-down-command.js';
 import { CharacterCommand } from './features/character/character-command.js';
 import { AutoCompleteInteractionHandler } from './shared/interactions/auto-complete-interaction-handler.js';
 import { SearchStep } from './shared/search/search-step.js';
-import { UniqueMoveSearch } from './shared/search/steps/unique-move-search.js';
+import { UniqueMoveSearchStep } from './shared/search/steps/unique-move-search-step.js';
 import { FullSearch } from './shared/search/full-search.js';
+import { HelpSearchStep } from './shared/search/steps/help-search-step.js';
 
 const container = new Container();
 container.bind<FailureStore>(FailureStore).toSelf().inSingletonScope();
@@ -33,7 +34,8 @@ container.bind<Search>(Search).toSelf().inSingletonScope();
 container.bind<Container>(Container).toConstantValue(container);
 container.bind<DiscordClient>(DiscordClient).toSelf();
 
-container.bind<SearchStep>('SearchSteps').to(UniqueMoveSearch);
+container.bind<SearchStep>('SearchSteps').to(UniqueMoveSearchStep);
+container.bind<SearchStep>('SearchSteps').to(HelpSearchStep);
 container.bind<FullSearch>(FullSearch).toSelf().inSingletonScope();
 
 container.bind<Command>('Command').to(FrameDataCommand);

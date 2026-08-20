@@ -8,7 +8,7 @@ import { SearchResultType } from '../../models/search/search-result-type.js';
 import assert from 'node:assert';
 
 @injectable()
-export class UniqueMoveSearch implements SearchStep {
+export class UniqueMoveSearchStep implements SearchStep {
   private readonly uniqueMoves = [{ query: 'shine', moveId: 1284 }];
 
   public get order(): number {
@@ -20,8 +20,9 @@ export class UniqueMoveSearch implements SearchStep {
     @inject(Symbols.Logger) private readonly logger: Logger
   ) {}
 
-  search(query: string): IntermediateSearchResult | null {
-    const uniqueMove = this.uniqueMoves.find((move) => move.query === query.toLowerCase());
+  search(searchResult: IntermediateSearchResult): IntermediateSearchResult | null {
+    const query = searchResult.remainder.trim().toLowerCase();
+    const uniqueMove = this.uniqueMoves.find((move) => move.query === query);
     if (!uniqueMove) {
       return null;
     }
@@ -38,13 +39,14 @@ export class UniqueMoveSearch implements SearchStep {
       return null;
     }
 
-    this.logger.debug(`UniqueMoveSearch found alias for query "${query}": ${alias.character?.name} ${move.name}`);
+    this.logger.debug(`UniqueMoveSearch found alias for query "${searchResult}": ${alias.character?.name} ${move.name}`);
 
     return {
       type: SearchResultType.Move,
       character: alias.character,
       move: move,
       remainder: '',
+      isFinal: true,
     };
   }
 }
