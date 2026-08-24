@@ -53,9 +53,7 @@ export class LogSingleton {
   public static createContextLogger(interaction: CommandInteraction | Interaction | Message): Logger {
     const baseLogger = LogSingleton.getLogger();
 
-    const metadata: Record<string, string | null | undefined> = {
-      guildName: interaction.guild?.name,
-    };
+    const metadata: Record<string, string | null | undefined> = {};
 
     if ('commandName' in interaction) {
       metadata.commandName = interaction.commandName;
