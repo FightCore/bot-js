@@ -15,9 +15,7 @@ export class HitlagFieldCreator {
 
     // check if the hitlag is equal for the defender and attacker, if so we dont need
     // to display all values.
-    const complicatedValues = hitlagValues.some(
-      (hitlag) => hitlag.hitlagDefender !== hitlag.hitlagAttacker || hitlag.hitlagDefenderCrouch !== hitlag.hitlagAttackerCrouch
-    );
+    const complicatedValues = hitlagValues.some((hitlag) => hitlag.hitlagDefender !== hitlag.hitlagAttacker);
 
     if (complicatedValues) {
       return BodyFormatter.create([
@@ -28,10 +26,6 @@ export class HitlagFieldCreator {
         {
           title: 'Hitlag for defender',
           value: hitlagValues.map((hitlag) => hitlag.hitlagDefender).join('/'),
-        },
-        {
-          title: 'Hitlag for attacker (crouch canceled)',
-          value: hitlagValues.map((hitlag) => hitlag.hitlagAttackerCrouch).join('/'),
         },
         {
           title: 'Hitlag for defender (crouch canceled)',
@@ -46,8 +40,8 @@ export class HitlagFieldCreator {
         value: hitlagValues.map((hitlag) => hitlag.hitlagAttacker).join('/'),
       },
       {
-        title: 'Hitlag attacker & defender (crouch canceled)',
-        value: hitlagValues.map((hitlag) => hitlag.hitlagAttackerCrouch).join('/'),
+        title: 'Hitlag defender (crouch canceled)',
+        value: hitlagValues.map((hitlag) => hitlag.hitlagDefenderCrouch).join('/'),
       },
     ]);
   }
