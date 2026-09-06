@@ -21,12 +21,7 @@ export class DiscordClient {
     private failureStore: FailureStore,
     private container: Container
   ) {
-    const intents = [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.DirectMessages,
-      GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.MessageContent,
-    ];
+    const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMessages];
 
     if (process.env.PREFIX) {
       this.logger.info('Prefix is used, enabling Message Content intent');
