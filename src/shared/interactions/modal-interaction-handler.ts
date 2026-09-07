@@ -4,10 +4,8 @@ import { Logger } from 'winston';
 import { Symbols } from '../config/symbols.js';
 import { FailureStore } from '../data/failure-store.js';
 import { BaseInteractionHandler } from './base-interaction-handler.js';
-import sqlite3 from 'sqlite3';
+import Database from 'better-sqlite3';
 import { FullSearch } from '../search/full-search.js';
-
-const { Database } = sqlite3;
 
 @injectable()
 export class ModalInteractionHandler extends BaseInteractionHandler {
@@ -23,7 +21,6 @@ export class ModalInteractionHandler extends BaseInteractionHandler {
       modalSubmit.fields.getTextInputValue('report_move_input'),
       modalSubmit.fields.getTextInputValue('report_issue_input')
     );
-    statement.finalize();
     db.close();
 
     await modalSubmit.reply({ content: 'Your report has been processed, thank you for the feedback!', ephemeral: true });
