@@ -31,7 +31,7 @@ export class SingleMoveSearchStep implements SearchStep {
 
   search(searchResult: IntermediateSearchResult): IntermediateSearchResult | null {
     // If the character is defined within the context, this step is not applicable.
-    if (!searchResult.character) {
+    if (searchResult.character) {
       return null;
     }
 
