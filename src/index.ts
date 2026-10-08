@@ -12,11 +12,9 @@ import { CommandInteractionHandler } from './shared/interactions/command-interac
 import { MessageInteractionHandler } from './shared/interactions/message-interaction-handler.js';
 import { ComponentInteractionHandler } from './shared/interactions/component-interaction-handler.js';
 import { RegisterCommands } from './shared/commands/register-commands.js';
-import { ModalInteractionHandler } from './shared/interactions/modal-interaction-handler.js';
 import { Command } from './shared/commands/command.js';
 import { FrameDataCommand } from './features/frame-data/frame-data-command.js';
 import { CrouchCancelCommand } from './features/knockback/crouch-cancel-command.js';
-import { ReportCommand } from './features/report/report-command.js';
 import { ASDIDownCommand } from './features/knockback/asdi-down-command.js';
 import { CharacterCommand } from './features/character/character-command.js';
 import { AutoCompleteInteractionHandler } from './shared/interactions/auto-complete-interaction-handler.js';
@@ -49,7 +47,6 @@ container.bind<FullSearch>(FullSearch).toSelf().inSingletonScope();
 
 container.bind<Command>('Command').to(FrameDataCommand);
 container.bind<Command>('Command').to(CrouchCancelCommand);
-container.bind<Command>('Command').to(ReportCommand);
 container.bind<Command>('Command').to(ASDIDownCommand);
 container.bind<Command>('Command').to(CharacterCommand);
 container.bind<RegisterCommands>(RegisterCommands).toSelf();
@@ -57,7 +54,6 @@ container.bind<CommandInteractionHandler>(CommandInteractionHandler).toSelf().in
 container.bind<MessageInteractionHandler>(MessageInteractionHandler).toSelf().inTransientScope();
 container.bind<AutoCompleteInteractionHandler>(AutoCompleteInteractionHandler).toSelf().inTransientScope();
 container.bind<ComponentInteractionHandler>(ComponentInteractionHandler).toSelf().inTransientScope();
-container.bind<ModalInteractionHandler>(ModalInteractionHandler).toSelf().inTransientScope();
 
 try {
   const client = container.get<DiscordClient>(DiscordClient);

@@ -8,7 +8,6 @@ import { Loader } from './shared/data/loader.js';
 import { CommandInteractionHandler } from './shared/interactions/command-interaction-handler.js';
 import { ComponentInteractionHandler } from './shared/interactions/component-interaction-handler.js';
 import { MessageInteractionHandler } from './shared/interactions/message-interaction-handler.js';
-import { ModalInteractionHandler } from './shared/interactions/modal-interaction-handler.js';
 import { AutoCompleteInteractionHandler } from './shared/interactions/auto-complete-interaction-handler.js';
 
 @injectable()
@@ -52,7 +51,6 @@ export class DiscordClient {
   private async handleInteraction(interaction: Interaction): Promise<void> {
     const commandInteractionHandler = this.container.get<CommandInteractionHandler>(CommandInteractionHandler);
     const componentInteractionHandler = this.container.get<ComponentInteractionHandler>(ComponentInteractionHandler);
-    const modalInteractionHandler = this.container.get<ModalInteractionHandler>(ModalInteractionHandler);
     const autoCompleteInteractionHandler = this.container.get<AutoCompleteInteractionHandler>(AutoCompleteInteractionHandler);
     try {
       if (
@@ -75,9 +73,6 @@ export class DiscordClient {
         await componentInteractionHandler.handle(interaction);
       }
 
-      if (interaction.isModalSubmit()) {
-        await modalInteractionHandler.handle(interaction);
-      }
       if (interaction.isAutocomplete()) {
         await autoCompleteInteractionHandler.handle(interaction);
       }
