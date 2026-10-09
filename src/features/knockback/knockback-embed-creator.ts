@@ -7,12 +7,16 @@ import { InfoLine } from '../../shared/embeds/formatting/info-line.js';
 import { CharacterEmoji } from '../../shared/utils/character-emoji.js';
 import { Loader } from '../../shared/data/loader.js';
 import { Hitbox } from '../../shared/models/hitbox.js';
-import { versionNumber } from '../../shared/meta-data.js';
+import { versionNumber } from '../../shared/version-number.js';
 import { getMoveLink } from '../../shared/utils/fightcore-link.js';
 import { processDuplicateHits, processDuplicateHitboxesForCrouchCancel } from '../../shared/utils/hitbox-utils.js';
 
 export abstract class KnockbackEmbedCreator extends BaseEmbedCreator {
-  constructor(private knockbackTarget: number, private longTerm: string, private shortTerm: string) {
+  constructor(
+    private knockbackTarget: number,
+    private longTerm: string,
+    private shortTerm: string
+  ) {
     super();
   }
 

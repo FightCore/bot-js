@@ -14,7 +14,7 @@ import { MoveType } from '../../shared/models/move-type.js';
 import { BaseEmbedCreator } from '../../shared/embeds/base-embed-creator.js';
 import { BodyFormatter } from '../../shared/embeds/formatting/body-formatter.js';
 import { LineProperty } from '../../shared/embeds/formatting/line-property.js';
-import { versionNumber } from '../../shared/meta-data.js';
+import { versionNumber } from '../../shared/version-number.js';
 import { getMoveLink } from '../../shared/utils/fightcore-link.js';
 import { processDuplicateHitboxes, processDuplicateHits } from '../../shared/utils/hitbox-utils.js';
 import { HitlagFieldCreator } from './field-creator/hitlag-field-creator.js';

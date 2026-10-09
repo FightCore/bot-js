@@ -1,6 +1,6 @@
 import { Move } from '../src/shared/models/move.js';
 import { Character } from '../src/shared/models/character.js';
-import { versionNumber } from '../src/shared/meta-data.js';
+import { versionNumber } from '../src/shared/version-number.js';
 
 export function getMarth(): Character {
   return {

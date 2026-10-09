@@ -4,6 +4,7 @@ export class MessageSearchResult {
   public shouldRespond?: boolean;
   public id?: string;
   public isRoleMessage?: boolean;
+  public isPrefixMessage?: boolean;
 }
 
 export class MessageCleaner {
@@ -24,7 +25,7 @@ export class MessageCleaner {
     // Check if we are using the legacy prefix system. If so check for the prefix
     // with a space afterwards.
     if (process.env.PREFIX && message.content.toLocaleLowerCase().startsWith(process.env.PREFIX + ' ')) {
-      return { shouldRespond: true, id: undefined };
+      return { shouldRespond: true, id: undefined, isPrefixMessage: true };
     }
 
     const mentionedUser = message.mentions?.users?.first();

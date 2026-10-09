@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import { MoveEmbedCreator } from '../src/features/frame-data/move-embed-creator.js';
 import { createCharacter, createMove } from './create-data.js';
-import { versionNumber } from '../src/shared/meta-data.js';
+import { versionNumber } from '../src/shared/version-number.js';
 import { getEmbedJson, getMarth, getMarthFTilt } from './move-embed-data.js';
 
 test('Ensure correct gif is added to embed', async () => {

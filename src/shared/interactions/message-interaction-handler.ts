@@ -1,4 +1,4 @@
-import { Client, Message, StageChannel } from 'discord.js';
+import { Client, Message, MessageFlags, StageChannel } from 'discord.js';
 import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
 import { Symbols } from '../config/symbols.js';
@@ -15,6 +15,7 @@ import { RoleEmbedCreator } from '../embeds/role-embed-creator.js';
 import { LogSingleton } from '../utils/logs-singleton.js';
 import { SearchResult } from '../search/search-result.js';
 import { FullSearch } from '../search/full-search.js';
+import { MentionEmbedCreator } from '../embeds/mention-embed-creator.js';
 
 @injectable()
 export class MessageInteractionHandler extends BaseInteractionHandler {
@@ -83,7 +84,15 @@ export class MessageInteractionHandler extends BaseInteractionHandler {
         case SearchResultType.MoveList: {
           const movesEmbed = new MoveListEmbedCreator(searchResult.character);
           await message.reply({ embeds: movesEmbed.create() });
+          break;
         }
+      }
+
+      if (messageSearchResult.isPrefixMessage) {
+        await message.reply({
+          embeds: new MentionEmbedCreator().create(),
+          options: { flags: MessageFlags.Ephemeral },
+        });
       }
     } catch (error) {
       await this.handleError(error, message);
