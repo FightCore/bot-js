@@ -19,7 +19,6 @@
         ],
         "moves": {
             "knee": "fair",
-            "stomp": "dair",
             "punch": "neurtalb"
         },
         "fightCoreId": 227
@@ -61,7 +60,6 @@
             "shine": "downb",
             "aerialblaster": "aneutralb",
             "aeriallaser": "aneutralb",
-            "drill": "dair",
             "illusion": "sideb"
         },
         "fightCoreId": 218
@@ -77,7 +75,6 @@
             "laser": "neutralb",
             "aerialblaster": "aneutralb",
             "aeriallaser": "aneutralb",
-            "drill": "dair",
             "phantasm": "sideb"
         }
     },
@@ -88,9 +85,6 @@
             "ganon",
             "dorf"
         ],
-        "moves": {
-            "stomp": "dair"
-        },
         "fightCoreId": 216
     },
     {
@@ -164,7 +158,8 @@
     {
         "name": "Marth",
         "names": [
-            "marth"
+            "marth",
+            "marf"
         ],
         "fightCoreId": 222
     },

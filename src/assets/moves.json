@@ -112,7 +112,8 @@
     {
         "move": "dair",
         "alias": [
-            "stomp"
+            "stomp",
+            "drill"
         ]
     },
     {
@@ -139,7 +140,7 @@
             "attackstomach"
         ]
     },
-    { 
+    {
         "move": "rjab",
         "alias": [
             "jabs",
