@@ -206,14 +206,6 @@ export class MoveEmbedCreator extends BaseEmbedCreator {
         value: move.landingFallSpecialLag,
       },
       {
-        title: 'Auto cancel before',
-        value: move.autoCancelBefore,
-      },
-      {
-        title: 'Auto cancel after',
-        value: move.autoCancelAfter,
-      },
-      {
         title: 'Notes',
         value: move.notes,
       },
